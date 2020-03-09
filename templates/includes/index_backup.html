@@ -1,18 +1,17 @@
 {% extends 'base.html' %}
-{% from "bootstrap/pagination.html" import render_pagination %}
 
 
-{% block page_body %}
-    <div class="container">
+{#{% block head %}#}
+{#    {{ super() }}#}
+{#{% endblock %}#}
+
+{% block body %}
+    {% block content %}
+        {{ super() }}
         <nav>
             <a href="{{ url_for('.start_spider') }}">开始爬取</a>
             <a href="{{ url_for('.gdut_index') }}">显示数据</a>
             <a href="{{ url_for('.clear_data') }}">清空数据</a>
         </nav>
-
-    {% if pagination %}
-            {{ render_pagination(pagination) }}
-        {% endif %}
-    </div>
-{% endblock %}
-
+    {% endblock content %}
+{% endblock body %}

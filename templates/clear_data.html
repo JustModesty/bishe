@@ -1,12 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-数据正在删除～
-<h1>数据清空完毕的时候跳一个框框出来～</h1>
-<a href="{{ url_for('.gdut_index') }}">显示数据</a>
-</body>
-</html>
+{% extends 'base.html' %}
+{% from "bootstrap/pagination.html" import render_pagination %}
+
+
+{% block page_body %}
+    <div class="container">
+
+
+        <h3>数据正在删除～</h3>
+
+        <h3>数据清空完毕的时候跳一个框框出来～</h3>
+        <div class="container">
+            <a href="{{ url_for('.gdut_index') }}">显示数据</a>
+        </div>
+
+        {% if pagination %}
+            {{ render_pagination(pagination) }}
+        {% endif %}
+    </div>
+{% endblock %}
+
+
+
+
+

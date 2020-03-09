@@ -1,24 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% block head %}
-        <meta charset="UTF-8">
-        <title>Title</title>
-    {% endblock %}
-</head>
-<body>
-<header>
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    {% include ['includes/_head.html'] %}
+    <title>广工新闻</title>
+{% endblock head %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/cerulean/bootstrap.min.css">
+{% endblock %}
+
+{#{% block navbar %}#}
+{#    {{ nav.top.render() }}#}
+{#{% endblock navbar %}#}
+
+{% block content %}
     {% block header %}
+        <header>
+            <div class="page-header">
+                <div class="container">
+                    <h1>广东工业大学新闻网爬虫系统</h1>
+                    <h2>欢迎使用</h2>
+                </div>
+            </div>
+        </header>
     {% endblock %}
-</header>
-<div>
-    {% block content %}
+
+    {% block page_body %}
+{#        继承于这个base的其他页，主要在这里写内容！！！！   #}
     {% endblock %}
-</div>
-<footer>
-    {% block footer %}
-        Copyright 2020 by jijunjie123
-    {% endblock %}
-</footer>
-</body>
-</html>
+
+
+{% endblock content %}
+

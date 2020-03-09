@@ -1,15 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>这是模拟的广工新闻首页</h1>
-<a href="{{ url_for('.index') }}">返回程序的首页</a>
+{% extends 'base.html' %}
+{% from "bootstrap/pagination.html" import render_pagination %}
 
-{#    循环创建菜单   #}
-{% set gdut_title_links=[
+
+{% block page_body %}
+    <div class="container">
+
+
+        <h3>这是模拟的广工新闻首页</h3>
+        <a href="{{ url_for('.index') }}">返回程序的首页</a>
+
+        {#    循环创建菜单   #}
+        {% set gdut_title_links=[
     {'label':'网站首页','href':url_for('.gdut_index')},
     {'label':'学校新闻','href':url_for('.gdut_index')},
     {'label':'图片新闻','href':url_for('.gdut_index')},
@@ -23,12 +24,17 @@
     {'label':'网上校史馆','href':url_for('.gdut_index')},
     ] %}
 
-<nav>
-    |
-    {% for link in gdut_title_links %}
-        <a href="{{ link.href }}">{{ link.label }}</a>
-        |
-    {% endfor %}
-</nav>
-</body>
-</html>
+        <nav>
+            |
+            {% for link in gdut_title_links %}
+                <a href="{{ link.href }}">{{ link.label }}</a>
+                |
+            {% endfor %}
+        </nav>
+
+        {% if pagination %}
+            {{ render_pagination(pagination) }}
+        {% endif %}
+    </div>
+{% endblock %}
+
