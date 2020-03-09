@@ -1,7 +1,13 @@
 from flask import Flask, session, redirect, url_for, request, render_template
 from flask_script import Manager
 
+from flask_bootstrap import Bootstrap
+
 app = Flask(__name__)
+
+# 使用Bootstrap
+Bootstrap(app)
+
 # 这一句方便开发
 app.config['DEBUG'] = True
 manager = Manager(app)

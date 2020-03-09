@@ -5,7 +5,30 @@
     <title>Title</title>
 </head>
 <body>
-    <h1>这是模拟的广工新闻首页</h1>
-    <h2>ABCD</h2>
+<h1>这是模拟的广工新闻首页</h1>
+<a href="{{ url_for('.index') }}">返回程序的首页</a>
+
+{#    循环创建菜单   #}
+{% set gdut_title_links=[
+    {'label':'网站首页','href':url_for('.gdut_index')},
+    {'label':'学校新闻','href':url_for('.gdut_index')},
+    {'label':'图片新闻','href':url_for('.gdut_index')},
+    {'label':'媒体工大','href':url_for('.gdut_index')},
+    {'label':'数字校报','href':url_for('.gdut_index')},
+    {'label':'人文校园','href':url_for('.gdut_index')},
+    {'label':'校友动态','href':url_for('.gdut_index')},
+    {'label':'学习园地','href':url_for('.gdut_index')},
+    {'label':'专题报道','href':url_for('.gdut_index')},
+    {'label':'新媒体联盟','href':url_for('.gdut_index')},
+    {'label':'网上校史馆','href':url_for('.gdut_index')},
+    ] %}
+
+<nav>
+    |
+    {% for link in gdut_title_links %}
+        <a href="{{ link.href }}">{{ link.label }}</a>
+        |
+    {% endfor %}
+</nav>
 </body>
 </html>

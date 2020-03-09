@@ -1,15 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>首页:{{ title }}</h1>
-<nav>
-    <a href="{{ url_for('.start_spider') }}">开始爬取</a>
-    <a href="{{ url_for('.gdut_index') }}">显示数据</a>
-    <a href="{{ url_for('.clear_data') }}">清空数据</a>
-</nav>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block header %}
+    首页:{{ title }}
+{% endblock %}
+
+
+{% block content %}
+    <nav>
+        <a href="{{ url_for('.start_spider') }}">开始爬取</a>
+        <a href="{{ url_for('.gdut_index') }}">显示数据</a>
+        <a href="{{ url_for('.clear_data') }}">清空数据</a>
+    </nav>
+{% endblock %}
