@@ -1,13 +1,25 @@
 # -*- coding: utf-8 -*-
+from os import path
+
 from flask import Flask
 from flask_bootstrap import Bootstrap
+from flask_sqlalchemy import SQLAlchemy
+from config import config
+
 from .views import init_views
+
+basedir = path.abspath(path.dirname(__file__))
+
+db = SQLAlchemy()
 
 bootstrap = Bootstrap()
 
 
-def create_app():
+def create_app(config_name='default'):
     app = Flask(__name__)
+    app.config.from_object(config[config_name])
+
+    db.init_app(app)
 
     # 这一句方便开发
     # app.config['DEBUG'] = True
