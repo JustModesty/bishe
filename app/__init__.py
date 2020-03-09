@@ -6,7 +6,6 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from config import config
 
-from .views import init_views
 
 basedir = path.abspath(path.dirname(__file__))
 
@@ -32,6 +31,8 @@ def create_app(config_name='default'):
 
     # nav.register_element('top', Navbar(u'广东工业大学新闻网',View(u'主页', 'index')))
     # nav.init_app(app)
+    # from .auth import auth as auth_blueprint
+    from .main import main_handler as main_blueprint
+    app.register_blueprint(main_blueprint)
 
-    init_views(app)
     return app
