@@ -15,29 +15,17 @@ class Config:
         pass
 
 
+
+
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:a1234567890!@127.0.0.1:3306/gdutnews'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
-
-# class TestingConfig(Config):
-#     TESTING = True
-#     SERVER_NAME = 'localhost:5000'
-#     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
-#                               'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
-#     WTF_CSRF_ENABLED = False
-#
-#
-# class Production(Config):
-#     DEBUG = True
-#     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-#                               'postgresql://ray:?@localhost/blog-db'
-
-
 config = {
-    'development': DevelopmentConfig,
-    # 'testing': TestingConfig,
-    # 'production': Production,
     'default': DevelopmentConfig
 }
+
+# GDUT的一些通用变量
+class PublicGdutWebVar:
+    url_pre = 'http://gdutnews.gdut.edu.cn/'
