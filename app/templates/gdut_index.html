@@ -4,37 +4,25 @@
 
 {% block page_body %}
     <div class="container">
+        {#    banner      #}
         <img src="{{ banner_site }}" alt="">
+
 
         <h3>这是模拟的广工新闻首页</h3>
         <a href="{{ url_for('.index') }}">返回程序的首页</a>
 
-        {#    循环创建菜单   #}
-        {% set gdut_title_links=[
-    {'label':'网站首页','href':url_for('.gdut_index')},
-    {'label':'学校新闻','href':url_for('.gdut_index')},
-    {'label':'图片新闻','href':url_for('.gdut_index')},
-    {'label':'媒体工大','href':url_for('.gdut_index')},
-    {'label':'数字校报','href':url_for('.gdut_index')},
-    {'label':'人文校园','href':url_for('.gdut_index')},
-    {'label':'校友动态','href':url_for('.gdut_index')},
-    {'label':'学习园地','href':url_for('.gdut_index')},
-    {'label':'专题报道','href':url_for('.gdut_index')},
-    {'label':'新媒体联盟','href':url_for('.gdut_index')},
-    {'label':'网上校史馆','href':url_for('.gdut_index')},
-    ] %}
 
+        {#    menu      #}
         <nav>
-            |
-            {% for link in gdut_title_links %}
-                <a href="{{ link.href }}">{{ link.label }}</a>
-                |
+            {% for menu in menu_query %}
+                <a href="{{ menu.menu_href }}">{{ menu.menu_name }}</a>
             {% endfor %}
         </nav>
+
+    <a href="{{ topnews_href }}">{{ topnews_title}}</a>
 
         {% if pagination %}
             {{ render_pagination(pagination) }}
         {% endif %}
     </div>
 {% endblock %}
-
