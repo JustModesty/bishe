@@ -7,12 +7,6 @@ import requests
 from app.models import *
 from config import PublicGdutWebVar
 
-# from sqlalchemy import create_engine
-# # DB_CONNECT = 'mysql+mysqlconnector://root:a1234567890!@127.0.0.1:3306/gdutnews?charset=utf8'
-# DB_CONNECT = 'mysql+pymysql://root:a1234567890!@127.0.0.1:3306/gdutnews'
-# engine = create_engine(DB_CONNECT, echo=False, pool_size=10, pool_recycle=3600)
-# conn = engine.connect()
-
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy import create_engine
 
@@ -56,12 +50,58 @@ def start_spider():
         db.session.commit()
     # 抓取topnews
     topnews_title = html.xpath('//div[@class="topnewsc"]//h1/a/text()')[0]
-    topnews_link = html.xpath('//div[@class="topnewsc"]//h1/a/@href')[0]
+    topnews_link = PublicGdutWebVar.url_pre + html.xpath('//div[@class="topnewsc"]//h1/a/@href')[0]
     # 存入数据库
-    topnews_link = PublicGdutWebVar.url_pre + topnews_link
     topnews = TopnewsTbl(topnews_title=topnews_title, topnews_href=topnews_link)
     db.session.add(topnews)
     db.session.commit()
+
+    # 抓取shcoolnews
+    schoolnews_parent_href = PublicGdutWebVar.url_pre + html.xpath('//div[@class="tabcenh"]/span/a/@href')[0]
+    schoolnews_parent_title = html.xpath('//div[@class="tabcenh"]/span/a/text()')[0]
+
+    schoolnews_head_news_image = PublicGdutWebVar.url_pre + html.xpath('//div[@class="ywtop2"]/div/a/img/@src')[0]
+    schoolnews_head_news_href = html.xpath('//div[@class="ywtop2"]/div/a/@href')[0]
+    schoolnews_head_news_title = html.xpath('//div[@class="ywtop2"]//h3/a/text()')[0]
+
+    # 存入数据库
+    schoolnews = SchoolnewsTbl(schoolnews_parent_href=schoolnews_parent_href,
+                               schoolnews_parent_title=schoolnews_parent_title,
+                               schoolnews_head_news_image=schoolnews_head_news_image,
+                               schoolnews_head_news_href=schoolnews_head_news_href,
+                               schoolnews_head_news_title=schoolnews_head_news_title)
+    db.session.add(schoolnews)
+    db.session.commit()
+
+    # 注意这是包含12个元素的列表
+    schoolnews_sub_news_href = html.xpath('//div[@class="ywcon"]/ul[@class="ywul"]/li/a/@href')
+    # 注意这是包含12个元素的列表
+    schoolnews_sub_news_title = html.xpath('//div[@class="ywcon"]/ul[@class="ywul"]/li/a/text()')
+
+    for i in range(len(schoolnews_sub_news_href)):
+        link = schoolnews_sub_news_href[i]
+        title = schoolnews_sub_news_title[i]
+        schoolnewssubnews = SchoolnewssubnewsTbl(schoolnews_sub_news_href=link, schoolnews_sub_news_title=title)
+        db.session.add(schoolnewssubnews)
+        db.session.commit()
+
+    # 抓取schoolnewssliding
+    # 包含5个元素的列表
+    schoolnews_head_news_image = html.xpath('//div[@class="main1right"]//div[@class="pages"]/ul/li/a/img/@src')
+    # 包含5个元素的列表
+    schoolnews_head_news_href = html.xpath('//div[@class="main1right"]//div[@class="pages"]/ul/li/a/@href')
+    # 包含5个元素的列表
+    schoolnews_head_news_title = html.xpath('//div[@class="main1right"]//div[@class="pages"]/ul/li/a/@title')
+
+    for i in range(len(schoolnews_head_news_title)):
+        link = PublicGdutWebVar.url_pre + schoolnews_head_news_href[i]
+        title = schoolnews_head_news_title[i]
+        image = PublicGdutWebVar.url_pre + schoolnews_head_news_image[i]
+        row = SchoolnewsslidingTbl(schoolnews_head_news_image=image,
+                                   schoolnews_head_news_href=link,
+                                   schoolnews_head_news_title=title)
+        db.session.add(row)
+        db.session.commit()
 
     return render_template('start_spider.html')
 
@@ -85,8 +125,28 @@ def gdut_index():
         topnews_query = TopnewsTbl.query.first()
         topnews_href = topnews_query.topnews_href
         topnews_title = topnews_query.topnews_title
+        # shcoolnews
+        schoolnews_query = SchoolnewsTbl.query.first()
+        schoolnews_parent_href = schoolnews_query.schoolnews_parent_href
+        schoolnews_parent_title = schoolnews_query.schoolnews_parent_title
+        schoolnews_head_news_image = schoolnews_query.schoolnews_head_news_image
+        schoolnews_head_news_href = schoolnews_query.schoolnews_head_news_href
+        schoolnews_head_news_title = schoolnews_query.schoolnews_head_news_title
+        # schoolnewssubnews
+        schoolnewssubnews_query = SchoolnewssubnewsTbl.query.all()
+        # schoolnewssliding
+        schoolnewssliding_query = SchoolnewsslidingTbl.query.all()
 
-        return render_template('gdut_index.html', banner_site=banner_site, menu_query=menu_query, topnews_href=topnews_href,topnews_title=topnews_title)
+        return render_template('gdut_index.html', banner_site=banner_site, menu_query=menu_query,
+                               topnews_href=topnews_href, topnews_title=topnews_title,
+                               schoolnews_parent_href=schoolnews_parent_href,
+                               schoolnews_parent_title=schoolnews_parent_title,
+                               schoolnews_head_news_image=schoolnews_head_news_image,
+                               schoolnews_head_news_href=schoolnews_head_news_href,
+                               schoolnews_head_news_title=schoolnews_head_news_title,
+                               schoolnewssubnews_query=schoolnewssubnews_query,
+                               schoolnewssliding_query=schoolnewssliding_query
+                               )
     else:
         return render_template('gdut_index.html')
 
@@ -99,5 +159,8 @@ def clear_data():
     session.execute('delete from banner_tbl where 1=1')
     session.execute('delete from menu_tbl where 1=1')
     session.execute('delete from topnews_tbl where 1=1')
+    session.execute('delete from schoolnews_tbl where 1=1')
+    session.execute('delete from schoolnewssubnews_tbl where 1=1')
+    session.execute('delete from schoolnewssliding_tbl where 1=1')
     session.commit()
     return render_template('clear_data.html')

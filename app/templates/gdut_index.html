@@ -19,7 +19,30 @@
             {% endfor %}
         </nav>
 
-    <a href="{{ topnews_href }}">{{ topnews_title}}</a>
+        <a href="{{ topnews_href }}">{{ topnews_title }}</a>
+
+
+        {#        学校新闻#}
+        <h3><a href="{{ schoolnews_parent_href }}">{{ schoolnews_parent_title }}</a></h3>
+        {#        学校新闻头条#}
+        <a href="{{ schoolnews_head_news_href }}">
+            <img src="{{ schoolnews_head_news_image }}" alt="">
+        </a>
+        <h4><a href="{{ schoolnews_head_news_href }}">{{ schoolnews_head_news_title }}</a></h4>
+        {#    子新闻  #}
+        {% for schoolnewssubnews in schoolnewssubnews_query %}
+            <a href="{{ schoolnewssubnews.schoolnews_sub_news_href }}">{{ schoolnewssubnews.schoolnews_sub_news_title }}</a>
+        {% endfor %}
+
+    {#    5个滑窗  #}
+        {% for query in schoolnewssliding_query %}
+            <a href="{{ query.schoolnews_head_news_href }}">
+            <img src="{{ query.schoolnews_head_news_image }}" alt="">
+                {{ query.schoolnews_head_news_title }}
+            </a>
+        {% endfor %}
+
+
 
         {% if pagination %}
             {{ render_pagination(pagination) }}
