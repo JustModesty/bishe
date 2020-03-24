@@ -5,8 +5,9 @@
 {% block page_body %}
     <div class="container">
         {#    banner      #}
-        <img src="{{ banner_site }}" alt="">
-
+        {% if banner_site %}
+            <img src="{{ banner_site }}" alt="">
+        {% endif %}
 
         <h3>这是模拟的广工新闻首页</h3>
         <a href="{{ url_for('.index') }}">返回程序的首页</a>
@@ -34,13 +35,17 @@
             <a href="{{ schoolnewssubnews.schoolnews_sub_news_href }}">{{ schoolnewssubnews.schoolnews_sub_news_title }}</a>
         {% endfor %}
 
-    {#    5个滑窗  #}
+        {#    5个滑窗  #}
         {% for query in schoolnewssliding_query %}
             <a href="{{ query.schoolnews_head_news_href }}">
-            <img src="{{ query.schoolnews_head_news_image }}" alt="">
+                <img src="{{ query.schoolnews_head_news_image }}" alt="">
                 {{ query.schoolnews_head_news_title }}
             </a>
         {% endfor %}
+        {#        "更多"按钮#}
+        {% if more_button_query %}
+            <a href="{{ more_button_query.paper_show_more_href }}">"纸媒汇"更多 </a>
+        {% endif %}
 
 
 

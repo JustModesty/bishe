@@ -103,6 +103,32 @@ def start_spider():
         db.session.add(row)
         db.session.commit()
 
+    # 抓取更多"更多按钮"
+    more_button_list = html.xpath('//div[@class="main3"]//span[@class="gdimg"]/a/@href')
+    paper_show_more_href = PublicGdutWebVar.url_pre + more_button_list[0]
+    media_show_more_href = PublicGdutWebVar.url_pre + more_button_list[1]
+    professor_show_more_href = PublicGdutWebVar.url_pre + more_button_list[2]
+    student_show_more_href = PublicGdutWebVar.url_pre + more_button_list[3]
+    higher_edu_perspective_show_more_href = PublicGdutWebVar.url_pre + more_button_list[4]
+    window_politics_show_more_href = PublicGdutWebVar.url_pre + more_button_list[5]
+    digitalmagazine_show_more_href = more_button_list[6]
+    special_column_report_show_more_href = PublicGdutWebVar.url_pre + more_button_list[7]
+    graduate_people_show_more_href = PublicGdutWebVar.url_pre + more_button_list[8]
+    history_show_more_href = PublicGdutWebVar.url_pre + more_button_list[9]
+    row = MoreButtonTbl(
+        paper_show_more_href=paper_show_more_href,
+        media_show_more_href=media_show_more_href,
+        professor_show_more_href=professor_show_more_href,
+        student_show_more_href=student_show_more_href,
+        higher_edu_perspective_show_more_href=higher_edu_perspective_show_more_href,
+        window_politics_show_more_href=window_politics_show_more_href,
+        digitalmagazine_show_more_href=digitalmagazine_show_more_href,
+        special_column_report_show_more_href=special_column_report_show_more_href,
+        graduate_people_show_more_href=graduate_people_show_more_href,
+        history_show_more_href=history_show_more_href,
+    )
+    db.session.add(row)
+    db.session.commit()
     return render_template('start_spider.html')
 
 
@@ -136,6 +162,8 @@ def gdut_index():
         schoolnewssubnews_query = SchoolnewssubnewsTbl.query.all()
         # schoolnewssliding
         schoolnewssliding_query = SchoolnewsslidingTbl.query.all()
+        # more_button
+        more_button_query = MoreButtonTbl.query.first()
 
         return render_template('gdut_index.html', banner_site=banner_site, menu_query=menu_query,
                                topnews_href=topnews_href, topnews_title=topnews_title,
@@ -145,7 +173,8 @@ def gdut_index():
                                schoolnews_head_news_href=schoolnews_head_news_href,
                                schoolnews_head_news_title=schoolnews_head_news_title,
                                schoolnewssubnews_query=schoolnewssubnews_query,
-                               schoolnewssliding_query=schoolnewssliding_query
+                               schoolnewssliding_query=schoolnewssliding_query,
+                               more_button_query=more_button_query
                                )
     else:
         return render_template('gdut_index.html')
@@ -162,5 +191,9 @@ def clear_data():
     session.execute('delete from schoolnews_tbl where 1=1')
     session.execute('delete from schoolnewssubnews_tbl where 1=1')
     session.execute('delete from schoolnewssliding_tbl where 1=1')
+    session.execute('delete from more_button_tbl where 1=1')
+
     session.commit()
     return render_template('clear_data.html')
+
+

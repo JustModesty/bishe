@@ -1,6 +1,8 @@
 {% extends 'bootstrap/base.html' %}
 
-{% block title %}{{ title }}{% endblock %}
+{#{% block title %}{{ title }}{% endblock %}#}
+{% block title %}This is GDUT news page{% endblock %}
+
 
 {% block head %}
     {{ super() }}
@@ -12,11 +14,10 @@
     {{ super() }}
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/cerulean/bootstrap.min.css">
+    {#    <link rel="stylesheet"#}
+    {#      href="{{url_for('app/static', filename='site.css')}}">#}
 {% endblock %}
 
-{#{% block navbar %}#}
-{#    {{ nav.top.render() }}#}
-{#{% endblock navbar %}#}
 
 {% block content %}
     {% block header %}
@@ -30,10 +31,17 @@
         </header>
     {% endblock %}
 
+
+
     {% block page_body %}
-{#        继承于这个base的其他页，主要在这里写内容！！！！   #}
+        {#        继承于这个base的其他页，主要在这里写内容！！！！   #}
     {% endblock %}
 
 
 {% endblock content %}
 
+
+{#{% block scripts %}#}
+{#<script src="{{url_for('.static', filename='myscripts.js')}}"></script>#}
+{#{{super()}}#}
+{#{% endblock %}#}
