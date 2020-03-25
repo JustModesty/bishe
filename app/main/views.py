@@ -133,6 +133,53 @@ def start_spider():
 
 
 # “网站首页” 接口
+# @main_handler.route('/gdut_index')
+# def gdut_index():
+#     # banner
+#     session = Session()
+#     cursor = session.execute('select count(*) from banner_tbl')
+#     session.commit()
+#     values = cursor.fetchall()
+#
+#     if values[0][0] > 0:
+#         # banner
+#         banner_query = BannerTbl.query.first()
+#         banner_site = banner_query.banner_image
+#         # menu
+#         menu_query = MenuTbl.query.all()
+#         # topnews
+#         topnews_query = TopnewsTbl.query.first()
+#         topnews_href = topnews_query.topnews_href
+#         topnews_title = topnews_query.topnews_title
+#         # shcoolnews
+#         schoolnews_query = SchoolnewsTbl.query.first()
+#         schoolnews_parent_href = schoolnews_query.schoolnews_parent_href
+#         schoolnews_parent_title = schoolnews_query.schoolnews_parent_title
+#         schoolnews_head_news_image = schoolnews_query.schoolnews_head_news_image
+#         schoolnews_head_news_href = schoolnews_query.schoolnews_head_news_href
+#         schoolnews_head_news_title = schoolnews_query.schoolnews_head_news_title
+#         # schoolnewssubnews
+#         schoolnewssubnews_query = SchoolnewssubnewsTbl.query.all()
+#         # schoolnewssliding
+#         schoolnewssliding_query = SchoolnewsslidingTbl.query.all()
+#         # more_button
+#         more_button_query = MoreButtonTbl.query.first()
+#
+#         return render_template('gdut_index.html', banner_site=banner_site, menu_query=menu_query,
+#                                topnews_href=topnews_href, topnews_title=topnews_title,
+#                                schoolnews_parent_href=schoolnews_parent_href,
+#                                schoolnews_parent_title=schoolnews_parent_title,
+#                                schoolnews_head_news_image=schoolnews_head_news_image,
+#                                schoolnews_head_news_href=schoolnews_head_news_href,
+#                                schoolnews_head_news_title=schoolnews_head_news_title,
+#                                schoolnewssubnews_query=schoolnewssubnews_query,
+#                                schoolnewssliding_query=schoolnewssliding_query,
+#                                more_button_query=more_button_query
+#                                )
+#     else:
+#         return render_template('gdut_index.html')
+
+
 @main_handler.route('/gdut_index')
 def gdut_index():
     # banner
@@ -165,7 +212,7 @@ def gdut_index():
         # more_button
         more_button_query = MoreButtonTbl.query.first()
 
-        return render_template('gdut_index.html', banner_site=banner_site, menu_query=menu_query,
+        return render_template('show_heading_index.html', banner_site=banner_site, menu_query=menu_query,
                                topnews_href=topnews_href, topnews_title=topnews_title,
                                schoolnews_parent_href=schoolnews_parent_href,
                                schoolnews_parent_title=schoolnews_parent_title,
@@ -177,7 +224,8 @@ def gdut_index():
                                more_button_query=more_button_query
                                )
     else:
-        return render_template('gdut_index.html')
+        return render_template('show_heading_index.html')
+
 
 
 # “清空数据” 接口

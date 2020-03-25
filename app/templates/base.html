@@ -19,26 +19,35 @@
 {% endblock %}
 
 
-{% block content %}
-    {% block header %}
-        <header>
-            <div class="page-header">
-                <div class="container">
-                    <h1>广东工业大学新闻网爬虫系统</h1>
-                    <h2>欢迎使用</h2>
+{% block body -%}
+    {% block navbar %}
+        {{ super() }}
+    {%- endblock navbar %}
+
+    {% block content -%}
+        {% block header %}
+            <header>
+                <div class="page-header">
+                    <div class="container">
+                        <h1>广东工业大学爬虫系统</h1>
+        <p>一个高效,便捷,灵活的新闻爬取系统,随时可同步更新!</p>
+        <p><a class="btn btn-primary btn-lg" href="{{ url_for('.index') }}" role="button">返回首页 &raquo;</a></p>
+                    </div>
                 </div>
-            </div>
-        </header>
-    {% endblock %}
+            </header>
+        {% endblock %}
 
+        {% block page_body %}
+            {#        继承于这个base的其他页，主要在这里写内容！！！！   #}
+        {% endblock %}
 
+    {%- endblock content %}
 
-    {% block page_body %}
-        {#        继承于这个base的其他页，主要在这里写内容！！！！   #}
-    {% endblock %}
+    {% block scripts %}
+        {{ super() }}
+    {%- endblock scripts %}
+{%- endblock body %}
 
-
-{% endblock content %}
 
 
 {#{% block scripts %}#}
