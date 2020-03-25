@@ -6,17 +6,17 @@
     {{ super() }}
 
     <!-- Bootstrap core CSS -->
-    <link href="/app/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="/app/bootstrap/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="/app/static/jumbotron.css" rel="stylesheet">
+    <link href="jumbotron.css" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     {#    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->#}
-    <script src="/app/bootstrap/assets/js/ie-emulation-modes-warning.js"></script>
+    <script src="assets/js/ie-emulation-modes-warning.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     {#    <!--[if lt IE 9]>#}
@@ -62,7 +62,7 @@
                     <div class="container">
                         <h1>广东工业大学爬虫系统</h1>
                         <p>一个高效,便捷,灵活的新闻爬取系统,随时可同步更新!</p>
-                        <p class="btn btn-primary btn-lg" role="button">首页</p>
+                        <p class="btn btn-primary btn-lg" disabled="disabled" role="button">首页</p>
                     </div>
                 </div>
             </header>
@@ -82,7 +82,7 @@
                             <br>
                             将会开始爬取 <a href="http://gdutnews.gdut.edu.cn/">http://gdutnews.gdut.edu.cn/</a>
                             页面的新闻内容,并且模拟一个新闻页面</p>
-                        <p><a class="btn btn-default" href="{{ url_for('.start_spider') }}" role="button">开始爬取 &raquo;</a></p>
+                        <p><a class="btn btn-success" href="{{ url_for('.start_spider') }}" role="button">开始爬取 &raquo;</a></p>
                     </div>
                     <div class="col-md-4">
                         <h2>展示</h2>
@@ -92,7 +92,7 @@
                         <br>
                         将会显示一个模拟 <a href="http://gdutnews.gdut.edu.cn/">http://gdutnews.gdut.edu.cn/</a>
                         页面的新闻页面</p>
-                        <p><a class="btn btn-default" href="{{ url_for('.gdut_index') }}" role="button">显示数据 &raquo;</a></p>
+                        <p><a class="btn btn-primary" href="{{ url_for('.gdut_index') }}" role="button">显示数据 &raquo;</a></p>
                     </div>
                     <div class="col-md-4">
                         <h2>删除</h2>
@@ -102,7 +102,7 @@
                         <br>
                         点击这个按钮之后
                         <br>将会开始 <b>清除</b> 数据库的所有内容!</p>
-                        <p><a class="btn btn-default" href="{{ url_for('.clear_data') }}" role="button">开始清空数据库 &raquo;</a></p>
+                        <p><a class="btn btn-danger" href="{{ url_for('.clear_data') }}" role="button">开始清空数据库 &raquo;</a></p>
                     </div>
                 </div>
 
