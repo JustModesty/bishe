@@ -1,19 +1,42 @@
 {% extends 'bootstrap/base.html' %}
 
-{#{% block title %}{{ title }}{% endblock %}#}
-{% block title %}This is GDUT news page{% endblock %}
-
 
 {% block head %}
-    {{ super() }}
+    {% block title %}
+        广工新闻
+    {% endblock title %}
 
-    {% include ['includes/_head.html'] %}
-    <title>广工新闻</title>
+    {%- block metas %}
+        {{ super() }}
+    {%- endblock metas %}
+
+    {% block styles %}
+        <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+              integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+              crossorigin="anonymous">
+
+
+
+        <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css"
+              integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+              crossorigin="anonymous">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/cerulean/bootstrap.min.css">
+
+        <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+                crossorigin="anonymous"></script>
+
+
+    {% endblock styles %}
 {% endblock head %}
 
-{% block styles %}
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/cerulean/bootstrap.min.css">
-{% endblock %}
 
 
 {% block body -%}
@@ -45,7 +68,7 @@
         <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
         <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
-        {#        <script src="{{ bootstrap_find_resource('jquery.js', cdn='jquery') }}"></script>#}
-        {#        <script src="{{ bootstrap_find_resource('js/bootstrap.js', cdn='bootstrap') }}"></script>#}
+        <script src="{{ bootstrap_find_resource('jquery.js', cdn='jquery') }}"></script>
+        <script src="{{ bootstrap_find_resource('js/bootstrap.js', cdn='bootstrap') }}"></script>
     {%- endblock scripts %}
 {%- endblock body %}
