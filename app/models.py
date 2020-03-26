@@ -29,9 +29,8 @@ class GraduatepeopleTbl(db.Model):
     __tablename__ = 'graduatepeople_tbl'
 
     id = db.Column(db.Integer, primary_key=True)
-    show_more_href = db.Column(db.String, nullable=False)
-    new_title = db.Column(db.String(2083), nullable=False)
-    new_href = db.Column(db.String(2083), nullable=False)
+    link = db.Column(db.String(2083), nullable=False)
+    title = db.Column(db.String(2083), nullable=False)
 
 
 
@@ -53,42 +52,12 @@ class HtmlTbl(db.Model):
 
 
 
-class HumanitiescampusTbl(db.Model):
-    __tablename__ = 'humanitiescampus_tbl'
+class HumanityCampusNew(db.Model):
+    __tablename__ = 'humanity_campus_news'
 
     id = db.Column(db.Integer, primary_key=True)
-    professor_show_more_href = db.Column(db.String(2083), nullable=False)
-    professor_head_news_image = db.Column(db.String(2083), nullable=False)
-    professor_head_news_href = db.Column(db.String(2083), nullable=False)
-    professor_head_news_title = db.Column(db.String, nullable=False)
-    professor_head_news_profile = db.Column(db.String(2083), nullable=False)
-    professor_head_news_profile_see_more = db.Column(db.String, nullable=False)
-    professor_sub_news_href = db.Column(db.String(2083), nullable=False)
-    professor_sub_news_title = db.Column(db.String, nullable=False)
-    student_show_more_href = db.Column(db.String(2083), nullable=False)
-    student_head_news_image = db.Column(db.String(2083), nullable=False)
-    student_head_news_href = db.Column(db.String(2083), nullable=False)
-    student_head_news_title = db.Column(db.String, nullable=False)
-    student_head_news_profile = db.Column(db.String, nullable=False)
-    student_head_news_profile_see_more = db.Column(db.String(2083), nullable=False)
-    student_sub_news_href = db.Column(db.String(2083), nullable=False)
-    student_sub_news_title = db.Column(db.String, nullable=False)
-
-
-
-class MediagongdaTbl(db.Model):
-    __tablename__ = 'mediagongda_tbl'
-
-    id = db.Column(db.Integer, primary_key=True)
-    paper_show_more_href = db.Column(db.String(2083), nullable=False)
-    paper_sub_news_href = db.Column(db.String(2083), nullable=False)
-    paper_sub_news_title = db.Column(db.String(2083), nullable=False)
-    media_show_more_href = db.Column(db.String(2083), nullable=False)
-    media_sub_news_href = db.Column(db.String(2083), nullable=False)
-    media_sub_news_image = db.Column(db.String(2083), nullable=False)
-    media_sub_news_title = db.Column(db.String(2083), nullable=False)
-    media_sub_news_playtime = db.Column(db.String(2083), nullable=False)
-    media_sub_news_date = db.Column(db.String(2083), nullable=False)
+    link = db.Column(db.String(1024), nullable=False)
+    title = db.Column(db.String(1024), nullable=False)
 
 
 
@@ -169,26 +138,12 @@ class ShijuegongdaTbl(db.Model):
 
 
 
-class StudyplacesTbl(db.Model):
-    __tablename__ = 'studyplaces_tbl'
+class StudyplacesNewsTbl(db.Model):
+    __tablename__ = 'studyplaces_news_tbl'
 
     id = db.Column(db.Integer, primary_key=True)
-    higher_edu_perspective_show_more_href = db.Column(db.String, nullable=False)
-    higher_edu_perspective_head_news_image = db.Column(db.String(2083), nullable=False)
-    higher_edu_perspective_head_news_href = db.Column(db.String(2083), nullable=False)
-    higher_edu_perspective_head_news_title = db.Column(db.String, nullable=False)
-    higher_edu_perspective_head_news_profile = db.Column(db.String(2083), nullable=False)
-    higher_edu_perspective_head_news_profile_see_more = db.Column(db.String, nullable=False)
-    higher_edu_perspective_sub_news_href = db.Column(db.String(2083), nullable=False)
-    higher_edu_perspective_sub_news_title = db.Column(db.String, nullable=False)
-    window_politics_show_more_href = db.Column(db.String(2083), nullable=False)
-    window_politics_head_news_image = db.Column(db.String(2083), nullable=False)
-    window_politics_head_news_href = db.Column(db.String(2083), nullable=False)
-    window_politics_head_news_title = db.Column(db.String, nullable=False)
-    window_politics_head_news_profile = db.Column(db.String(2083), nullable=False)
-    window_politics_head_news_profile_see_more = db.Column(db.String, nullable=False)
-    window_politics_sub_news_href = db.Column(db.String(2083), nullable=False)
-    window_politics_sub_news_title = db.Column(db.String, nullable=False)
+    link = db.Column(db.String(2083), nullable=False)
+    title = db.Column(db.String(2083), nullable=False)
 
 
 
@@ -198,3 +153,12 @@ class TopnewsTbl(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     topnews_title = db.Column(db.String(2083), nullable=False)
     topnews_href = db.Column(db.String(2083), nullable=False)
+
+
+
+class Zhimeihui(db.Model):
+    __tablename__ = 'zhimeihui'
+
+    id = db.Column(db.Integer, primary_key=True)
+    paper_sub_news_href = db.Column(db.String(2083), nullable=False)
+    paper_sub_news_title = db.Column(db.String(2083), nullable=False)

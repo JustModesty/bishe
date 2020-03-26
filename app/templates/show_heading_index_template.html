@@ -9,61 +9,132 @@
 {% block body -%}
     {% block navbar %}
         {{ super() }}
+        <nav class="navbar navbar-fixed-top navbar-inverse">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                            aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Project name</a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div><!-- /.nav-collapse -->
+            </div><!-- /.container -->
+        </nav><!-- /.navbar -->
     {%- endblock navbar %}
 
     {% block content -%}
         {% block header %}
-            <header>
-                <div class="page-header">
-                    <div class="container">
-                        <h1>广东工业大学爬虫系统</h1>
-                        <p>一个高效,便捷,灵活的新闻爬取系统,随时可同步更新!</p>
-                        <p class="btn btn-primary btn-lg" disabled="disabled" role="button">首页</p>
-                    </div>
-                </div>
-            </header>
-
+            {{ super() }}
         {% endblock %}
 
         {% block page_body %}
             <div class="container">
-                <!-- Example row of columns -->
-                <div class="row">
-                    <div class="col-md-4">
-                        <h2>爬取</h2>
-                        <p>
-                            <br>
-                            点击这个按钮之后
-                            <br>
-                            <br>
-                            将会开始爬取 <a href="http://gdutnews.gdut.edu.cn/">http://gdutnews.gdut.edu.cn/</a>
-                            页面的新闻内容,并且模拟一个新闻页面</p>
-                        <p><a class="btn btn-success" href="{{ url_for('.start_spider') }}" role="button">开始爬取
-                            &raquo;</a></p>
-                    </div>
-                    <div class="col-md-4">
-                        <h2>展示</h2>
-                        <br>
-                        点击这个按钮之后
-                        <br>
-                        <br>
-                        将会显示一个模拟 <a href="http://gdutnews.gdut.edu.cn/">http://gdutnews.gdut.edu.cn/</a>
-                        页面的新闻页面</p>
-                        <p><a class="btn btn-primary" href="{{ url_for('.gdut_index') }}" role="button">显示数据 &raquo;</a>
+                <div class="row row-offcanvas row-offcanvas-right">
+
+                    <div class="col-xs-12 col-sm-9">
+                        <p class="pull-right visible-xs">
+                            <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav
+                            </button>
                         </p>
-                    </div>
-                    <div class="col-md-4">
-                        <h2>删除</h2>
-                        <br>
-                        <b>慎重!!</b>
-                        <br>
-                        <br>
-                        点击这个按钮之后
-                        <br>将会开始 <b>清除</b> 数据库的所有内容!</p>
-                        <p><a class="btn btn-danger" href="{{ url_for('.clear_data') }}" role="button">开始清空数据库
-                            &raquo;</a></p>
-                    </div>
+                        <div class="jumbotron">
+                            {#                            <h1><a href="{{ topnews_href }}">{{ topnews_title }}</a></h1>#}
+                            <h1><a href="{{ topnews_href }}">{{ topnews_title }}</a></h1>
+                            <p>This is an example to show the potential of an offcanvas layout pattern in Bootstrap. Try
+                                some
+                                responsive-range viewport sizes to see it in action.</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6 col-lg-4">
+                                <h2><a href="{{ schoolnews_parent_href }}">学校新闻</a></h2>
+                                <p><a href="{{ schoolnews_head_news_href }}">{{ schoolnews_head_news_title }}</a>
+                                    {% for schoolnewssubnews in schoolnewssubnews_query %}
+                                        <a href="{{ schoolnewssubnews.schoolnews_sub_news_href }}">
+                                            {{ schoolnewssubnews.schoolnews_sub_news_title }}
+                                        </a>
+                                        <br>
+                                    {% endfor %}</p>
+                                <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+                            </div><!--/.col-xs-6.col-lg-4-->
+
+                            <div class="col-xs-6 col-lg-4">
+                                <h2><a href="{{ schoolnews_parent_href }}">媒体工大</a></h2>
+                                <p>
+                                    {% for zhimeihui in zhimeihui_query %}
+                                        <a href="{{ zhimeihui.paper_sub_news_href }}">
+                                            {{ zhimeihui.paper_sub_news_title }}
+                                        </a>
+                                        <br>
+                                    {% endfor %}</p>
+                                <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+                            </div><!--/.col-xs-6.col-lg-4-->
+
+                            <div class="col-xs-6 col-lg-4">
+                                <h2><a href="{{ schoolnews_parent_href }}">人文校园</a></h2>
+                                <p>
+                                    {% for line in humanity_campus_query %}
+                                        <a href="{{ line.link }}">{{ line.title }}</a>
+                                        <br>
+                                    {% endfor %}</p>
+                                <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+                            </div><!--/.col-xs-6.col-lg-4-->
+
+
+                            <div class="col-xs-6 col-lg-4">
+                                <h2><a href="{{ schoolnews_parent_href }}">学习园地</a></h2>
+                                <p>
+                                    {% for line in studyplaces_news_query %}
+                                        <a href="{{ line.link }}">{{ line.title }}</a>
+                                        <br>
+                                    {% endfor %}</p>
+                                <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+                            </div><!--/.col-xs-6.col-lg-4-->
+
+                            <div class="col-xs-6 col-lg-4">
+                                <h2><a href="{{ schoolnews_parent_href }}">校友动态</a></h2>
+                                <p><a href="{{ schoolnews_head_news_href }}">{{ schoolnews_head_news_title }}</a>
+                                    <br>
+                                    {% for line in graduate_people_query %}
+                                        <a href="{{ line.link }}">
+                                            {{ line.title }}
+                                        </a>
+                                    {% endfor %}</p>
+                                <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+                            </div><!--/.col-xs-6.col-lg-4-->
+                            <div class="col-xs-6 col-lg-4">
+                                <h2><a href="{{ schoolnews_parent_href }}">网上校史馆</a></h2>
+                                <p><a href="{{ schoolnews_head_news_href }}">{{ schoolnews_head_news_title }}</a>
+                                    <br>
+                                    {% for schoolnewssubnews in schoolnewssubnews_query %}
+                                        <a href="{{ schoolnewssubnews.schoolnews_sub_news_href }}">
+                                            {{ schoolnewssubnews.schoolnews_sub_news_title }}
+                                        </a>
+                                        <br>
+                                    {% endfor %}</p>
+                                <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+                            </div><!--/.col-xs-6.col-lg-4-->
+
+                        </div><!--/row-->
+                    </div><!--/.col-xs-12.col-sm-9-->
+
+                    <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar">
+                        <div class="list-group">
+                            {% for menu in menu_query %}
+                                <a href="{{ menu.menu_href }}" class="list-group-item">{{ menu.menu_name }}</a>
+                            {% endfor %}
+                        </div>
+                    </div><!--/.sidebar-offcanvas-->
                 </div>
+
 
                 <hr>
 
