@@ -1,3 +1,6 @@
+import requests
+from lxml import etree
+
 from app import db
 from app.models import *
 from config import PublicGdutWebVar
@@ -186,3 +189,21 @@ def shcool_history(html):
         sql_insert = HistoryTbl(link=link, title=title)
         db.session.add(sql_insert)
         db.session.commit()
+
+
+def start_spider_detail(url):
+    response = requests.get(url)
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    detail = {}
+
+    detail['title'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/h1[@class='title']/span[@id='ctl00_ContentPlaceHolder1_tbxTitle']/text()")
+    detail['jianjie'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@id='ctl00_ContentPlaceHolder1_jj']/p/span[@id='ctl00_ContentPlaceHolder1_tbxIntro']/text()")
+    # fixme: 这里能得到p, 但是不一定能提取到图片...怎么处理需要好好考虑一下
+    detail['content'] = html.xpath('//div[@id="vsb_content_2"]/p')
+
+    return detail
+
+
