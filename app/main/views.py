@@ -56,6 +56,9 @@ def start_spider():
     # 抓取校友动态
     gdut_spider_function.graduate_people(html)
 
+    # 抓取网上校史馆
+    gdut_spider_function.shcool_history(html)
+
     return render_template('start_spider.html')
 
 
@@ -111,6 +114,9 @@ def gdut_index():
         # 校友动态
         graduate_people_query = GraduatepeopleTbl.query.all()
 
+        # 网上校史馆
+        school_history_query = HistoryTbl.query.all()
+
         return render_template('show_heading_index_template.html', banner_site=banner_site, menu_query=menu_query,
                                topnews_href=topnews_href, topnews_title=topnews_title,
                                schoolnews_parent_href=schoolnews_parent_href,
@@ -124,7 +130,8 @@ def gdut_index():
                                zhimeihui_query=zhimeihui_query,
                                humanity_campus_query=humanity_campus_query,
                                studyplaces_news_query=studyplaces_news_query,
-                               graduate_people_query=graduate_people_query
+                               graduate_people_query=graduate_people_query,
+                               school_history_query=school_history_query
                                )
     else:
         return render_template('show_heading_index_template.html')
@@ -151,6 +158,20 @@ def clear_data():
     session.execute('delete from humanity_campus_news where 1=1')
     session.execute('delete from studyplaces_news_tbl where 1=1')
     session.execute('delete from graduatepeople_tbl where 1=1')
+    session.execute('delete from history_tbl where 1=1')
 
     session.commit()
     return render_template('clear_data.html')
+
+
+# 爬取文章详情页
+@main_handler.route('/detail/<path>', methods=['GET', 'POST'])
+def spider_detail(path):
+    print("1111111111")
+    print(type(path))
+    print(path)
+    print("22222222")
+    return render_template('index.html')
+    # return 'yourPath %s' % path
+    # return render_template('show_heading_index_template.html')
+

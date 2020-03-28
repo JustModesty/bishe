@@ -48,14 +48,17 @@
                         </p>
                         <div class="jumbotron">
                             {#                            <h1><a href="{{ topnews_href }}">{{ topnews_title }}</a></h1>#}
-                            <h1><a href="{{ topnews_href }}">{{ topnews_title }}</a></h1>
+                            <h1><a href="{{ url_for('.spider_detail', path=topnews_href) }}">{{ topnews_title }}</a>
+                            </h1>
                             <p>This is an example to show the potential of an offcanvas layout pattern in Bootstrap. Try
                                 some
                                 responsive-range viewport sizes to see it in action.</p>
                         </div>
                         <div class="row">
                             <div class="col-xs-6 col-lg-4">
-                                <h2><a href="{{ schoolnews_parent_href }}">学校新闻</a></h2>
+                                {#                                <h2><a href="{{ schoolnews_parent_href }}">学校新闻</a></h2>#}
+                                <h2><a href="{{ url_for('.spider_detail', path=schoolnews_parent_href) }}">学校新闻</a></h2>
+
                                 <p><a href="{{ schoolnews_head_news_href }}">{{ schoolnews_head_news_title }}</a>
                                     {% for schoolnewssubnews in schoolnewssubnews_query %}
                                         <a href="{{ schoolnewssubnews.schoolnews_sub_news_href }}">
@@ -101,22 +104,19 @@
 
                             <div class="col-xs-6 col-lg-4">
                                 <h2><a href="{{ schoolnews_parent_href }}">校友动态</a></h2>
-                                <p><a href="{{ schoolnews_head_news_href }}">{{ schoolnews_head_news_title }}</a>
-                                    <br>
+                                <p>
                                     {% for line in graduate_people_query %}
-                                        <a href="{{ line.link }}">
-                                            {{ line.title }}
-                                        </a>
+                                        <a href="{{ line.link }}">{{ line.title }}</a>
+                                        <br>
                                     {% endfor %}</p>
                                 <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
                             </div><!--/.col-xs-6.col-lg-4-->
                             <div class="col-xs-6 col-lg-4">
                                 <h2><a href="{{ schoolnews_parent_href }}">网上校史馆</a></h2>
-                                <p><a href="{{ schoolnews_head_news_href }}">{{ schoolnews_head_news_title }}</a>
-                                    <br>
-                                    {% for schoolnewssubnews in schoolnewssubnews_query %}
-                                        <a href="{{ schoolnewssubnews.schoolnews_sub_news_href }}">
-                                            {{ schoolnewssubnews.schoolnews_sub_news_title }}
+                                <p>
+                                    {% for line in school_history_query %}
+                                        <a href="{{ line.link }}">
+                                            {{ line.title }}
                                         </a>
                                         <br>
                                     {% endfor %}</p>

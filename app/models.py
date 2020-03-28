@@ -38,9 +38,8 @@ class HistoryTbl(db.Model):
     __tablename__ = 'history_tbl'
 
     id = db.Column(db.Integer, primary_key=True)
-    show_more_href = db.Column(db.String, nullable=False)
-    new_title = db.Column(db.String(2083), nullable=False)
-    new_href = db.Column(db.String(2083), nullable=False)
+    link = db.Column(db.String(2083), nullable=False)
+    title = db.Column(db.String(2083), nullable=False)
 
 
 
