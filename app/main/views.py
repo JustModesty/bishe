@@ -182,6 +182,16 @@ def spider_detail(path):
         img_list = detail['img_list']
         text_list = []
         for content in content_list:
-            text_list.append(content.text)
+            if content.text is None:
+                pass
+                # text_list.append("None")
+            else:
+                text_list.append(content.text)
+
+
+        img_link_list = []
+        for link in img_list:
+            img_link_list.append(PublicGdutWebVar.url_pre + link)
+        release_date = detail['release_date'][0]
         # 取出标题和内容,传递给前端
-        return render_template('detail_page.html', title=title, jianjie=jianjie, text_list=text_list, img_list=img_list)
+        return render_template('detail_page.html', title=title, jianjie=jianjie, text_list=text_list, img_link_list=img_link_list,release_date=release_date)

@@ -18,8 +18,8 @@ class Config:
 
 
 class DevelopmentConfig(Config):
-    DEBUG = False
-    # DEBUG = True
+    # DEBUG = False
+    DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:a1234567890!@127.0.0.1:3306/gdutnews'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 

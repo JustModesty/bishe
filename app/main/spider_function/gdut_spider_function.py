@@ -211,6 +211,7 @@ def start_spider_detail(url):
     # fixme: 这里能得到p, 但是不一定能提取到图片...怎么处理需要好好考虑一下
     detail['content_list'] = html.xpath('//div[@id="vsb_content_2"]//p//span')
     detail['img_list'] = html.xpath('//div[@id="vsb_content_2"]//p//img/@src')
+    detail['release_date'] = html.xpath("///div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@class='info']/span[@id='ctl00_ContentPlaceHolder1_tbxUpdateTime']/text()")
 
     return detail
 
