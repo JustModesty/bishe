@@ -65,7 +65,14 @@ def schoolnews(html):
 
     for i in range(len(schoolnews_sub_news_href)):
         link = schoolnews_sub_news_href[i]
+        print("5555555555555555555555555555555555555")
+        print(type(link))
+        print(link)
+        print("66666666666666666666666666666666666666")
         title = schoolnews_sub_news_title[i]
+        print(type(title))
+        print(title)
+        print("777777777777777777777777777777777777777")
         schoolnewssubnews = SchoolnewssubnewsTbl(schoolnews_sub_news_href=link, schoolnews_sub_news_title=title)
         db.session.add(schoolnewssubnews)
         db.session.commit()
@@ -202,7 +209,8 @@ def start_spider_detail(url):
     detail['title'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/h1[@class='title']/span[@id='ctl00_ContentPlaceHolder1_tbxTitle']/text()")
     detail['jianjie'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@id='ctl00_ContentPlaceHolder1_jj']/p/span[@id='ctl00_ContentPlaceHolder1_tbxIntro']/text()")
     # fixme: 这里能得到p, 但是不一定能提取到图片...怎么处理需要好好考虑一下
-    detail['content'] = html.xpath('//div[@id="vsb_content_2"]/p')
+    detail['content_list'] = html.xpath('//div[@id="vsb_content_2"]//p//span')
+    detail['img_list'] = html.xpath('//div[@id="vsb_content_2"]//p//img/@src')
 
     return detail
 

@@ -176,28 +176,12 @@ def spider_detail(path):
 
         # 爬取文章, 标题,内容, 存入数据库
         detail = gdut_spider_function.start_spider_detail(url)
-        title = detail['title']
-        jianjie = detail['jianjie']
-        content = detail['content']
-
+        title = detail['title'][0]
+        jianjie = detail['jianjie'][0].strip()
+        content_list = detail['content_list']
+        img_list = detail['img_list']
+        text_list = []
+        for content in content_list:
+            text_list.append(content.text)
         # 取出标题和内容,传递给前端
-        return render_template('detail_page.html', title=title, jianjie=jianjie)
-
-
-
-# return render_template('show_heading_index_template.html', banner_site=banner_site, menu_query=menu_query,
-#                        topnews_href=topnews_href, topnews_title=topnews_title,
-#                        schoolnews_parent_href=schoolnews_parent_href,
-#                        schoolnews_parent_title=schoolnews_parent_title,
-#                        schoolnews_head_news_image=schoolnews_head_news_image,
-#                        schoolnews_head_news_href=schoolnews_head_news_href,
-#                        schoolnews_head_news_title=schoolnews_head_news_title,
-#                        schoolnewssubnews_query=schoolnewssubnews_query,
-#                        schoolnewssliding_query=schoolnewssliding_query,
-#                        more_button_query=more_button_query,
-#                        zhimeihui_query=zhimeihui_query,
-#                        humanity_campus_query=humanity_campus_query,
-#                        studyplaces_news_query=studyplaces_news_query,
-#                        graduate_people_query=graduate_people_query,
-#                        school_history_query=school_history_query
-#                        )
+        return render_template('detail_page.html', title=title, jianjie=jianjie, text_list=text_list, img_list=img_list)
