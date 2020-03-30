@@ -208,7 +208,6 @@ def start_spider_detail(url):
 
     detail['title'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/h1[@class='title']/span[@id='ctl00_ContentPlaceHolder1_tbxTitle']/text()")
     detail['jianjie'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@id='ctl00_ContentPlaceHolder1_jj']/p/span[@id='ctl00_ContentPlaceHolder1_tbxIntro']/text()")
-    # fixme: 这里能得到p, 但是不一定能提取到图片...怎么处理需要好好考虑一下
     detail['content_list'] = html.xpath('//div[@id="vsb_content_2"]//p//span')
     detail['content_list2'] = html.xpath('//div[@id="vsb_content_4"]//p//text()')
     detail['img_list'] = html.xpath('//div[@id="vsb_content_2"]//p//img/@src')
@@ -223,11 +222,24 @@ def start_spider_menu_section(url):
     content = content.decode('utf-8')
     html = etree.HTML(content)
 
+    all_news = []
+
     # 有图片的位于顶部的新闻
     # 图片的src链接(不含前缀)
-    # //div[@class='newslistcon']/div[@class='listleft']/ul[@class='listimgul']/li/a[@class='listimgula']/table/tbody/tr/td/a[@class='listimgulimg']/img/@src
+    top_news_src_links = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listimgul']/li/a[@class='listimgula']/table/tbody/tr/td/a[@class='listimgulimg']/img/@src")
     # 新闻的链接(部分含含http前缀的外部链接,直接跳转；不含的则加广工前缀跳转)
-    # //div[@class='newslistcon']/div[@class='listleft']/ul[@class='listimgul']/li/a[@class='listimgula']/table/tbody/tr[1]/td[2]/a[@class='listimgultitle']/@href
+    top_news_links = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listimgul']/li/a[@class='listimgula']/table/tbody/tr[1]/td[2]/a[@class='listimgultitle']/@href")
+    # 顶部新闻标题
+    top_news_titles = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listimgul']/li/a[@class='listimgula']/table/tbody/tr[1]/td[2]/a[@class='listimgultitle']/text()")
+    for i in range(len(top_news_src_links)):
+        item = {'src': PublicGdutWebVar.url_pre + top_news_src_links[i], 'link': top_news_links[i], 'title': top_news_titles[i]}
+        all_news.append(item)
 
+    # 普通链接新闻
+    normal_news_links = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/@href")
+    normal_news_title = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/text()")
+    for i in range(len(normal_news_links)):
+        item = {'link': normal_news_links[i], 'title': normal_news_title[i]}
+        all_news.append(item)
 
-    return None
+    return all_news

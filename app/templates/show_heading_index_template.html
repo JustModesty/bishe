@@ -134,14 +134,17 @@
 {#                                <a href="{{ menu.menu_href }}" class="list-group-item">{{ menu.menu_name }}</a>#}
 {#                            {% endfor %}#}
                             <a href="{{ url_for('.index') }}" class="list-group-item">网站首页</a>
-                            <a href="#" class="list-group-item">学校新闻</a>
-                            <a href="#" class="list-group-item">图片新闻</a>
-                            <a href="#" class="list-group-item">媒体工大</a>
+                            <a href="{{ url_for('.spider_menu_section', path=menu_query[1].menu_href) }}" class="list-group-item">学校新闻</a>
+
+{#                            url_for('.spider_detail', path=topnews_href)#}
+
+                            <a href="{{ url_for('.spider_menu_section', path=menu_query[2].menu_href) }}" class="list-group-item">图片新闻</a>
+                            <a href="{{ url_for('.spider_menu_section', path=menu_query[3].menu_href) }}" class="list-group-item">媒体工大</a>
                             <a href="http://xbw.gdut.edu.cn/index.aspx" class="list-group-item">数字校报</a>
-                            <a href="#" class="list-group-item">人文校园</a>
-                            <a href="#" class="list-group-item">校友动态</a>
-                            <a href="#" class="list-group-item">学习园地</a>
-                            <a href="#" class="list-group-item">专题报道</a>
+                            <a href="{{ url_for('.spider_menu_section', path=menu_query[5].menu_href) }}" class="list-group-item">人文校园</a>
+                            <a href="{{ url_for('.spider_menu_section', path=menu_query[6].menu_href) }}" class="list-group-item">校友动态</a>
+                            <a href="{{ url_for('.spider_menu_section', path=menu_query[7].menu_href) }}" class="list-group-item">学习园地</a>
+                            <a href="{{ url_for('.spider_menu_section', path=menu_query[8].menu_href) }}" class="list-group-item">专题报道</a>
                             <a href="http://xmt.gdut.edu.cn/" class="list-group-item">新媒体联盟</a>
                             <a href="#" class="list-group-item">网上校史馆</a>
                         </div>

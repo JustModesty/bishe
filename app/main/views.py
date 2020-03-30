@@ -212,32 +212,6 @@ def spider_menu_section(path):
     url = PublicGdutWebVar.url_pre + path
 
     # 爬取链接  todo:存入数据库,下次直接从数据库提取
-    detail = gdut_spider_function.start_spider_menu_section(url)
+    all_news = gdut_spider_function.start_spider_menu_section(url)
 
-
-    title = detail['title'][0]
-    jianjie = detail['jianjie'][0].strip()
-    content_list = detail['content_list']
-    content_list2 = detail['content_list2']
-
-    img_list = detail['img_list']
-    text_list = []
-    for content in content_list:
-        if content.text is None:
-            pass
-            # text_list.append("None")
-        else:
-            text_list.append(content.text)
-    # for content in content_list2:
-    #     text_list.append(content.text)
-
-    for content in content_list2:
-        text_list.append(str(content))
-
-    img_link_list = []
-    for link in img_list:
-        img_link_list.append(PublicGdutWebVar.url_pre + link)
-    release_date = detail['release_date'][0]
-    # 取出标题和内容,传递给前端
-    return render_template('detail_page.html', title=title, jianjie=jianjie, text_list=text_list,
-                           img_link_list=img_link_list, release_date=release_date)
+    return render_template('menu_section_page.html', all_news=all_news)
