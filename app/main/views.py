@@ -174,11 +174,14 @@ def spider_detail(path):
     else:
         url = PublicGdutWebVar.url_pre + path
 
-        # 爬取文章, 标题,内容, 存入数据库
+        # 爬取文章, 标题,内容 todo:存入数据库,下次直接从数据库提取
         detail = gdut_spider_function.start_spider_detail(url)
         title = detail['title'][0]
         jianjie = detail['jianjie'][0].strip()
         content_list = detail['content_list']
+        content_list2 = detail['content_list2']
+
+
         img_list = detail['img_list']
         text_list = []
         for content in content_list:
@@ -187,7 +190,11 @@ def spider_detail(path):
                 # text_list.append("None")
             else:
                 text_list.append(content.text)
-
+        # for content in content_list2:
+        #     text_list.append(content.text)
+        
+        for content in content_list2:
+            text_list.append(str(content))
 
         img_link_list = []
         for link in img_list:
@@ -195,3 +202,42 @@ def spider_detail(path):
         release_date = detail['release_date'][0]
         # 取出标题和内容,传递给前端
         return render_template('detail_page.html', title=title, jianjie=jianjie, text_list=text_list, img_link_list=img_link_list,release_date=release_date)
+
+
+
+# 爬取菜单里的专题跳转的页面,并且渲染成为一个新页面并展示
+# 有几个专题的页面模板是相同的:学校新闻, 图片新闻, 媒体工大, 人文校园, 学习园地, 专题报道  这六个可以用这个接口
+@main_handler.route('/menu_section/<path>', methods=['GET'])
+def spider_menu_section(path):
+    url = PublicGdutWebVar.url_pre + path
+
+    # 爬取链接  todo:存入数据库,下次直接从数据库提取
+    detail = gdut_spider_function.start_spider_menu_section(url)
+
+
+    title = detail['title'][0]
+    jianjie = detail['jianjie'][0].strip()
+    content_list = detail['content_list']
+    content_list2 = detail['content_list2']
+
+    img_list = detail['img_list']
+    text_list = []
+    for content in content_list:
+        if content.text is None:
+            pass
+            # text_list.append("None")
+        else:
+            text_list.append(content.text)
+    # for content in content_list2:
+    #     text_list.append(content.text)
+
+    for content in content_list2:
+        text_list.append(str(content))
+
+    img_link_list = []
+    for link in img_list:
+        img_link_list.append(PublicGdutWebVar.url_pre + link)
+    release_date = detail['release_date'][0]
+    # 取出标题和内容,传递给前端
+    return render_template('detail_page.html', title=title, jianjie=jianjie, text_list=text_list,
+                           img_link_list=img_link_list, release_date=release_date)
