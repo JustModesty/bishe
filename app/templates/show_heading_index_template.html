@@ -133,7 +133,7 @@
 {#                            {% for menu in menu_query %}#}
 {#                                <a href="{{ menu.menu_href }}" class="list-group-item">{{ menu.menu_name }}</a>#}
 {#                            {% endfor %}#}
-                            <a href="{{ url_for('.index') }}" class="list-group-item">网站首页</a>
+                            <a href="{{ url_for('.gdut_index') }}" class="list-group-item">网站首页</a>
                             <a href="{{ url_for('.spider_menu_section', path=menu_query[1].menu_href) }}" class="list-group-item">学校新闻</a>
 
 {#                            url_for('.spider_detail', path=topnews_href)#}

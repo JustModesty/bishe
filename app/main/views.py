@@ -214,4 +214,6 @@ def spider_menu_section(path):
     # 爬取链接  todo:存入数据库,下次直接从数据库提取
     all_news = gdut_spider_function.start_spider_menu_section(url)
 
+
+
     return render_template('menu_section_page.html', all_news=all_news)

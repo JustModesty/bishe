@@ -226,11 +226,11 @@ def start_spider_menu_section(url):
 
     # 有图片的位于顶部的新闻
     # 图片的src链接(不含前缀)
-    top_news_src_links = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listimgul']/li/a[@class='listimgula']/table/tbody/tr/td/a[@class='listimgulimg']/img/@src")
+    top_news_src_links = html.xpath("//ul[@class='listimgul']//li//img/@src")
     # 新闻的链接(部分含含http前缀的外部链接,直接跳转；不含的则加广工前缀跳转)
-    top_news_links = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listimgul']/li/a[@class='listimgula']/table/tbody/tr[1]/td[2]/a[@class='listimgultitle']/@href")
+    top_news_links = html.xpath("//ul[@class='listimgul']//li//a[@class='listimgulimg']/@href")
     # 顶部新闻标题
-    top_news_titles = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listimgul']/li/a[@class='listimgula']/table/tbody/tr[1]/td[2]/a[@class='listimgultitle']/text()")
+    top_news_titles = html.xpath("//a[@class='listimgultitle']/text()")
     for i in range(len(top_news_src_links)):
         item = {'src': PublicGdutWebVar.url_pre + top_news_src_links[i], 'link': top_news_links[i], 'title': top_news_titles[i]}
         all_news.append(item)
