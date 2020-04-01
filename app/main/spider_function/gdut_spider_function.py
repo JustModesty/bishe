@@ -242,4 +242,7 @@ def start_spider_menu_section(url):
         item = {'link': normal_news_links[i], 'title': normal_news_title[i]}
         all_news.append(item)
 
+    for i in all_news:
+        print(i)
+
     return all_news

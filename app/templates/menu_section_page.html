@@ -17,6 +17,8 @@
 
         <script src="http://how2j.cn/study/js/bootstrap/3.3.6/bootstrap.min.js"></script>
 
+        <link href="dashboard.css" rel="stylesheet">
+
     {% endblock styles %}
 {% endblock head %}
 
@@ -38,42 +40,54 @@
         {% endblock %}
 
         {% block page_body %}
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row">
-                    <div class="col-sm-8 blog-main">
-                        <div class="blog-post">
-                            <h1>{{ title }}</h1>
-                            <hr>
-{#                            <p class="blog-post-meta">发布时间: {{ release_date }}</p>#}
-{#                            <pre><code>&nbsp;&nbsp;&nbsp;&nbsp;{{ jianjie }}</code></pre>#}
-{#                            <h2>正文</h2>#}
+                    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                        <h1 class="page-header">Dashboard</h1>
+                        <div class="row placeholders">
+
+
                             {% for item in all_news %}
-{#                                {% if "src" in item.keys %}#}
-                                {% if item["src"] != None %}
-                                    <p>
-                                        <span><a href="{{ item["link"] }}"><img src="{{ item["src"] }}" alt="">{{ item["title"] }}</a></span>
-                                    </p>
-                                    <br>
-                                {% else %}
-                                    <p> <span><a href="{{ item["link"] }}">{{ item["title"] }}</a></span></p>
-                                    <br>
+                                {% if item.__contains__("src") %}
+                                    <div class="col-xs-6 col-sm-3 placeholder">
+                                        <a href="{{ item["link"] }}"><img src="{{ item["src"] }}"
+                                                                          width="200" height="200"
+                                                                          class="img-responsive"
+                                                                          alt="Generic placeholder thumbnail"></a>
+                                        <h4>Label</h4>
+                                        <a href="{{ item["link"] }}"><span class="text-muted">{{ item["title"] }}</span></a>
+                                        <br>
+                                    </div>
                                 {% endif %}
-
-
                             {% endfor %}
+                        </div>
 
-{#                            <h2>图片</h2>#}
-                            {% for img_link in img_link_list %}
-                                <p>
-                                    <img src="{{ img_link }}" alt="">
-                                </p>
-                                <br>
-                            {% endfor %}
-                        </div><!-- /.blog-post -->
+                        <h2 class="sub-header">Section title</h2>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>标题</th>
+                                    <th>发布时间</th>
+                                </tr>
+                                </thead>
+                                <tbody>
 
-                    </div><!-- /.blog-main -->
-                </div><!-- /.row -->
-            </div><!-- /.container -->
+                                {% for item in all_news %}
+                                    <tr>
+                                        {% if not item.__contains__("src") %}
+                                            <td><a href="{{ item["link"] }}"><span
+                                                    class="text-muted">{{ item["title"] }}</span></a></td>
+                                            <td>Lorem</td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         {% endblock %}
     {% endblock %}
 
