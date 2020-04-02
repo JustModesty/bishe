@@ -18,7 +18,7 @@ Session = sessionmaker(bind=engine)
 
 @main_handler.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('my_gdut_index.html')
 
 
 # “开始爬取” 接口
