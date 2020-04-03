@@ -16,16 +16,58 @@ engine = create_engine("mysql+pymysql://root:a1234567890!@127.0.0.1:3306/gdutnew
 Session = sessionmaker(bind=engine)
 
 
+# dashboard首页
 @main_handler.route('/')
 def dashboard_index():
     return render_template('index.html')
 
 
-@main_handler.route('/skin-config.html')
-def dashboard_skin_config():
-    return render_template('skin-config.html')
+# dashboard查看数据库分类
+@main_handler.route('/forum_main.html')
+def dashboard_forum_main():
+    return render_template('forum_main.html')
 
 
+# dashboard查看某个表的数据
+@main_handler.route('/ecommerce_product_list.html')
+def dashboard_ecommerce_product_list():
+    return render_template('ecommerce_product_list.html')
+
+
+# dashboard查看"学校新闻表"的数据
+@main_handler.route('/table_schoolnews.html')
+def dashboard_table_schoolnews():
+    return render_template('table_schoolnews.html')
+
+# dashboard查看"媒体工大表"的数据
+@main_handler.route('/table_meitigongda.html')
+def dashboard_table_meitigongda():
+    return render_template('table_meitigongda.html')
+
+# dashboard查看"人文校园表"的数据
+@main_handler.route('/table_renwenxiaoyuan.html')
+def dashboard_table_renwenxiaoyuan():
+    return render_template('table_renwenxiaoyuan.html')
+
+
+# dashboard查看"校友动态表"的数据
+@main_handler.route('/table_xiaoyoudongtai.html')
+def dashboard_table_xiaoyoudongtai():
+    return render_template('table_xiaoyoudongtai.html')
+
+
+# dashboard查看"网上校史馆表"的数据
+@main_handler.route('/table_wangshangxiaoshiguan.html')
+def dashboard_table_wangshangxiaoshiguan():
+    return render_template('table_wangshangxiaoshiguan.html')
+
+
+# dashboard查看"学习园地表"的数据
+@main_handler.route('/table_xuexiyuandi.html')
+def dashboard_table_xuexiyuandi():
+    return render_template('table_xuexiyuandi.html')
+
+# 模拟的爬取到的新闻首页
 @main_handler.route('/landing.html')
 def gdutnews_index():
     # return render_template('landing.html')
