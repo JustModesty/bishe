@@ -17,6 +17,90 @@ Session = sessionmaker(bind=engine)
 
 
 @main_handler.route('/')
+def dashboard_index():
+    return render_template('index.html')
+
+
+@main_handler.route('/skin-config.html')
+def dashboard_skin_config():
+    return render_template('skin-config.html')
+
+
+@main_handler.route('/landing.html')
+def gdutnews_index():
+    # return render_template('landing.html')
+    # banner
+    session = Session()
+    cursor = session.execute('select count(*) from banner_tbl')
+    session.commit()
+    values = cursor.fetchall()
+
+    if values[0][0] > 0:
+        # banner
+        banner_query = BannerTbl.query.first()
+        banner_site = banner_query.banner_image
+
+        # menu
+        menu_query = MenuTbl.query.all()
+
+        # topnews
+        topnews_query = TopnewsTbl.query.first()
+        topnews_href = topnews_query.topnews_href
+        topnews_title = topnews_query.topnews_title
+
+        # shcoolnews
+        schoolnews_query = SchoolnewsTbl.query.first()
+        schoolnews_parent_href = schoolnews_query.schoolnews_parent_href
+        schoolnews_parent_title = schoolnews_query.schoolnews_parent_title
+        schoolnews_head_news_image = schoolnews_query.schoolnews_head_news_image
+        schoolnews_head_news_href = schoolnews_query.schoolnews_head_news_href
+        schoolnews_head_news_title = schoolnews_query.schoolnews_head_news_title
+
+        # schoolnewssubnews
+        schoolnewssubnews_query = SchoolnewssubnewsTbl.query.all()
+
+        # schoolnewssliding
+        schoolnewssliding_query = SchoolnewsslidingTbl.query.all()
+
+        # more_button
+        more_button_query = MoreButtonTbl.query.first()
+
+        # 媒体工大
+        # 纸媒汇
+        zhimeihui_query = Zhimeihui.query.all()
+
+        # 人文校园
+        humanity_campus_query = HumanityCampusNew.query.all()
+
+        # 学习校园
+        studyplaces_news_query = StudyplacesNewsTbl.query.all()
+
+        # 校友动态
+        graduate_people_query = GraduatepeopleTbl.query.all()
+
+        # 网上校史馆
+        school_history_query = HistoryTbl.query.all()
+
+        return render_template('landing.html', banner_site=banner_site, menu_query=menu_query,
+                               topnews_href=topnews_href, topnews_title=topnews_title,
+                               schoolnews_parent_href=schoolnews_parent_href,
+                               schoolnews_parent_title=schoolnews_parent_title,
+                               schoolnews_head_news_image=schoolnews_head_news_image,
+                               schoolnews_head_news_href=schoolnews_head_news_href,
+                               schoolnews_head_news_title=schoolnews_head_news_title,
+                               schoolnewssubnews_query=schoolnewssubnews_query,
+                               schoolnewssliding_query=schoolnewssliding_query,
+                               more_button_query=more_button_query,
+                               zhimeihui_query=zhimeihui_query,
+                               humanity_campus_query=humanity_campus_query,
+                               studyplaces_news_query=studyplaces_news_query,
+                               graduate_people_query=graduate_people_query,
+                               school_history_query=school_history_query
+                               )
+    else:
+        return render_template('landing.html')
+
+@main_handler.route('/my_gdut_index')
 def index():
     return render_template('my_gdut_index.html')
 
@@ -60,6 +144,8 @@ def start_spider():
     gdut_spider_function.shcool_history(html)
 
     return render_template('start_spider.html')
+
+
 
 
 # “网站首页” 接口
@@ -181,7 +267,6 @@ def spider_detail(path):
         content_list = detail['content_list']
         content_list2 = detail['content_list2']
 
-
         img_list = detail['img_list']
         text_list = []
         for content in content_list:
@@ -192,7 +277,7 @@ def spider_detail(path):
                 text_list.append(content.text)
         # for content in content_list2:
         #     text_list.append(content.text)
-        
+
         for content in content_list2:
             text_list.append(str(content))
 
@@ -201,8 +286,8 @@ def spider_detail(path):
             img_link_list.append(PublicGdutWebVar.url_pre + link)
         release_date = detail['release_date'][0]
         # 取出标题和内容,传递给前端
-        return render_template('detail_page.html', title=title, jianjie=jianjie, text_list=text_list, img_link_list=img_link_list,release_date=release_date)
-
+        return render_template('detail_page.html', title=title, jianjie=jianjie, text_list=text_list,
+                               img_link_list=img_link_list, release_date=release_date)
 
 
 # 爬取菜单里的专题跳转的页面,并且渲染成为一个新页面并展示
@@ -213,7 +298,5 @@ def spider_menu_section(path):
 
     # 爬取链接  todo:存入数据库,下次直接从数据库提取
     all_news = gdut_spider_function.start_spider_menu_section(url)
-
-
 
     return render_template('menu_section_page.html', all_news=all_news)
