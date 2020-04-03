@@ -25,12 +25,31 @@ class DigitalmagazineTbl(db.Model):
 
 
 
+class GdutSchoolnew(db.Model):
+    __tablename__ = 'gdut_schoolnews'
+
+    id = db.Column(db.Integer, primary_key=True)
+    link = db.Column(db.String(500), nullable=False)
+    title = db.Column(db.String(500), nullable=False)
+    src = db.Column(db.String(500))
+    date = db.Column(db.String(500))
+
+
+
 class GraduatepeopleTbl(db.Model):
     __tablename__ = 'graduatepeople_tbl'
 
     id = db.Column(db.Integer, primary_key=True)
     link = db.Column(db.String(2083), nullable=False)
     title = db.Column(db.String(2083), nullable=False)
+
+
+
+class HasLinkTbl(db.Model):
+    __tablename__ = 'has_link_tbl'
+
+    id = db.Column(db.Integer, primary_key=True)
+    link = db.Column(db.String(100), nullable=False)
 
 
 

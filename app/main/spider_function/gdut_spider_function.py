@@ -238,11 +238,31 @@ def start_spider_menu_section(url):
     # 普通链接新闻
     normal_news_links = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/@href")
     normal_news_title = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/text()")
+    normal_news_date = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']//span[@class='floatright']/text()")
     for i in range(len(normal_news_links)):
-        item = {'link': normal_news_links[i], 'title': normal_news_title[i]}
+        news_publish_date = normal_news_date[i][1:-1]
+        item = {'link': normal_news_links[i], 'title': normal_news_title[i], 'date': news_publish_date}
         all_news.append(item)
 
-    for i in all_news:
-        print(i)
+
+    # 将链接存进数据库
+    gdutschoolnew_all_link = set(db.session.query(GdutSchoolnew.link).all())
+    gdutschoolnew_all_tmp = set()
+    for line in gdutschoolnew_all_link:
+        gdutschoolnew_all_tmp.add(line[0])
+    gdutschoolnew_all_link = gdutschoolnew_all_tmp
+
+    for item in all_news:
+        if item['link'] not in gdutschoolnew_all_link:
+            # 有图片顶部新闻是不带日期的, 而没图片的是带日期的.
+            if item.__contains__('src'):
+                sql_insert = GdutSchoolnew(link=item['link'], title=item['title'], src=item['src'])
+                db.session.add(sql_insert)
+                db.session.commit()
+            else:
+                sql_insert = GdutSchoolnew(link=item['link'], title=item['title'], date=item['date'])
+                db.session.add(sql_insert)
+                db.session.commit()
+            gdutschoolnew_all_link.add(item['link'])
 
     return all_news

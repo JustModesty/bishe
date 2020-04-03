@@ -1,5 +1,7 @@
+import flask
 from flask import render_template
 from lxml import etree
+
 
 from app import db
 from . import main_handler
@@ -37,7 +39,8 @@ def dashboard_ecommerce_product_list():
 # dashboard查看"学校新闻表"的数据
 @main_handler.route('/table_schoolnews.html')
 def dashboard_table_schoolnews():
-    return render_template('table_schoolnews.html')
+    gdutschoolnew_all_line = db.session.query(GdutSchoolnew.link, GdutSchoolnew.title, GdutSchoolnew.src, GdutSchoolnew.date).all()
+    return render_template('table_schoolnews.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 # dashboard查看"媒体工大表"的数据
 @main_handler.route('/table_meitigongda.html')
@@ -66,6 +69,15 @@ def dashboard_table_wangshangxiaoshiguan():
 @main_handler.route('/table_xuexiyuandi.html')
 def dashboard_table_xuexiyuandi():
     return render_template('table_xuexiyuandi.html')
+
+# dashboard里面点击文章之后,跳转到"编辑"页面
+@main_handler.route('/ecommerce_product.html', methods=['GET'])
+def dashboard_jump_edit():
+    # print("article_link=", article_link)
+    print(flask.request.args.get('article_link'))
+    # todo:查询文章内容的详情
+    return render_template('ecommerce_product.html')
+
 
 # 模拟的爬取到的新闻首页
 @main_handler.route('/landing.html')
@@ -287,6 +299,7 @@ def clear_data():
     session.execute('delete from studyplaces_news_tbl where 1=1')
     session.execute('delete from graduatepeople_tbl where 1=1')
     session.execute('delete from history_tbl where 1=1')
+    session.execute('delete from gdut_schoolnews where 1=1')
 
     session.commit()
     return render_template('clear_data.html')
