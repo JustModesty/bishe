@@ -76,6 +76,7 @@ def dashboard_jump_edit():
     # print("article_link=", article_link)
     print(flask.request.args.get('article_link'))
     # todo:查询文章内容的详情
+
     return render_template('ecommerce_product.html')
 
 
