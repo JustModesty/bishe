@@ -30,3 +30,4 @@ config = {
 # GDUT的一些通用变量
 class PublicGdutWebVar:
     url_pre = 'http://gdutnews.gdut.edu.cn/'
+    url_pre_no_slash = 'http://gdutnews.gdut.edu.cn'

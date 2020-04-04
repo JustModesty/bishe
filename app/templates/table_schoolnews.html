@@ -157,61 +157,68 @@
             </div>
             <div class="row wrapper border-bottom white-bg page-heading">
                 <div class="col-lg-10">
-                    <h2>E-commerce product list</h2>
+                    <h2>学校新闻</h2>
                     <ol class="breadcrumb">
                         <li>
-                            <a href="index.html">Home</a>
+                            <a href="index.html">首页</a>
                         </li>
                         <li>
-                            <a>E-commerce</a>
+                            <a>数据表</a>
                         </li>
                         <li class="active">
-                            <strong>Product list</strong>
+                            <strong>学校新闻表</strong>
                         </li>
                     </ol>
                 </div>
                 <div class="col-lg-2">
 
                 </div>
+
             </div>
 
             <div class="wrapper wrapper-content animated fadeInRight ecommerce">
 
 
                 <div class="ibox-content m-b-sm border-bottom">
+
                     <div class="row">
+
                         <div class="col-sm-4">
+
                             <div class="form-group">
-                                <label class="control-label" for="product_name">Product Name</label>
+                                <label class="control-label" for="product_name">新闻标题</label>
                                 <input type="text" id="product_name" name="product_name" value=""
-                                       placeholder="Product Name" class="form-control">
+                                       placeholder="关键字筛选新闻标题" class="form-control">
                             </div>
+                            <a class="btn btn-success" href="/start_spider" role="button">开始爬取 »</a>
+                            <a class="btn btn-danger" href="/clear_data" role="button">开始清空数据库 »</a>
                         </div>
                         <div class="col-sm-2">
                             <div class="form-group">
-                                <label class="control-label" for="price">Price</label>
-                                <input type="text" id="price" name="price" value="" placeholder="Price"
+                                <label class="control-label" for="price">发布日期</label>
+                                <input type="text" id="price" name="price" value="" placeholder="格式:aaaa-bb-cc"
                                        class="form-control">
                             </div>
                         </div>
                         <div class="col-sm-2">
                             <div class="form-group">
-                                <label class="control-label" for="quantity">Quantity</label>
-                                <input type="text" id="quantity" name="quantity" value="" placeholder="Quantity"
-                                       class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label" for="status">Status</label>
+                                <label class="control-label" for="status">能否编辑</label>
                                 <select name="status" id="status" class="form-control">
-                                    <option value="1" selected>Enabled</option>
-                                    <option value="0">Disabled</option>
+                                    <option value="0" selected>All</option>
+                                    <option value="1">Enabled</option>
+                                    <option value="2">Unabled</option>
                                 </select>
                             </div>
                         </div>
-                    </div>
 
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <br>
+                                <button class="btn btn-primary " type="button"><i class="fa fa-check"></i>&nbsp;查询</button>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
 
                 <div class="row">

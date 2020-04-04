@@ -29,13 +29,6 @@ def dashboard_index():
 def dashboard_forum_main():
     return render_template('forum_main.html')
 
-
-# dashboard查看某个表的数据
-@main_handler.route('/ecommerce_product_list.html')
-def dashboard_ecommerce_product_list():
-    return render_template('ecommerce_product_list.html')
-
-
 # dashboard查看"学校新闻表"的数据
 @main_handler.route('/table_schoolnews.html')
 def dashboard_table_schoolnews():
@@ -75,9 +68,54 @@ def dashboard_table_xuexiyuandi():
 def dashboard_jump_edit():
     # print("article_link=", article_link)
     print(flask.request.args.get('article_link'))
+    if_exist = db.session.query(GdutSchoolnewsDetailpage.link == path).first()
+
     # todo:查询文章内容的详情
 
     return render_template('ecommerce_product.html')
+
+# dashboard 学校新闻 “开始爬取” 接口
+@main_handler.route('/dashboard_start_spider_schoolnews')
+def dashboard_start_spider_schoolnews():
+    response = requests.get('http://gdutnews.gdut.edu.cn/')
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    # 抓取banner
+    gdut_spider_function.banner(html)
+
+    # 抓取Menu
+    gdut_spider_function.menu(html)
+
+    # 抓取shcoolnews
+    gdut_spider_function.schoolnews(html)
+
+    # 抓取schoolnewssliding
+    gdut_spider_function.schoolnewssliding(html)
+
+    # 抓取更多"更多按钮"
+    gdut_spider_function.more_button(html)
+
+    # 抓取纸媒汇
+    gdut_spider_function.zhimeihui(html)
+
+    # 抓取人文校园
+    gdut_spider_function.humanity_campus(html)
+
+    # 抓取学习校园
+    gdut_spider_function.study_section(html)
+
+    # 抓取校友动态
+    gdut_spider_function.graduate_people(html)
+
+    # 抓取网上校史馆
+    gdut_spider_function.shcool_history(html)
+
+    return render_template('start_spider.html')
+
+
+
 
 
 # 模拟的爬取到的新闻首页
@@ -314,10 +352,10 @@ def spider_detail(path):
         pass
     # 其他情况:
     else:
-        url = PublicGdutWebVar.url_pre + path
+        # url = PublicGdutWebVar.url_pre + path
 
         # 爬取文章, 标题,内容 todo:存入数据库,下次直接从数据库提取
-        detail = gdut_spider_function.start_spider_detail(url)
+        detail = gdut_spider_function.start_spider_detail(path)
         title = detail['title'][0]
         jianjie = detail['jianjie'][0].strip()
         content_list = detail['content_list']

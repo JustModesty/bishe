@@ -5,6 +5,7 @@ from app import db
 from app.models import *
 from config import PublicGdutWebVar
 
+from urllib.request import urlretrieve
 
 # 抓取banner
 def banner(html):
@@ -198,7 +199,8 @@ def shcool_history(html):
         db.session.commit()
 
 
-def start_spider_detail(url):
+def start_spider_detail(path):
+    url = PublicGdutWebVar.url_pre + path
     response = requests.get(url)
     content = response.content
     content = content.decode('utf-8')
@@ -206,14 +208,53 @@ def start_spider_detail(url):
 
     detail = {}
 
-    detail['title'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/h1[@class='title']/span[@id='ctl00_ContentPlaceHolder1_tbxTitle']/text()")
-    detail['release_date'] = html.xpath("///div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@class='info']/span[@id='ctl00_ContentPlaceHolder1_tbxUpdateTime']/text()")
-    detail['jianjie'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@id='ctl00_ContentPlaceHolder1_jj']/p/span[@id='ctl00_ContentPlaceHolder1_tbxIntro']/text()")
-    detail['content_list'] = html.xpath('//div[@id="vsb_content_2"]//p//span')
-    detail['content_list2'] = html.xpath('//div[@id="vsb_content_4"]//p//text()')
-    detail['img_list'] = html.xpath('//div[@id="vsb_content_2"]//p//img/@src')
 
 
+    if_exist = db.session.query(GdutDetailpage.link == path).first()
+    # 如果没有爬取过这个文章,在这里进行爬取
+    if if_exist is None:
+        detail['title'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/h1[@class='title']/span[@id='ctl00_ContentPlaceHolder1_tbxTitle']/text()")
+        detail['release_date'] = html.xpath("///div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@class='info']/span[@id='ctl00_ContentPlaceHolder1_tbxUpdateTime']/text()")
+        detail['jianjie'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@id='ctl00_ContentPlaceHolder1_jj']/p/span[@id='ctl00_ContentPlaceHolder1_tbxIntro']/text()")
+        detail['content_list'] = html.xpath('//div[@id="vsb_content_2"]//p//span')
+        detail['content_list2'] = html.xpath('//div[@id="vsb_content_4"]//p//text()')
+        detail['img_list'] = html.xpath('//div[@id="vsb_content_2"]//p//img/@src')
+
+
+        # 存储文章基本信息
+        sql_insert_GdutSchoolnewsDetailpage = GdutDetailpage(link=path, title=detail['title'], date=detail['release_date'], jianjie=detail['jianjie'])
+        db.session.add(sql_insert_GdutSchoolnewsDetailpage)
+
+        # 下载图片
+        for img_item in detail['img_list']:
+            start_index = img_item.rfind('/')
+            save_position = 'app/static/gdut_img/detailpage' + img_item[start_index:]
+            urlretrieve(PublicGdutWebVar.url_pre_no_slash + img_item, save_position)
+            sql_insert_GdutDetailpagePicture = GdutDetailpagePicture(detail_link=path, local_position=save_position)
+            db.session.add(sql_insert_GdutDetailpagePicture)
+
+        # 存储段落
+        text_list = []
+        for content in detail['content_list']:
+            if content.text is None:
+                pass
+                # text_list.append("None")
+            else:
+                text_list.append(content.text)
+        # for content in content_list2:
+        #     text_list.append(content.text)
+
+        for content in detail['content_list2']:
+            text_list.append(str(content))
+
+        # for paragraph in detail['content_list']:
+        #     pass
+        # for paragraph in detail['content_list2']:
+        #     pass
+        for paragraph in text_list:
+            sql_insert_GdutDetailpageContent = GdutDetailpageContent(detail_link=path, paragraph=paragraph)
+            db.session.add(sql_insert_GdutDetailpageContent)
+        db.session.commit()
     return detail
 
 
