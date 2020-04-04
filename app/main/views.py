@@ -1,3 +1,5 @@
+import time
+
 import flask
 from flask import render_template, redirect, url_for
 from lxml import etree
@@ -32,7 +34,10 @@ def dashboard_forum_main():
 # dashboard查看"学校新闻表"的数据
 @main_handler.route('/table_schoolnews.html')
 def dashboard_table_schoolnews():
-    gdutschoolnew_all_line = db.session.query(GdutSchoolnew.link, GdutSchoolnew.title, GdutSchoolnew.src, GdutSchoolnew.date).all()
+    session = Session()
+    gdutschoolnew_all_line = session.query(GdutSchoolnew.link, GdutSchoolnew.title, GdutSchoolnew.src, GdutSchoolnew.date).all()
+    # session.add(gdutschoolnew_all_line)
+    db.session.commit()
     return render_template('table_schoolnews.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 # dashboard查看"媒体工大表"的数据
@@ -82,40 +87,25 @@ def dashboard_start_spider_schoolnews():
     content = content.decode('utf-8')
     html = etree.HTML(content)
 
-    # 抓取banner
-    gdut_spider_function.banner(html)
-
-    # 抓取Menu
-    gdut_spider_function.menu(html)
-
     # 抓取shcoolnews
-    gdut_spider_function.schoolnews(html)
+    # gdut_spider_function.schoolnews(html)
 
-    # 抓取schoolnewssliding
-    gdut_spider_function.schoolnewssliding(html)
+    # 从菜单栏里面找到入口
+    enter_url = html.xpath("//div[@class='menu']/ul/li[2]/a/@href")[0]
+    gdut_spider_function.dashboard_start_spider_schoolnews_list(enter_url)
 
-    # 抓取更多"更多按钮"
-    gdut_spider_function.more_button(html)
+    # 爬取取完,直接重新刷新页面(每次进入那个页面的时候都会抓取数据库数据的)
+    return redirect(url_for('.dashboard_table_schoolnews'))
 
-    # 抓取纸媒汇
-    gdut_spider_function.zhimeihui(html)
-
-    # 抓取人文校园
-    gdut_spider_function.humanity_campus(html)
-
-    # 抓取学习校园
-    gdut_spider_function.study_section(html)
-
-    # 抓取校友动态
-    gdut_spider_function.graduate_people(html)
-
-    # 抓取网上校史馆
-    gdut_spider_function.shcool_history(html)
-
-    return render_template('start_spider.html')
-
-
-
+# “清空数据” 接口
+@main_handler.route('/clear_data_schoolnews')
+def clear_data_schoolnews():
+    # 删除banner
+    session = Session()
+    session.execute('delete from gdut_schoolnews where 1=1')
+    session.commit()
+    # return redirect(url_for('.dashboard_table_schoolnews'))
+    return redirect(url_for('.dashboard_table_schoolnews'))
 
 
 # 模拟的爬取到的新闻首页
@@ -200,7 +190,7 @@ def index():
 
 # “开始爬取” 接口
 @main_handler.route('/start_spider')
-def start_spider():
+def start_spider123():
     response = requests.get('http://gdutnews.gdut.edu.cn/')
     content = response.content
     content = content.decode('utf-8')

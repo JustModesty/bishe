@@ -308,3 +308,59 @@ def start_spider_menu_section(url):
             gdutschoolnew_all_link.add(item['link'])
 
     return all_news
+
+
+def dashboard_start_spider_schoolnews_list(enter_url):
+    # 进入新的url开始爬取
+    url = PublicGdutWebVar.url_pre + enter_url
+    response = requests.get(url)
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    all_news = []
+
+    # 有图片的位于顶部的新闻
+    # 图片的src链接(不含前缀)
+    top_news_src_links = html.xpath("//ul[@class='listimgul']//li//img/@src")
+
+    # 新闻的链接(部分含含http前缀的外部链接,直接跳转；不含的则加广工前缀跳转)
+    top_news_links = html.xpath("//ul[@class='listimgul']//li//a[@class='listimgulimg']/@href")
+    # 顶部新闻标题
+    top_news_titles = html.xpath("//a[@class='listimgultitle']/text()")
+    for i in range(len(top_news_links)):
+        item = {'src': PublicGdutWebVar.url_pre + top_news_src_links[i], 'link': top_news_links[i],
+                'title': top_news_titles[i]}
+        all_news.append(item)
+
+    # 普通链接新闻
+    normal_news_links = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/@href")
+    normal_news_title = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/text()")
+    normal_news_date = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']//span[@class='floatright']/text()")
+    for i in range(len(normal_news_links)):
+        news_publish_date = normal_news_date[i][1:-1]
+        item = {'link': normal_news_links[i], 'title': normal_news_title[i], 'date': news_publish_date}
+        all_news.append(item)
+
+    # 将链接存进数据库
+    gdutschoolnew_all_link = set(db.session.query(GdutSchoolnew.link).all())
+    gdutschoolnew_all_tmp = set()
+    for line in gdutschoolnew_all_link:
+        gdutschoolnew_all_tmp.add(line[0])
+    gdutschoolnew_all_link = gdutschoolnew_all_tmp
+
+    for item in all_news:
+        if item['link'] not in gdutschoolnew_all_link:
+            # 有图片顶部新闻是不带日期的, 而没图片的是带日期的.
+            if item.__contains__('src'):
+                sql_insert = GdutSchoolnew(link=item['link'], title=item['title'], src=item['src'])
+                db.session.add(sql_insert)
+                db.session.commit()
+            else:
+                sql_insert = GdutSchoolnew(link=item['link'], title=item['title'], date=item['date'])
+                db.session.add(sql_insert)
+                db.session.commit()
+            gdutschoolnew_all_link.add(item['link'])

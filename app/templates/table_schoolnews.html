@@ -190,8 +190,9 @@
                                 <input type="text" id="product_name" name="product_name" value=""
                                        placeholder="关键字筛选新闻标题" class="form-control">
                             </div>
-                            <a class="btn btn-success" href="/start_spider" role="button">开始爬取 »</a>
-                            <a class="btn btn-danger" href="/clear_data" role="button">开始清空数据库 »</a>
+
+                            <a class="btn btn-success" href="{{ url_for('.dashboard_start_spider_schoolnews') }}" role="button">开始爬取 »</a>
+                            <a class="btn btn-danger" href="{{ url_for('.clear_data_schoolnews') }}" role="button">开始清空数据库 »</a>
                         </div>
                         <div class="col-sm-2">
                             <div class="form-group">
