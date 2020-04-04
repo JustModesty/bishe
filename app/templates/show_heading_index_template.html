@@ -75,9 +75,15 @@
                                 <h2><a href="{{ schoolnews_parent_href }}">媒体工大</a></h2>
                                 <p>
                                     {% for zhimeihui in zhimeihui_query %}
+                                        {% if zhimeihui.paper_sub_news_href.startswith('http') %}
+                                        <a target="_blank" href="{{ zhimeihui.paper_sub_news_href }}">
+                                            {{ zhimeihui.paper_sub_news_title }}
+                                        </a>
+                                        {% else %}
                                         <a href="{{ url_for('.spider_detail', path=zhimeihui.paper_sub_news_href) }}">
                                             {{ zhimeihui.paper_sub_news_title }}
                                         </a>
+                                        {% endif %}
                                         <br>
                                     {% endfor %}</p>
                                 <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>

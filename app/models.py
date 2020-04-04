@@ -1,5 +1,5 @@
 # coding: utf-8
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Text
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -25,6 +25,24 @@ class DigitalmagazineTbl(db.Model):
 
 
 
+class GdutDetailpageContent(db.Model):
+    __tablename__ = 'gdut_detailpage_content'
+
+    id = db.Column(db.Integer, primary_key=True)
+    detail_link = db.Column(db.String(500), nullable=False)
+    paragraph = db.Column(db.Text, nullable=False)
+
+
+
+class GdutDetailpagePicture(db.Model):
+    __tablename__ = 'gdut_detailpage_picture'
+
+    id = db.Column(db.Integer, primary_key=True)
+    detail_link = db.Column(db.String(500), nullable=False)
+    local_position = db.Column(db.String(500), nullable=False)
+
+
+
 class GdutSchoolnew(db.Model):
     __tablename__ = 'gdut_schoolnews'
 
@@ -33,6 +51,17 @@ class GdutSchoolnew(db.Model):
     title = db.Column(db.String(500), nullable=False)
     src = db.Column(db.String(500))
     date = db.Column(db.String(500))
+
+
+
+class GdutSchoolnewsDetailpage(db.Model):
+    __tablename__ = 'gdut_schoolnews_detailpage'
+
+    id = db.Column(db.Integer, primary_key=True)
+    link = db.Column(db.String(500), nullable=False)
+    title = db.Column(db.String(500), nullable=False)
+    date = db.Column(db.String(500), nullable=False)
+    jianjie = db.Column(db.String(500))
 
 
 

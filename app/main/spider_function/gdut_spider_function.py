@@ -207,11 +207,12 @@ def start_spider_detail(url):
     detail = {}
 
     detail['title'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/h1[@class='title']/span[@id='ctl00_ContentPlaceHolder1_tbxTitle']/text()")
+    detail['release_date'] = html.xpath("///div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@class='info']/span[@id='ctl00_ContentPlaceHolder1_tbxUpdateTime']/text()")
     detail['jianjie'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@id='ctl00_ContentPlaceHolder1_jj']/p/span[@id='ctl00_ContentPlaceHolder1_tbxIntro']/text()")
     detail['content_list'] = html.xpath('//div[@id="vsb_content_2"]//p//span')
     detail['content_list2'] = html.xpath('//div[@id="vsb_content_4"]//p//text()')
     detail['img_list'] = html.xpath('//div[@id="vsb_content_2"]//p//img/@src')
-    detail['release_date'] = html.xpath("///div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@class='info']/span[@id='ctl00_ContentPlaceHolder1_tbxUpdateTime']/text()")
+
 
     return detail
 
