@@ -144,8 +144,6 @@
                                 </li>
                             </ul>
                         </li>
-
-
                         <li>
                             <a href="login.html">
                                 <i class="fa fa-sign-out"></i> Log out
@@ -170,6 +168,13 @@
                         </li>
                     </ol>
                 </div>
+                <div>
+                    <br>
+                    <a class="btn btn-success" href="{{ url_for('.dashboard_start_spider_schoolnews') }}"
+                       role="button">开始爬取 »</a>
+                    <a class="btn btn-danger" href="{{ url_for('.clear_data_schoolnews') }}" role="button">开始清空数据库 »</a>
+                </div>
+
                 <div class="col-lg-2">
 
                 </div>
@@ -177,48 +182,25 @@
             </div>
 
             <div class="wrapper wrapper-content animated fadeInRight ecommerce">
-
-
                 <div class="ibox-content m-b-sm border-bottom">
-
                     <div class="row">
-
-                        <div class="col-sm-4">
-
-                            <div class="form-group">
-                                <label class="control-label" for="product_name">新闻标题</label>
-                                <input type="text" id="product_name" name="product_name" value=""
-                                       placeholder="关键字筛选新闻标题" class="form-control">
+                        <form action="{{ url_for('.search_data_schoolnews') }}">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label class="control-label" for="product_name">置顶新闻标题</label>
+                                    <input type="text" id="product_name" name="product_name" value=""
+                                           placeholder="关键字筛选新闻标题" class="form-control">
+                                </div>
                             </div>
 
-                            <a class="btn btn-success" href="{{ url_for('.dashboard_start_spider_schoolnews') }}" role="button">开始爬取 »</a>
-                            <a class="btn btn-danger" href="{{ url_for('.clear_data_schoolnews') }}" role="button">开始清空数据库 »</a>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="form-group">
-                                <label class="control-label" for="price">发布日期</label>
-                                <input type="text" id="price" name="price" value="" placeholder="格式:aaaa-bb-cc"
-                                       class="form-control">
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <br>
+                                        <button class="btn btn-primary " type="submit"><i class="fa fa-check"></i>&nbsp;查询
+                                        </button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="form-group">
-                                <label class="control-label" for="status">能否编辑</label>
-                                <select name="status" id="status" class="form-control">
-                                    <option value="0" selected>All</option>
-                                    <option value="1">Enabled</option>
-                                    <option value="2">Unabled</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-2">
-                            <div class="form-group">
-                                <br>
-                                <button class="btn btn-primary " type="button"><i class="fa fa-check"></i>&nbsp;查询</button>
-                            </div>
-                        </div>
-
+                        </form>
                     </div>
                 </div>
 
@@ -226,66 +208,69 @@
                     <div class="col-lg-12">
                         <div class="ibox">
                             <div class="ibox-content">
-
                                 <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
                                     <thead>
                                     <tr>
-
-                                        <th data-toggle="true">新闻标题</th>
+                                        <th data-toggle="true">置顶新闻标题</th>
                                         <th data-hide="phone">发布日期</th>
                                         <th data-hide="all">Description</th>
-                                        <th data-hide="phone,tablet">Quantity</th>
+
                                         <th data-hide="phone">能否编辑</th>
                                         <th class="text-right" data-sort-ignore="true">Action</th>
-
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for item in gdutschoolnew_all_line %}
-                                        <tr>
-                                            <td>
-                                                {#                                                {{ item['title'] }}#}
-                                                <a target="_blank" href="{{ item['link'] }}">{{ item['title'] }}</a>
-                                            </td>
-                                            <td>
-                                                {#                                                {{ item['date'] | default('') }}#}
-                                                {{ item['date'] or '' }}
-                                            </td>
-                                            <td>
-                                                It is a long established fact that a reader will be distracted by the
-                                                readable
-                                                content of a page when looking at its layout. The point of using Lorem
-                                                Ipsum
-                                                is
-                                                that it has a more-or-less normal distribution of letters, as opposed to
-                                                using
-                                                'Content here, content here', making it look like readable English.
-                                            </td>
-                                            <td>
-                                                1000
-                                            </td>
-                                            <td>
-                                                {% if item['link'].startswith('http') %}
-                                                    <span class="label label-danger">Unable</span>
-                                                {% else %}
-                                                    <span class="label label-primary">Enable</span>
-                                                {% endif %}
-                                            </td>
-                                            <td class="text-right">
-                                                <div class="btn-group">
+                                        {% if not item['date'] %}
+                                            <tr>
+                                                <td>
+                                                    {#                                                {{ item['title'] }}#}
+                                                    <a target="_blank" href="{{ item['link'] }}">{{ item['title'] }}</a>
+                                                </td>
+                                                <td>
+                                                    {#                                                {{ item['date'] | default('') }}#}
+                                                    {{ item['date'] or '' }}
+                                                </td>
+                                                <td>
+                                                    It is a long established fact that a reader will be distracted by
+                                                    the
+                                                    readable
+                                                    content of a page when looking at its layout. The point of using
+                                                    Lorem
+                                                    Ipsum
+                                                    is
+                                                    that it has a more-or-less normal distribution of letters, as
+                                                    opposed to
+                                                    using
+                                                    'Content here, content here', making it look like readable English.
+                                                </td>
+
+                                                <td>
                                                     {% if item['link'].startswith('http') %}
-                                                        <button class="btn-white btn btn-xs disabled">Edit</button>
+                                                        <span class="label label-danger">Unable</span>
                                                     {% else %}
-                                                        <a href="{{ url_for('.dashboard_jump_edit', article_link=item['link'] ) }}">
-                                                            <button class="btn-white btn btn-xs">Edit</button>
-                                                        </a>
+                                                        <span class="label label-primary">Enable</span>
                                                     {% endif %}
-                                                    <a href="">
-                                                        <button class="btn-white btn btn-xs">View</button>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                </td>
+                                                <td class="text-right">
+                                                    <div class="btn-group">
+                                                        {% if item['link'].startswith('http') %}
+                                                            <button class="btn-white btn btn-xs disabled">编辑</button>
+                                                        {% else %}
+                                                            <a href="{{ url_for('.dashboard_jump_edit', article_link=item['link'] ) }}">
+                                                                <button class="btn-white btn btn-xs">编辑</button>
+                                                            </a>
+                                                        {% endif %}
+                                                        <a href="">
+                                                            <button class="btn-white btn btn-xs">查看</button>
+                                                        </a>
+                                                        <a href="">
+                                                            <button class="btn-white btn btn-xs">删除</button>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
                                     {% endfor %}
                                     </tbody>
                                     <tfoot>
@@ -296,7 +281,88 @@
                                     </tr>
                                     </tfoot>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="ibox">
+                            <div class="ibox-content">
+                                <table class="footable table table-stripped toggle-arrow-tiny" data-page-size="15">
+                                    <thead>
+                                    <tr>
+                                        <th data-toggle="true">新闻标题</th>
+                                        <th data-hide="phone">发布日期</th>
+                                        <th data-hide="all">Description</th>
+
+                                        <th data-hide="phone">能否编辑</th>
+                                        <th class="text-right" data-sort-ignore="true">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in gdutschoolnew_all_line %}
+                                        {% if item['date'] %}
+                                            <tr>
+                                                <td>
+                                                    {#                                                {{ item['title'] }}#}
+                                                    <a target="_blank" href="{{ item['link'] }}">{{ item['title'] }}</a>
+                                                </td>
+                                                <td>
+                                                    {#                                                {{ item['date'] | default('') }}#}
+                                                    {{ item['date'] or '' }}
+                                                </td>
+                                                <td>
+                                                    It is a long established fact that a reader will be distracted by
+                                                    the
+                                                    readable
+                                                    content of a page when looking at its layout. The point of using
+                                                    Lorem
+                                                    Ipsum
+                                                    is
+                                                    that it has a more-or-less normal distribution of letters, as
+                                                    opposed to
+                                                    using
+                                                    'Content here, content here', making it look like readable English.
+                                                </td>
+
+                                                <td>
+                                                    {% if item['link'].startswith('http') %}
+                                                        <span class="label label-danger">Unable</span>
+                                                    {% else %}
+                                                        <span class="label label-primary">Enable</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td class="text-right">
+                                                    <div class="btn-group">
+                                                        {% if item['link'].startswith('http') %}
+                                                            <button class="btn-white btn btn-xs disabled">编辑</button>
+                                                        {% else %}
+                                                            <a href="{{ url_for('.dashboard_jump_edit', article_link=item['link'] ) }}">
+                                                                <button class="btn-white btn btn-xs">编辑</button>
+                                                            </a>
+                                                        {% endif %}
+                                                        <a href="">
+                                                            <button class="btn-white btn btn-xs">查看</button>
+                                                        </a>
+                                                        <a href="">
+                                                            <button class="btn-white btn btn-xs">删除</button>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <td colspan="6">
+                                            <ul class="pagination pull-right"></ul>
+                                        </td>
+                                    </tr>
+                                    </tfoot>
+                                </table>
                             </div>
                         </div>
                     </div>

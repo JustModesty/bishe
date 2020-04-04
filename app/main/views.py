@@ -31,14 +31,59 @@ def dashboard_index():
 def dashboard_forum_main():
     return render_template('forum_main.html')
 
+# ==================学校新闻====================================== #
 # dashboard查看"学校新闻表"的数据
 @main_handler.route('/table_schoolnews.html')
 def dashboard_table_schoolnews():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutSchoolnew.link, GdutSchoolnew.title, GdutSchoolnew.src, GdutSchoolnew.date).all()
-    # session.add(gdutschoolnew_all_line)
     db.session.commit()
     return render_template('table_schoolnews.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
+
+
+# dashboard 学校新闻 “开始爬取” 接口
+@main_handler.route('/dashboard_start_spider_schoolnews')
+def dashboard_start_spider_schoolnews():
+    response = requests.get('http://gdutnews.gdut.edu.cn/')
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    # 抓取shcoolnews
+    # gdut_spider_function.schoolnews(html)
+
+    # 从菜单栏里面找到入口
+    enter_url = html.xpath("//div[@class='menu']/ul/li[2]/a/@href")[0]
+    gdut_spider_function.dashboard_start_spider_schoolnews_list(enter_url)
+
+    # 爬取取完,直接重新刷新页面(每次进入那个页面的时候都会抓取数据库数据的)
+    return redirect(url_for('.dashboard_table_schoolnews'))
+
+
+# 学校新闻“清空数据” 接口
+@main_handler.route('/clear_data_schoolnews')
+def clear_data_schoolnews():
+    session = Session()
+    session.execute('delete from gdut_schoolnews where 1=1')
+    session.commit()
+    return redirect(url_for('.dashboard_table_schoolnews'))
+
+
+# 学校新闻“查询” 接口
+@main_handler.route('/search_data/schoolnews')
+def search_data_schoolnews():
+    # print(flask.request.args)
+    filter_title = flask.request.args.get('product_name')
+    schoolnews_query = GdutSchoolnew.query.all()
+    if filter_title:
+        schoolnews_query = GdutSchoolnew.query.filter(
+            GdutSchoolnew.title.like("%" + filter_title + "%")
+        ).all()
+
+    return render_template('table_schoolnews.html', gdutschoolnew_all_line=schoolnews_query)
+
+
+# ==================工大====================================== #
 
 # dashboard查看"媒体工大表"的数据
 @main_handler.route('/table_meitigongda.html')
@@ -79,33 +124,6 @@ def dashboard_jump_edit():
 
     return render_template('ecommerce_product.html')
 
-# dashboard 学校新闻 “开始爬取” 接口
-@main_handler.route('/dashboard_start_spider_schoolnews')
-def dashboard_start_spider_schoolnews():
-    response = requests.get('http://gdutnews.gdut.edu.cn/')
-    content = response.content
-    content = content.decode('utf-8')
-    html = etree.HTML(content)
-
-    # 抓取shcoolnews
-    # gdut_spider_function.schoolnews(html)
-
-    # 从菜单栏里面找到入口
-    enter_url = html.xpath("//div[@class='menu']/ul/li[2]/a/@href")[0]
-    gdut_spider_function.dashboard_start_spider_schoolnews_list(enter_url)
-
-    # 爬取取完,直接重新刷新页面(每次进入那个页面的时候都会抓取数据库数据的)
-    return redirect(url_for('.dashboard_table_schoolnews'))
-
-# “清空数据” 接口
-@main_handler.route('/clear_data_schoolnews')
-def clear_data_schoolnews():
-    # 删除banner
-    session = Session()
-    session.execute('delete from gdut_schoolnews where 1=1')
-    session.commit()
-    # return redirect(url_for('.dashboard_table_schoolnews'))
-    return redirect(url_for('.dashboard_table_schoolnews'))
 
 
 # 模拟的爬取到的新闻首页
@@ -183,6 +201,7 @@ def gdutnews_index():
     else:
         return render_template('landing.html')
 
+
 @main_handler.route('/my_gdut_index')
 def index():
     return render_template('my_gdut_index.html')
@@ -227,8 +246,6 @@ def start_spider123():
     gdut_spider_function.shcool_history(html)
 
     return render_template('start_spider.html')
-
-
 
 
 # “网站首页” 接口
@@ -304,11 +321,6 @@ def gdut_index():
                                )
     else:
         return render_template('show_heading_index_template.html')
-
-
-# @main_handler.route('/show_heading_index')
-# def gdut_index():
-#     return render_template('show_heading_index_template.html')
 
 
 # “清空数据” 接口
