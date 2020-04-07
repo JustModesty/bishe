@@ -1,7 +1,8 @@
+import json
 import time
 
 import flask
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, request
 from lxml import etree
 
 
@@ -88,21 +89,83 @@ def search_data_schoolnews():
 def edit_article_schoolnews():
     # 1. 定位是哪篇文章
     article_title_restful_url = flask.request.args.get('article_link')
-    print("article_title=", article_title_restful_url)
+    # print("article_title=", article_title_restful_url)
+
     # 2. 查询数据库,找到文章内容
     content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
+
     # 3. 返回内容并渲染成一个新页面
-    return render_template('ecommerce_product.html', content=content)
+    return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url)
 
+# 学校新闻编辑里面的"保存修改"按钮
+@main_handler.route('/save_schoolnews_edit', methods=['GET', 'POST'])
+def save_edit_article_schoolnews():
+    # 1. 定位是哪篇文章
+    if request.method =='POST':
+        origin_title = request.form['origin_title']
+        title = request.form['title']
+        date = request.form['date']
+        jianjie = request.form['jianjie']
+        # paragraph = request.form['paragraph']
+        print("origin_title=", origin_title)
+        print("title=",title)
+        print("date=", date)
+        print("jianjie=", jianjie)
+        # print("paragraph=", paragraph)
+        origin_title = flask.request.args.get('origin_title')
 
-    # # print(flask.request.args)
-    # filter_title = flask.request.args.get('product_name')
-    # schoolnews_query = GdutSchoolnew.query.all()
-    # if filter_title:
-    #     schoolnews_query = GdutSchoolnew.query.filter(
-    #         GdutSchoolnew.title.like("%" + filter_title + "%")
-    #     ).all()
-    # return render_template('table_schoolnews.html', gdutschoolnew_all_line=schoolnews_query)
+        # title = flask.request.args.get('title')
+        # date = flask.request.args.get('date')
+        # jianjie = flask.request.args.get('date')
+        content = flask.request.args.get('ret_content')
+        # print("origin_title=", origin_title)
+        # print("title=",title)
+        # print("date=", date)
+        # print("jianjie=", jianjie)
+        print("content=", content)
+        content = eval(content)
+        print("content=", content)
+        # 2. 查询数据库,找到文章内容
+        content['title'] = title
+        content['date'] = date
+        content['jianjie'] = jianjie
+        # item = GdutDetailpage.query.filter(GdutDetailpage.title.like("%"+str(origin_title)+"%")).all()
+        # if filter_title:
+        #     schoolnews_query = GdutSchoolnew.query.filter(
+        #         GdutSchoolnew.title.like("%" + filter_title + "%")
+        #     ).all()
+        # print("item=", item)
+        # print("type(item)=", type(item))
+        # print("dir(item)=", dir(item))
+        # item.title = title
+        # item.date = date
+        # item.jianjie = jianjie
+        # db.session.commit()
+        # content = GdutDetailpage.query.filter_by(title=origin_title).first()
+        # link = content.link
+        #
+        # result_picture = GdutDetailpagePicture.query.filter_by(detail_link=link).all()
+        # picture_local_position_list = []
+        # if result_picture:
+        #     for item in result_picture:
+        #         # picture_local_position_list.append(item["local_position"])
+        #         picture_local_position_list.append(".." + item.local_position[3:])
+        #
+        # result_paragraph = GdutDetailpageContent.query.filter_by(detail_link=link).all()
+        # paragraph_list = []
+        # if result_paragraph:
+        #     for item in result_paragraph:
+        #         # paragraph_list.append(item["paragraph"])
+        #         paragraph_list.append(item.paragraph)
+        #
+        # # 新数据
+        #
+        #
+        # content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
+        # # 3. 返回内容并渲染成一个新页面
+        # todo:以后更改为跳转到用户的展示页面
+        return redirect(url_for('.dashboard_table_schoolnews'))
+
 
 
 # ==================工大====================================== #

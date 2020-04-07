@@ -190,51 +190,67 @@
                             <div class="tab-content">
                                 <div id="tab-1" class="tab-pane active">
                                     <div class="panel-body">
-
-                                        <fieldset class="form-horizontal">
-                                            <div class="form-group"><label class="col-sm-2 control-label">文章标题:</label>
-                                                <div class="col-sm-10"><input type="text" class="form-control"
-                                                                              placeholder="请输入标题"
-                                                                              value="{{ content["title"] }}"></div>
-                                            </div>
-                                            <div class="form-group"><label class="col-sm-2 control-label">发布日期:</label>
-                                                <div class="col-sm-10"><input type="text" class="form-control"
-                                                                              placeholder="格式:yyyy年mm月dd日"
-                                                                              value="{{ content["date"] }}"></div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="col-sm-2 control-label">简介:</label>
-                                                <div class="col-sm-10">
-                                                    <div class="summernote">
-                                                        {{ content["jianjie"] }}
+                                        <form action="{{ url_for('.save_edit_article_schoolnews', ret_content=content) }}" method="post"
+                                              id="contentEdit">
+                                            <fieldset class="form-horizontal">
+                                                <div class="form-group"><label
+                                                        class="col-sm-2 control-label">文章标题:</label>
+                                                    <div class="col-sm-10"><input type="text" class="form-control"
+                                                                                  placeholder="请输入标题"
+                                                                                  name="title"
+                                                                                  value="{{ content['title'] }}">
+                                                        <input type="hidden" class="form-control"
+                                                               placeholder="请输入标题"
+                                                               name="origin_title"
+                                                               value="{{ content["title"] }}">
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="col-sm-2 control-label">内容:</label>
-                                                <div class="col-sm-10">
-                                                    <div class="summernote">
-                                                        {% for picture in  content["picture_local_position_list"] %}
-                                                            <img src="{{ picture }}" alt="">
-{#                                                            <img src="../static/gdut_img/detailpage/5F81B05F754C4F7B6FFA791ECFA_6B43103D_C33A.jpg" alt="">#}
-{#                                                            <img src="../static/gdut_img/detailpage/5F81B05F754C4F7B6FFA791ECFA_6B43103D_C33A.jpg" alt="">#}
-{#                                                            <img src="/home/jijunjie/github/bishe/app/static/gdut_img/detailpage/5F81B05F754C4F7B6FFA791ECFA_6B43103D_C33A.jpg?e=.jpg"#}
-{#                                                                 alt="">#}
-
-                                                            {#                                                                <span>{{  }}</span>#}
-                                                        {% endfor %}
-
-                                                        {% for text in  content["paragraph_list"] %}
-                                                            <p>
-                                                                <span>{{ text }}</span>
-                                                            </p>
-                                                        {% endfor %}
-
+                                                <div class="form-group"><label
+                                                        class="col-sm-2 control-label">发布日期:</label>
+                                                    <div class="col-sm-10"><input type="text" class="form-control"
+                                                                                  placeholder="格式:yyyy年mm月dd日"
+                                                                                  name="date"
+                                                                                  value="{{ content["date"] }}"></div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">简介:</label>
+                                                    <div class="col-sm-10">
+                                                        <textarea name="jianjie" id="jianjie" cols="30"
+                                                                  rows="10">{{ content["jianjie"] }}</textarea>
                                                     </div>
                                                 </div>
-                                            </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">内容:</label>
 
-                                        </fieldset>
+                                                    <div class="col-sm-10">
+
+                                                        <div class="summernote" name="paragraph_one" id="paragraph_one">
+
+                                                            {% for picture in  content["picture_local_position_list"] %}
+                                                                <img src="{{ picture }}" alt="">
+                                                            {% endfor %}
+                                                            {% for text in  content["paragraph_list"] %}
+                                                                <p>
+                                                                    <span>{{ text }}</span>
+                                                                </p>
+                                                            {% endfor %}
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </fieldset>
+
+                                            <div class="col-sm-2">
+                                                <div class="form-group">
+                                                    <br>
+                                                    <button class="btn btn-primary " type="submit" id="save"><i
+                                                            class="fa fa-check"></i>&nbsp;保存修改
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            {#                                            <input type="submit" id="save" name="save" value="Submit"/>#}
+                                        </form>
 
                                     </div>
                                 </div>
@@ -757,7 +773,7 @@
     <!-- Data picker -->
     <script src="../static/js/plugins/datapicker/bootstrap-datepicker.js"></script>
 
-    <script>
+    <script type="text/javascript">
         $(document).ready(function () {
 
             $('.summernote').summernote();
@@ -769,7 +785,6 @@
                 calendarWeeks: true,
                 autoclose: true
             });
-
         });
     </script>
 

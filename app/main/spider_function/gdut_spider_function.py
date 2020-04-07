@@ -387,13 +387,13 @@ def query_from_database_gdut_detailpage(article_title_restful_url):
 
     # result =  db.session.query(GdutDetailpage.link).all()
 
-    # -----test start------
-    print("-----test start------")
-    print("type(result)=",type(result))
-    print("result=",result)
-    # print("len(result)=",len(result))
-    print("-----test end--------")
-    # -----test end--------
+    # # -----test start------
+    # print("-----test start------")
+    # print("type(result)=",type(result))
+    # print("result=",result)
+    # # print("len(result)=",len(result))
+    # print("-----test end--------")
+    # # -----test end--------
 
     # 如果已经在了,直接找到相应的内容返回即可. 不用再次爬取
     if result:
@@ -402,19 +402,19 @@ def query_from_database_gdut_detailpage(article_title_restful_url):
         row = result[0]
 
         # fixme bug:list out of range
-        print("-----test start------")
-        print("type(row)=", type(row))
-        print("row=", row)
-        print("dir(row)=",dir(row))
-        print("-----test end--------")
+        # print("-----test start------")
+        # print("type(row)=", type(row))
+        # print("row=", row)
+        # print("dir(row)=",dir(row))
+        # print("-----test end--------")
 
         title = row.title
         date = row.date
         jianjie = row.jianjie
-        print("title=", title)
-        print("date=", date)
-        print("jianjie=", jianjie)
-        print("==============================================")
+        # print("title=", title)
+        # print("date=", date)
+        # print("jianjie=", jianjie)
+        # print("==============================================")
 
         # title = row[2]
         # date = row[3]
