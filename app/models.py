@@ -29,7 +29,6 @@ class GdutDetailpage(db.Model):
     __tablename__ = 'gdut_detailpage'
 
     id = db.Column(db.Integer, primary_key=True)
-    category = db.Column(db.String(500), nullable=False)
     link = db.Column(db.String(500), nullable=False)
     title = db.Column(db.String(500), nullable=False)
     date = db.Column(db.String(500), nullable=False)

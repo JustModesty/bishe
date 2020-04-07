@@ -201,6 +201,8 @@ def shcool_history(html):
 
 def start_spider_detail(path):
     url = PublicGdutWebVar.url_pre + path
+    print("url=", url)
+
     response = requests.get(url)
     content = response.content
     content = content.decode('utf-8')
@@ -208,14 +210,23 @@ def start_spider_detail(path):
 
     detail = {}
 
+    if_exist = GdutDetailpage.query.filter_by(link=path).all()
 
-
-    if_exist = db.session.query(GdutDetailpage.link == path).first()
+    # if_exist = db.session.query(GdutDetailpage.link == path).first()
+    # db.session.commit()
     # 如果没有爬取过这个文章,在这里进行爬取
-    if if_exist is None:
-        detail['title'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/h1[@class='title']/span[@id='ctl00_ContentPlaceHolder1_tbxTitle']/text()")
-        detail['release_date'] = html.xpath("///div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@class='info']/span[@id='ctl00_ContentPlaceHolder1_tbxUpdateTime']/text()")
-        detail['jianjie'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@id='ctl00_ContentPlaceHolder1_jj']/p/span[@id='ctl00_ContentPlaceHolder1_tbxIntro']/text()")
+
+    print("if_exist=", if_exist)
+    print("type(if_exist)=", type(if_exist))
+    # print("len(if_exist)=", len(if_exist))
+
+    if not if_exist:
+        detail['title'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/h1[@class='title']/span[@id='ctl00_ContentPlaceHolder1_tbxTitle']/text()")[0]
+        print("detail['title']=",detail['title'])
+        detail['release_date'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@class='info']/span[@id='ctl00_ContentPlaceHolder1_tbxUpdateTime']/text()")[0]
+        print("detail['release_date']=", detail['release_date'])
+        detail['jianjie'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@id='ctl00_ContentPlaceHolder1_jj']/p/span[@id='ctl00_ContentPlaceHolder1_tbxIntro']/text()")[0]
+        print("detail['jianjie']=", detail['jianjie'])
         detail['content_list'] = html.xpath('//div[@id="vsb_content_2"]//p//span')
         detail['content_list2'] = html.xpath('//div[@id="vsb_content_4"]//p//text()')
         detail['img_list'] = html.xpath('//div[@id="vsb_content_2"]//p//img/@src')
@@ -224,14 +235,16 @@ def start_spider_detail(path):
         # 存储文章基本信息
         sql_insert_GdutSchoolnewsDetailpage = GdutDetailpage(link=path, title=detail['title'], date=detail['release_date'], jianjie=detail['jianjie'])
         db.session.add(sql_insert_GdutSchoolnewsDetailpage)
+        db.session.commit()
 
         # 下载图片
         for img_item in detail['img_list']:
             start_index = img_item.rfind('/')
-            save_position = 'app/static/gdut_img/detailpage' + img_item[start_index:]
+            save_position = 'app/static/gdut_img/detailpage' + img_item[start_index:-7]
             urlretrieve(PublicGdutWebVar.url_pre_no_slash + img_item, save_position)
             sql_insert_GdutDetailpagePicture = GdutDetailpagePicture(detail_link=path, local_position=save_position)
             db.session.add(sql_insert_GdutDetailpagePicture)
+            db.session.commit()
 
         # 存储段落
         text_list = []
@@ -254,8 +267,9 @@ def start_spider_detail(path):
         for paragraph in text_list:
             sql_insert_GdutDetailpageContent = GdutDetailpageContent(detail_link=path, paragraph=paragraph)
             db.session.add(sql_insert_GdutDetailpageContent)
-        db.session.commit()
-    return detail
+            db.session.commit()
+    # return detail
+
 
 
 def start_spider_menu_section(url):
@@ -364,3 +378,68 @@ def dashboard_start_spider_schoolnews_list(enter_url):
                 db.session.add(sql_insert)
                 db.session.commit()
             gdutschoolnew_all_link.add(item['link'])
+
+
+def query_from_database_gdut_detailpage(article_title_restful_url):
+    content = {}
+    result = GdutDetailpage.query.filter_by(link=article_title_restful_url).all()
+    # result = GdutDetailpage.query.filter(link=article_title_restful_url).all()[0]
+
+    # result =  db.session.query(GdutDetailpage.link).all()
+
+    # -----test start------
+    print("-----test start------")
+    print("type(result)=",type(result))
+    print("result=",result)
+    # print("len(result)=",len(result))
+    print("-----test end--------")
+    # -----test end--------
+
+    # 如果已经在了,直接找到相应的内容返回即可. 不用再次爬取
+    if result:
+
+        print("11111111111")
+        row = result[0]
+
+        # fixme bug:list out of range
+        print("-----test start------")
+        print("type(row)=", type(row))
+        print("row=", row)
+        print("dir(row)=",dir(row))
+        print("-----test end--------")
+
+        title = row.title
+        date = row.date
+        jianjie = row.jianjie
+        print("title=", title)
+        print("date=", date)
+        print("jianjie=", jianjie)
+        print("==============================================")
+
+        # title = row[2]
+        # date = row[3]
+        # jianjie = row[4]
+
+        result_picture = GdutDetailpagePicture.query.filter_by(detail_link=article_title_restful_url).all()
+        picture_local_position_list = []
+        if result_picture:
+            for item in result_picture:
+                # picture_local_position_list.append(item["local_position"])
+                picture_local_position_list.append(".." + item.local_position[3:])
+        result_paragraph = GdutDetailpageContent.query.filter_by(detail_link=article_title_restful_url).all()
+        paragraph_list = []
+        if result_paragraph:
+            for item in result_paragraph:
+                # paragraph_list.append(item["paragraph"])
+                paragraph_list.append(item.paragraph)
+        content["title"] = title
+        content["date"] = date
+        content["jianjie"] = jianjie
+        content["picture_local_position_list"] = picture_local_position_list
+        content["paragraph_list"] = paragraph_list
+        return content
+    # 如果article_title_restful_url不在gdut_detailpage的link字段里面,则去爬取相应的文章,并保存到数据库
+    else:
+        print("2222222222")
+        start_spider_detail(article_title_restful_url)
+        return query_from_database_gdut_detailpage(article_title_restful_url)

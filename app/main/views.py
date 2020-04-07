@@ -54,6 +54,7 @@ def dashboard_start_spider_schoolnews():
 
     # 从菜单栏里面找到入口
     enter_url = html.xpath("//div[@class='menu']/ul/li[2]/a/@href")[0]
+    # enter_url = html.xpath("//div[@class='menu']/ul/li[2]/a/@href")[0]
     gdut_spider_function.dashboard_start_spider_schoolnews_list(enter_url)
 
     # 爬取取完,直接重新刷新页面(每次进入那个页面的时候都会抓取数据库数据的)
@@ -70,7 +71,7 @@ def clear_data_schoolnews():
 
 
 # 学校新闻“查询” 接口
-@main_handler.route('/search_data/schoolnews')
+@main_handler.route('/search_data_schoolnews')
 def search_data_schoolnews():
     # print(flask.request.args)
     filter_title = flask.request.args.get('product_name')
@@ -79,8 +80,29 @@ def search_data_schoolnews():
         schoolnews_query = GdutSchoolnew.query.filter(
             GdutSchoolnew.title.like("%" + filter_title + "%")
         ).all()
-
     return render_template('table_schoolnews.html', gdutschoolnew_all_line=schoolnews_query)
+
+
+# 学校新闻“编辑” 接口
+@main_handler.route('/schoolnews_edit')
+def edit_article_schoolnews():
+    # 1. 定位是哪篇文章
+    article_title_restful_url = flask.request.args.get('article_link')
+    print("article_title=", article_title_restful_url)
+    # 2. 查询数据库,找到文章内容
+    content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
+    # 3. 返回内容并渲染成一个新页面
+    return render_template('ecommerce_product.html', content=content)
+
+
+    # # print(flask.request.args)
+    # filter_title = flask.request.args.get('product_name')
+    # schoolnews_query = GdutSchoolnew.query.all()
+    # if filter_title:
+    #     schoolnews_query = GdutSchoolnew.query.filter(
+    #         GdutSchoolnew.title.like("%" + filter_title + "%")
+    #     ).all()
+    # return render_template('table_schoolnews.html', gdutschoolnew_all_line=schoolnews_query)
 
 
 # ==================工大====================================== #
@@ -341,6 +363,10 @@ def clear_data():
     session.execute('delete from graduatepeople_tbl where 1=1')
     session.execute('delete from history_tbl where 1=1')
     session.execute('delete from gdut_schoolnews where 1=1')
+    session.execute('delete from gdut_detailpage where 1=1')
+    session.execute('delete from gdut_detailpage_content where 1=1')
+    session.execute('delete from gdut_detailpage_picture where 1=1')
+
 
     session.commit()
     return render_template('clear_data.html')
