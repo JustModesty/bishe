@@ -16,7 +16,7 @@ from sqlalchemy import create_engine
 
 from app.main.spider_function import gdut_spider_function
 
-engine = create_engine("mysql+pymysql://root:a1234567890!@127.0.0.1:3306/gdutnews", max_overflow=0, pool_size=5)
+engine = create_engine("mysql+pymysql://root:a1234567890!@127.0.0.1:3306/gdutnews", max_overflow=0, pool_size=20)
 Session = sessionmaker(bind=engine)
 
 
@@ -39,7 +39,10 @@ def dashboard_table_schoolnews():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutSchoolnew.link, GdutSchoolnew.title, GdutSchoolnew.src,
                                            GdutSchoolnew.date).all()
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
     return render_template('table_schoolnews.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 
@@ -68,7 +71,10 @@ def dashboard_start_spider_schoolnews():
 def clear_data_schoolnews():
     session = Session()
     session.execute('delete from gdut_schoolnews where 1=1')
-    session.commit()
+    try:
+        session.commit()
+    except:
+        session.rollback()
     return redirect(url_for('.dashboard_table_schoolnews'))
 
 
@@ -130,7 +136,10 @@ def dashboard_table_meitigongda():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutMeitigongda.link, GdutMeitigongda.title, GdutMeitigongda.src,
                                            GdutMeitigongda.date).all()
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
     return render_template('table_meitigongda.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 
@@ -158,7 +167,10 @@ def dashboard_start_spider_meitigongda():
 def clear_data_meitigongda():
     session = Session()
     session.execute('delete from gdut_meitigongda where 1=1')
-    session.commit()
+    try:
+        session.commit()
+    except:
+        session.rollback()
     return redirect(url_for('.dashboard_table_meitigongda'))
 
 
@@ -220,7 +232,10 @@ def dashboard_table_renwenxiaoyuan():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutRenwenxiaoyuan.link, GdutRenwenxiaoyuan.title, GdutRenwenxiaoyuan.src,
                                            GdutRenwenxiaoyuan.date).all()
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
     return render_template('table_renwenxiaoyuan.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 
@@ -245,7 +260,10 @@ def dashboard_start_spider_renwenxiaoyuan():
 def clear_data_renwenxiaoyuan():
     session = Session()
     session.execute('delete from gdut_renwenxiaoyuan where 1=1')
-    session.commit()
+    try:
+        session.commit()
+    except :
+        session.rollback()
     return redirect(url_for('.dashboard_table_renwenxiaoyuan'))
 
 
@@ -300,7 +318,6 @@ def save_edit_article_renwenxiaoyuan():
         return redirect(url_for('.dashboard_table_renwenxiaoyuan'))
 
 
-
 # ==================校友动态表====================================== #
 # dashboard查看"校友动态"的数据
 @main_handler.route('/table_xiaoyoudongtai.html')
@@ -308,7 +325,10 @@ def dashboard_table_xiaoyoudongtai():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutXiaoyoudongtai.link, GdutXiaoyoudongtai.title, GdutXiaoyoudongtai.src,
                                            GdutXiaoyoudongtai.date).all()
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
     return render_template('table_xiaoyoudongtai.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 
@@ -333,7 +353,10 @@ def dashboard_start_spider_xiaoyoudongtai():
 def clear_data_xiaoyoudongtai():
     session = Session()
     session.execute('delete from gdut_xiaoyoudongtai where 1=1')
-    session.commit()
+    try:
+        session.commit()
+    except :
+        session.rollback()
     return redirect(url_for('.dashboard_table_xiaoyoudongtai'))
 
 
@@ -395,7 +418,10 @@ def dashboard_table_wangshangxiaoshiguan():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutWangshangxiaoshiguan.link, GdutWangshangxiaoshiguan.title, GdutWangshangxiaoshiguan.src,
                                            GdutWangshangxiaoshiguan.date).all()
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
     return render_template('table_wangshangxiaoshiguan.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 
@@ -420,7 +446,10 @@ def dashboard_start_spider_wangshangxiaoshiguan():
 def clear_data_wangshangxiaoshiguan():
     session = Session()
     session.execute('delete from gdut_wangshangxiaoshiguan where 1=1')
-    session.commit()
+    try:
+        session.commit()
+    except :
+        session.rollback()
     return redirect(url_for('.dashboard_table_wangshangxiaoshiguan'))
 
 
@@ -474,6 +503,7 @@ def save_edit_article_wangshangxiaoshiguan():
         # todo:以后更改为跳转到用户的展示页面
         return redirect(url_for('.dashboard_table_wangshangxiaoshiguan'))
 
+
 # ==================学习园地表====================================== #
 # dashboard查看"学习园地表"的数据
 # @main_handler.route('/table_xuexiyuandi.html')
@@ -486,7 +516,10 @@ def dashboard_table_xuexiyuandi():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutXuexiyuandi.link, GdutXuexiyuandi.title, GdutXuexiyuandi.src,
                                            GdutXuexiyuandi.date).all()
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
     return render_template('table_xuexiyuandi.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 
@@ -511,7 +544,10 @@ def dashboard_start_spider_xuexiyuandi():
 def clear_data_xuexiyuandi():
     session = Session()
     session.execute('delete from gdut_xuexiyuandi where 1=1')
-    session.commit()
+    try:
+        session.commit()
+    except :
+        session.rollback()
     return redirect(url_for('.dashboard_table_xuexiyuandi'))
 
 
@@ -565,6 +601,7 @@ def save_edit_article_xuexiyuandi():
         # todo:以后更改为跳转到用户的展示页面
         return redirect(url_for('.dashboard_table_xuexiyuandi'))
 
+
 # ===================专栏报道表=========================================== #
 
 # dashboard查看"校友动态"的数据
@@ -573,7 +610,10 @@ def dashboard_table_zhuanlanbaodao():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutZhuanlanbaodao.link, GdutZhuanlanbaodao.title, GdutZhuanlanbaodao.src,
                                            GdutZhuanlanbaodao.date).all()
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
     return render_template('table_zhuanlanbaodao.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 
@@ -598,7 +638,10 @@ def dashboard_start_spider_zhuanlanbaodao():
 def clear_data_zhuanlanbaodao():
     session = Session()
     session.execute('delete from gdut_zhuanlanbaodao where 1=1')
-    session.commit()
+    try:
+        session.commit()
+    except :
+        session.rollback()
     return redirect(url_for('.dashboard_table_zhuanlanbaodao'))
 
 
@@ -652,6 +695,7 @@ def save_edit_article_zhuanlanbaodao():
         # todo:以后更改为跳转到用户的展示页面
         return redirect(url_for('.dashboard_table_zhuanlanbaodao'))
 
+
 # ========================================================================
 
 # dashboard里面点击文章之后,跳转到"编辑"页面
@@ -673,7 +717,10 @@ def gdutnews_index():
     # banner
     session = Session()
     cursor = session.execute('select count(*) from banner_tbl')
-    session.commit()
+    try:
+        session.commit()
+    except :
+        session.rollback()
     values = cursor.fetchall()
 
     if values[0][0] > 0:
@@ -794,7 +841,10 @@ def gdut_index():
     # banner
     session = Session()
     cursor = session.execute('select count(*) from banner_tbl')
-    session.commit()
+    try:
+        session.commit()
+    except :
+        session.rollback()
     values = cursor.fetchall()
 
     if values[0][0] > 0:
@@ -885,7 +935,10 @@ def clear_data():
     session.execute('delete from gdut_detailpage_content where 1=1')
     session.execute('delete from gdut_detailpage_picture where 1=1')
 
-    session.commit()
+    try:
+        session.commit()
+    except:
+        session.rollback()
     return render_template('clear_data.html')
 
 

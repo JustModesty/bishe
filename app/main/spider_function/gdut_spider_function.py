@@ -15,7 +15,11 @@ def banner(html):
     banner_url = banner
     banner = BannerTbl(banner_image=banner_url)
     db.session.add(banner)
-    db.session.commit()
+
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
 
 
 # 抓取menu
@@ -32,14 +36,22 @@ def menu(html):
             link = link
         menu = MenuTbl(menu_href=link, menu_name=name)
         db.session.add(menu)
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
     # 抓取topnews
     topnews_title = html.xpath('//div[@class="topnewsc"]//h1/a/text()')[0]
     topnews_link = html.xpath('//div[@class="topnewsc"]//h1/a/@href')[0]
     # 存入数据库
     topnews = TopnewsTbl(topnews_title=topnews_title, topnews_href=topnews_link)
     db.session.add(topnews)
-    db.session.commit()
+
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
 
 
 # 抓取学校新闻
@@ -58,7 +70,11 @@ def schoolnews(html):
                                schoolnews_head_news_href=schoolnews_head_news_href,
                                schoolnews_head_news_title=schoolnews_head_news_title)
     db.session.add(schoolnews)
-    db.session.commit()
+
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
 
     # 注意这是包含12个元素的列表
     schoolnews_sub_news_href = html.xpath('//div[@class="ywcon"]/ul[@class="ywul"]/li/a/@href')
@@ -77,7 +93,11 @@ def schoolnews(html):
         print("777777777777777777777777777777777777777")
         schoolnewssubnews = SchoolnewssubnewsTbl(schoolnews_sub_news_href=link, schoolnews_sub_news_title=title)
         db.session.add(schoolnewssubnews)
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
 
 
 # 抓取schoolnewssliding
@@ -97,7 +117,11 @@ def schoolnewssliding(html):
                                    schoolnews_head_news_href=link,
                                    schoolnews_head_news_title=title)
         db.session.add(row)
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
 
 
 # 抓取纸媒汇
@@ -112,7 +136,11 @@ def zhimeihui(html):
         link = link_list[i]
         sql_insert = Zhimeihui(paper_sub_news_href=link, paper_sub_news_title=title)
         db.session.add(sql_insert)
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
 
 
 # 抓取更多"更多按钮"
@@ -141,7 +169,11 @@ def more_button(html):
         history_show_more_href=history_show_more_href,
     )
     db.session.add(row)
-    db.session.commit()
+
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
 
 
 def humanity_campus(html):
@@ -155,7 +187,11 @@ def humanity_campus(html):
         link = link_list[i]
         sql_insert = HumanityCampusNew(link=link, title=title)
         db.session.add(sql_insert)
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
 
 
 def study_section(html):
@@ -169,7 +205,11 @@ def study_section(html):
         link = link_list[i]
         sql_insert = StudyplacesNewsTbl(link=link, title=title)
         db.session.add(sql_insert)
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
 
 
 def graduate_people(html):
@@ -183,7 +223,11 @@ def graduate_people(html):
         link = link_list[i]
         sql_insert = GraduatepeopleTbl(link=link, title=title)
         db.session.add(sql_insert)
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
 
 
 def shcool_history(html):
@@ -197,7 +241,11 @@ def shcool_history(html):
         link = link_list[i]
         sql_insert = HistoryTbl(link=link, title=title)
         db.session.add(sql_insert)
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
 
 
 def start_spider_detail(path):
@@ -244,7 +292,11 @@ def start_spider_detail(path):
         sql_insert_GdutSchoolnewsDetailpage = GdutDetailpage(link=path, title=detail['title'],
                                                              date=detail['release_date'], jianjie=detail['jianjie'])
         db.session.add(sql_insert_GdutSchoolnewsDetailpage)
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
 
         # 下载图片
         for img_item in detail['img_list']:
@@ -253,7 +305,11 @@ def start_spider_detail(path):
             urlretrieve(PublicGdutWebVar.url_pre_no_slash + img_item, save_position)
             sql_insert_GdutDetailpagePicture = GdutDetailpagePicture(detail_link=path, local_position=save_position)
             db.session.add(sql_insert_GdutDetailpagePicture)
-            db.session.commit()
+
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
 
         # 存储段落
         text_list = []
@@ -271,7 +327,11 @@ def start_spider_detail(path):
         for paragraph in text_list:
             sql_insert_GdutDetailpageContent = GdutDetailpageContent(detail_link=path, paragraph=paragraph)
             db.session.add(sql_insert_GdutDetailpageContent)
-            db.session.commit()
+
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
 
 
 def start_spider_menu_section(url):
@@ -319,11 +379,19 @@ def start_spider_menu_section(url):
             if item.__contains__('src'):
                 sql_insert = GdutSchoolnew(link=item['link'], title=item['title'], src=item['src'])
                 db.session.add(sql_insert)
-                db.session.commit()
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
             else:
                 sql_insert = GdutSchoolnew(link=item['link'], title=item['title'], date=item['date'])
                 db.session.add(sql_insert)
-                db.session.commit()
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
             gdutschoolnew_all_link.add(item['link'])
 
     return all_news
@@ -377,11 +445,19 @@ def dashboard_start_spider_schoolnews_list(enter_url):
             if item.__contains__('src'):
                 sql_insert = GdutSchoolnew(link=item['link'], title=item['title'], src=item['src'])
                 db.session.add(sql_insert)
-                db.session.commit()
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
             else:
                 sql_insert = GdutSchoolnew(link=item['link'], title=item['title'], date=item['date'])
                 db.session.add(sql_insert)
-                db.session.commit()
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
             gdutschoolnew_all_link.add(item['link'])
 
 
@@ -471,11 +547,19 @@ def dashboard_start_spider_meitigongda_list(enter_url):
             if item.__contains__('src'):
                 sql_insert = GdutMeitigongda(link=item['link'], title=item['title'], src=item['src'])
                 db.session.add(sql_insert)
-                db.session.commit()
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
             else:
                 sql_insert = GdutMeitigongda(link=item['link'], title=item['title'], date=item['date'])
                 db.session.add(sql_insert)
-                db.session.commit()
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
             gdutschoolnew_all_link.add(item['link'])
 
 
@@ -528,11 +612,19 @@ def dashboard_start_spider_renwenxiaoyuan_list(enter_url):
             if item.__contains__('src'):
                 sql_insert = GdutRenwenxiaoyuan(link=item['link'], title=item['title'], src=item['src'])
                 db.session.add(sql_insert)
-                db.session.commit()
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
             else:
                 sql_insert = GdutRenwenxiaoyuan(link=item['link'], title=item['title'], date=item['date'])
                 db.session.add(sql_insert)
-                db.session.commit()
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
             gdutschoolnew_all_link.add(item['link'])
 
 
@@ -584,11 +676,20 @@ def dashboard_start_spider_xiaoyoudongtai_list(enter_url):
             if item.__contains__('src'):
                 sql_insert = GdutXiaoyoudongtai(link=item['link'], title=item['title'], src=item['src'])
                 db.session.add(sql_insert)
-                db.session.commit()
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
+
             else:
                 sql_insert = GdutXiaoyoudongtai(link=item['link'], title=item['title'], date=item['date'])
                 db.session.add(sql_insert)
-                db.session.commit()
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
             gdutschoolnew_all_link.add(item['link'])
 
 
@@ -640,11 +741,19 @@ def dashboard_start_spider_wangshangxiaoshiguan_list(enter_url):
             if item.__contains__('src'):
                 sql_insert = GdutWangshangxiaoshiguan(link=item['link'], title=item['title'], src=item['src'])
                 db.session.add(sql_insert)
-                db.session.commit()
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
             else:
                 sql_insert = GdutWangshangxiaoshiguan(link=item['link'], title=item['title'], date=item['date'])
                 db.session.add(sql_insert)
-                db.session.commit()
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
             gdutschoolnew_all_link.add(item['link'])
 
 
@@ -696,11 +805,19 @@ def dashboard_start_spider_xuexiyuandi_list(enter_url):
             if item.__contains__('src'):
                 sql_insert = GdutXuexiyuandi(link=item['link'], title=item['title'], src=item['src'])
                 db.session.add(sql_insert)
-                db.session.commit()
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
             else:
                 sql_insert = GdutXuexiyuandi(link=item['link'], title=item['title'], date=item['date'])
                 db.session.add(sql_insert)
-                db.session.commit()
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
             gdutschoolnew_all_link.add(item['link'])
 
 
@@ -752,9 +869,17 @@ def dashboard_start_spider_zhuanlanbaodao_list(enter_url):
             if item.__contains__('src'):
                 sql_insert = GdutZhuanlanbaodao(link=item['link'], title=item['title'], src=item['src'])
                 db.session.add(sql_insert)
-                db.session.commit()
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
             else:
                 sql_insert = GdutZhuanlanbaodao(link=item['link'], title=item['title'], date=item['date'])
                 db.session.add(sql_insert)
-                db.session.commit()
+
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
             gdutschoolnew_all_link.add(item['link'])
