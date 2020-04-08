@@ -100,7 +100,8 @@ def edit_article_schoolnews():
 
     # 2. 查询数据库,找到文章内容
     session = Session()
-    article_id_in_mysql = session.execute("select id from gdut_detailpage where link='%s';" %(article_title_restful_url))
+    article_id_in_mysql = session.execute(
+        "select id from gdut_detailpage where link='%s';" % (article_title_restful_url))
     article_id_in_mysql_first = article_id_in_mysql.first()
     article_id_in_mysql_first_zero = article_id_in_mysql_first[0]
     try:
@@ -110,7 +111,8 @@ def edit_article_schoolnews():
     content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
 
     # 3. 返回内容并渲染成一个新页面
-    return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url, article_id_in_mysql=article_id_in_mysql_first_zero)
+    return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url,
+                           article_id_in_mysql=article_id_in_mysql_first_zero, news_class="schoolnews")
 
 
 # 学校新闻编辑里面的"保存修改"按钮
@@ -118,20 +120,21 @@ def edit_article_schoolnews():
 def save_edit_article_schoolnews():
     # 1. 定位是哪篇文章
     if request.method == 'POST':
+        databases_map = {'schoolnews': GdutSchoolnew, }
+
         update_field = flask.request.args.get('update_field')
-        # article_id = request.form['mysql_id']
+        news_class = flask.request.args.get('news_class')
         article_id = request.form['mysql_id']
-        print("dir(article_id)=", dir(article_id))
         if update_field == 'title':
-            print("article_id=", article_id)
-            print("type(article_id)=", type(article_id))
             new_title = request.form['title']
             article = GdutDetailpage.query.get(article_id)
             article.title = new_title
-
+            link = article.link
+            row = databases_map[news_class].query.filter(databases_map[news_class].link == link).first()
+            row.title =  new_title
             # session = Session()
-            # cursor = session.execute(
-            #     "update gdut_detailpage set title={} where id={}".format(new_title, article_id))
+            # sql = "update %s set title=%s where link=%s; "
+            # cursor = session.execute(sql, type_tbl, new_title, link)
             try:
                 db.session.commit()
             except:
@@ -152,28 +155,28 @@ def save_edit_article_schoolnews():
 
         # # 3. 返回内容并渲染成一个新页面
         # todo:以后更改为跳转到用户的展示页面
-        return redirect(url_for('.dashboard_table_meitigongda'))
+        return redirect(url_for('.dashboard_table_schoolnews'))
 
 
 # # 1. 定位是哪篇文章
-    # if request.method == 'POST':
-    #     origin_title = request.form['origin_title']
-    #     title = request.form['title']
-    #     date = request.form['date']
-    #     jianjie = request.form['jianjie']
-    #     origin_title = flask.request.args.get('origin_title')
-    #     content = flask.request.args.get('ret_content')
-    #
-    #     content = eval(content)
-    #
-    #     # 2. 查询数据库,找到文章内容
-    #     content['title'] = str(title)
-    #     content['date'] = str(date)
-    #     content['jianjie'] = str(jianjie)
-    #
-    #     # # 3. 返回内容并渲染成一个新页面
-    #     # todo:以后更改为跳转到用户的展示页面
-    #     return redirect(url_for('.dashboard_table_schoolnews'))
+# if request.method == 'POST':
+#     origin_title = request.form['origin_title']
+#     title = request.form['title']
+#     date = request.form['date']
+#     jianjie = request.form['jianjie']
+#     origin_title = flask.request.args.get('origin_title')
+#     content = flask.request.args.get('ret_content')
+#
+#     content = eval(content)
+#
+#     # 2. 查询数据库,找到文章内容
+#     content['title'] = str(title)
+#     content['date'] = str(date)
+#     content['jianjie'] = str(jianjie)
+#
+#     # # 3. 返回内容并渲染成一个新页面
+#     # todo:以后更改为跳转到用户的展示页面
+#     return redirect(url_for('.dashboard_table_schoolnews'))
 
 
 # ==================工大====================================== #
@@ -258,7 +261,8 @@ def save_edit_article_meitigongda():
         if update_field == 'title':
             new_title = request.form['title']
             session = Session()
-            cursor = session.execute("update gdut_detailpage set title='%s' where id='%d';" %(new_title, int(article_id)))
+            cursor = session.execute(
+                "update gdut_detailpage set title='%s' where id='%d';" % (new_title, int(article_id)))
             try:
                 session.commit()
             except:
@@ -319,7 +323,7 @@ def clear_data_renwenxiaoyuan():
     session.execute('delete from gdut_renwenxiaoyuan where 1=1')
     try:
         session.commit()
-    except :
+    except:
         session.rollback()
     return redirect(url_for('.dashboard_table_renwenxiaoyuan'))
 
@@ -412,7 +416,7 @@ def clear_data_xiaoyoudongtai():
     session.execute('delete from gdut_xiaoyoudongtai where 1=1')
     try:
         session.commit()
-    except :
+    except:
         session.rollback()
     return redirect(url_for('.dashboard_table_xiaoyoudongtai'))
 
@@ -473,7 +477,8 @@ def save_edit_article_xiaoyoudongtai():
 @main_handler.route('/table_wangshangxiaoshiguan.html')
 def dashboard_table_wangshangxiaoshiguan():
     session = Session()
-    gdutschoolnew_all_line = session.query(GdutWangshangxiaoshiguan.link, GdutWangshangxiaoshiguan.title, GdutWangshangxiaoshiguan.src,
+    gdutschoolnew_all_line = session.query(GdutWangshangxiaoshiguan.link, GdutWangshangxiaoshiguan.title,
+                                           GdutWangshangxiaoshiguan.src,
                                            GdutWangshangxiaoshiguan.date).all()
     try:
         db.session.commit()
@@ -505,7 +510,7 @@ def clear_data_wangshangxiaoshiguan():
     session.execute('delete from gdut_wangshangxiaoshiguan where 1=1')
     try:
         session.commit()
-    except :
+    except:
         session.rollback()
     return redirect(url_for('.dashboard_table_wangshangxiaoshiguan'))
 
@@ -603,7 +608,7 @@ def clear_data_xuexiyuandi():
     session.execute('delete from gdut_xuexiyuandi where 1=1')
     try:
         session.commit()
-    except :
+    except:
         session.rollback()
     return redirect(url_for('.dashboard_table_xuexiyuandi'))
 
@@ -697,7 +702,7 @@ def clear_data_zhuanlanbaodao():
     session.execute('delete from gdut_zhuanlanbaodao where 1=1')
     try:
         session.commit()
-    except :
+    except:
         session.rollback()
     return redirect(url_for('.dashboard_table_zhuanlanbaodao'))
 
@@ -776,7 +781,7 @@ def gdutnews_index():
     cursor = session.execute('select count(*) from banner_tbl')
     try:
         session.commit()
-    except :
+    except:
         session.rollback()
     values = cursor.fetchall()
 
@@ -900,7 +905,7 @@ def gdut_index():
     cursor = session.execute('select count(*) from banner_tbl')
     try:
         session.commit()
-    except :
+    except:
         session.rollback()
     values = cursor.fetchall()
 
