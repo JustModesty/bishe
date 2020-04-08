@@ -96,13 +96,21 @@ def search_data_schoolnews():
 def edit_article_schoolnews():
     # 1. 定位是哪篇文章
     article_title_restful_url = flask.request.args.get('article_link')
-    # print("article_title=", article_title_restful_url)
+    print("article_title=", article_title_restful_url)
 
     # 2. 查询数据库,找到文章内容
+    session = Session()
+    article_id_in_mysql = session.execute("select id from gdut_detailpage where link='%s';" %(article_title_restful_url))
+    article_id_in_mysql_first = article_id_in_mysql.first()
+    article_id_in_mysql_first_zero = article_id_in_mysql_first[0]
+    try:
+        session.commit()
+    except:
+        session.rollback()
     content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
 
     # 3. 返回内容并渲染成一个新页面
-    return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url)
+    return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url, article_id_in_mysql=article_id_in_mysql_first_zero)
 
 
 # 学校新闻编辑里面的"保存修改"按钮
@@ -110,23 +118,62 @@ def edit_article_schoolnews():
 def save_edit_article_schoolnews():
     # 1. 定位是哪篇文章
     if request.method == 'POST':
-        origin_title = request.form['origin_title']
-        title = request.form['title']
-        date = request.form['date']
-        jianjie = request.form['jianjie']
-        origin_title = flask.request.args.get('origin_title')
-        content = flask.request.args.get('ret_content')
+        update_field = flask.request.args.get('update_field')
+        # article_id = request.form['mysql_id']
+        article_id = request.form['mysql_id']
+        print("dir(article_id)=", dir(article_id))
+        if update_field == 'title':
+            print("article_id=", article_id)
+            print("type(article_id)=", type(article_id))
+            new_title = request.form['title']
+            article = GdutDetailpage.query.get(article_id)
+            article.title = new_title
 
-        content = eval(content)
+            # session = Session()
+            # cursor = session.execute(
+            #     "update gdut_detailpage set title={} where id={}".format(new_title, article_id))
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
+        if update_field == 'date':
+            pass
+        if update_field == 'jianjie':
+            pass
+        if update_field == 'paragraph':
+            pass
+
+        # content = eval(content)
 
         # 2. 查询数据库,找到文章内容
-        content['title'] = str(title)
-        content['date'] = str(date)
-        content['jianjie'] = str(jianjie)
+        # content['title'] = str(title)
+        # content['date'] = str(date)
+        # content['jianjie'] = str(jianjie)
 
         # # 3. 返回内容并渲染成一个新页面
         # todo:以后更改为跳转到用户的展示页面
-        return redirect(url_for('.dashboard_table_schoolnews'))
+        return redirect(url_for('.dashboard_table_meitigongda'))
+
+
+# # 1. 定位是哪篇文章
+    # if request.method == 'POST':
+    #     origin_title = request.form['origin_title']
+    #     title = request.form['title']
+    #     date = request.form['date']
+    #     jianjie = request.form['jianjie']
+    #     origin_title = flask.request.args.get('origin_title')
+    #     content = flask.request.args.get('ret_content')
+    #
+    #     content = eval(content)
+    #
+    #     # 2. 查询数据库,找到文章内容
+    #     content['title'] = str(title)
+    #     content['date'] = str(date)
+    #     content['jianjie'] = str(jianjie)
+    #
+    #     # # 3. 返回内容并渲染成一个新页面
+    #     # todo:以后更改为跳转到用户的展示页面
+    #     return redirect(url_for('.dashboard_table_schoolnews'))
 
 
 # ==================工大====================================== #
@@ -206,19 +253,29 @@ def edit_article_meitigongda():
 def save_edit_article_meitigongda():
     # 1. 定位是哪篇文章
     if request.method == 'POST':
-        origin_title = request.form['origin_title']
-        title = request.form['title']
-        date = request.form['date']
-        jianjie = request.form['jianjie']
-        origin_title = flask.request.args.get('origin_title')
-        content = flask.request.args.get('ret_content')
+        update_field = flask.request.args.get('update_field')
+        article_id = request.form['mysql_id']
+        if update_field == 'title':
+            new_title = request.form['title']
+            session = Session()
+            cursor = session.execute("update gdut_detailpage set title='%s' where id='%d';" %(new_title, int(article_id)))
+            try:
+                session.commit()
+            except:
+                session.rollback()
+        if update_field == 'date':
+            pass
+        if update_field == 'jianjie':
+            pass
+        if update_field == 'paragraph':
+            pass
 
-        content = eval(content)
+        # content = eval(content)
 
         # 2. 查询数据库,找到文章内容
-        content['title'] = str(title)
-        content['date'] = str(date)
-        content['jianjie'] = str(jianjie)
+        # content['title'] = str(title)
+        # content['date'] = str(date)
+        # content['jianjie'] = str(jianjie)
 
         # # 3. 返回内容并渲染成一个新页面
         # todo:以后更改为跳转到用户的展示页面
