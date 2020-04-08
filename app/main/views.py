@@ -5,7 +5,6 @@ import flask
 from flask import render_template, redirect, url_for, request
 from lxml import etree
 
-
 from app import db
 from . import main_handler
 import requests
@@ -32,12 +31,14 @@ def dashboard_index():
 def dashboard_forum_main():
     return render_template('forum_main.html')
 
+
 # ==================学校新闻====================================== #
 # dashboard查看"学校新闻表"的数据
 @main_handler.route('/table_schoolnews.html')
 def dashboard_table_schoolnews():
     session = Session()
-    gdutschoolnew_all_line = session.query(GdutSchoolnew.link, GdutSchoolnew.title, GdutSchoolnew.src, GdutSchoolnew.date).all()
+    gdutschoolnew_all_line = session.query(GdutSchoolnew.link, GdutSchoolnew.title, GdutSchoolnew.src,
+                                           GdutSchoolnew.date).all()
     db.session.commit()
     return render_template('table_schoolnews.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
@@ -97,106 +98,561 @@ def edit_article_schoolnews():
     # 3. 返回内容并渲染成一个新页面
     return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url)
 
+
 # 学校新闻编辑里面的"保存修改"按钮
 @main_handler.route('/save_schoolnews_edit', methods=['GET', 'POST'])
 def save_edit_article_schoolnews():
     # 1. 定位是哪篇文章
-    if request.method =='POST':
+    if request.method == 'POST':
         origin_title = request.form['origin_title']
         title = request.form['title']
         date = request.form['date']
         jianjie = request.form['jianjie']
-        # paragraph = request.form['paragraph']
-        print("origin_title=", origin_title)
-        print("title=",title)
-        print("date=", date)
-        print("jianjie=", jianjie)
-        # print("paragraph=", paragraph)
         origin_title = flask.request.args.get('origin_title')
-
-        # title = flask.request.args.get('title')
-        # date = flask.request.args.get('date')
-        # jianjie = flask.request.args.get('date')
         content = flask.request.args.get('ret_content')
-        # print("origin_title=", origin_title)
-        # print("title=",title)
-        # print("date=", date)
-        # print("jianjie=", jianjie)
-        print("content=", content)
+
         content = eval(content)
-        print("content=", content)
+
         # 2. 查询数据库,找到文章内容
-        content['title'] = title
-        content['date'] = date
-        content['jianjie'] = jianjie
-        # item = GdutDetailpage.query.filter(GdutDetailpage.title.like("%"+str(origin_title)+"%")).all()
-        # if filter_title:
-        #     schoolnews_query = GdutSchoolnew.query.filter(
-        #         GdutSchoolnew.title.like("%" + filter_title + "%")
-        #     ).all()
-        # print("item=", item)
-        # print("type(item)=", type(item))
-        # print("dir(item)=", dir(item))
-        # item.title = title
-        # item.date = date
-        # item.jianjie = jianjie
-        # db.session.commit()
-        # content = GdutDetailpage.query.filter_by(title=origin_title).first()
-        # link = content.link
-        #
-        # result_picture = GdutDetailpagePicture.query.filter_by(detail_link=link).all()
-        # picture_local_position_list = []
-        # if result_picture:
-        #     for item in result_picture:
-        #         # picture_local_position_list.append(item["local_position"])
-        #         picture_local_position_list.append(".." + item.local_position[3:])
-        #
-        # result_paragraph = GdutDetailpageContent.query.filter_by(detail_link=link).all()
-        # paragraph_list = []
-        # if result_paragraph:
-        #     for item in result_paragraph:
-        #         # paragraph_list.append(item["paragraph"])
-        #         paragraph_list.append(item.paragraph)
-        #
-        # # 新数据
-        #
-        #
-        # content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
+        content['title'] = str(title)
+        content['date'] = str(date)
+        content['jianjie'] = str(jianjie)
+
         # # 3. 返回内容并渲染成一个新页面
         # todo:以后更改为跳转到用户的展示页面
         return redirect(url_for('.dashboard_table_schoolnews'))
 
 
-
 # ==================工大====================================== #
-
 # dashboard查看"媒体工大表"的数据
 @main_handler.route('/table_meitigongda.html')
 def dashboard_table_meitigongda():
-    return render_template('table_meitigongda.html')
+    session = Session()
+    gdutschoolnew_all_line = session.query(GdutMeitigongda.link, GdutMeitigongda.title, GdutMeitigongda.src,
+                                           GdutMeitigongda.date).all()
+    db.session.commit()
+    return render_template('table_meitigongda.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
+
+# dashboard 媒体工大 “开始爬取” 接口
+@main_handler.route('/dashboard_start_spider_meitigongda')
+def dashboard_start_spider_meitigongda():
+    response = requests.get('http://gdutnews.gdut.edu.cn/')
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    # 抓取shcoolnews
+    # gdut_spider_function.meitigongda(html)
+
+    # 从菜单栏里面找到入口
+    enter_url = html.xpath("//div[@class='menu']/ul/li[4]/a/@href")[0]
+    gdut_spider_function.dashboard_start_spider_meitigongda_list(enter_url)
+
+    # 爬取取完,直接重新刷新页面(每次进入那个页面的时候都会抓取数据库数据的)
+    return redirect(url_for('.dashboard_table_meitigongda'))
+
+
+# 媒体工大“清空数据” 接口
+@main_handler.route('/clear_data_meitigongda')
+def clear_data_meitigongda():
+    session = Session()
+    session.execute('delete from gdut_meitigongda where 1=1')
+    session.commit()
+    return redirect(url_for('.dashboard_table_meitigongda'))
+
+
+# 媒体工大“查询” 接口
+@main_handler.route('/search_data_meitigongda')
+def search_data_meitigongda():
+    # print(flask.request.args)
+    filter_title = flask.request.args.get('product_name')
+    meitigongda_query = GdutMeitigongda.query.all()
+    if filter_title:
+        meitigongda_query = GdutMeitigongda.query.filter(
+            GdutMeitigongda.title.like("%" + filter_title + "%")
+        ).all()
+    return render_template('table_meitigongda.html', gdutschoolnew_all_line=meitigongda_query)
+
+
+# 媒体工大“编辑” 接口
+@main_handler.route('/meitigongda_edit')
+def edit_article_meitigongda():
+    # 1. 定位是哪篇文章
+    article_title_restful_url = flask.request.args.get('article_link')
+    # print("article_title=", article_title_restful_url)
+
+    # 2. 查询数据库,找到文章内容
+    content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
+
+    # 3. 返回内容并渲染成一个新页面
+    return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url)
+
+
+# 媒体工大编辑里面的"保存修改"按钮
+@main_handler.route('/save_meitigongda_edit', methods=['GET', 'POST'])
+def save_edit_article_meitigongda():
+    # 1. 定位是哪篇文章
+    if request.method == 'POST':
+        origin_title = request.form['origin_title']
+        title = request.form['title']
+        date = request.form['date']
+        jianjie = request.form['jianjie']
+        origin_title = flask.request.args.get('origin_title')
+        content = flask.request.args.get('ret_content')
+
+        content = eval(content)
+
+        # 2. 查询数据库,找到文章内容
+        content['title'] = str(title)
+        content['date'] = str(date)
+        content['jianjie'] = str(jianjie)
+
+        # # 3. 返回内容并渲染成一个新页面
+        # todo:以后更改为跳转到用户的展示页面
+        return redirect(url_for('.dashboard_table_meitigongda'))
+
+
+# ==================人文校园====================================== #
 # dashboard查看"人文校园表"的数据
 @main_handler.route('/table_renwenxiaoyuan.html')
 def dashboard_table_renwenxiaoyuan():
-    return render_template('table_renwenxiaoyuan.html')
+    session = Session()
+    gdutschoolnew_all_line = session.query(GdutRenwenxiaoyuan.link, GdutRenwenxiaoyuan.title, GdutRenwenxiaoyuan.src,
+                                           GdutRenwenxiaoyuan.date).all()
+    db.session.commit()
+    return render_template('table_renwenxiaoyuan.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 
-# dashboard查看"校友动态表"的数据
+# dashboard 人文校园 “开始爬取” 接口
+@main_handler.route('/dashboard_start_spider_renwenxiaoyuan')
+def dashboard_start_spider_renwenxiaoyuan():
+    response = requests.get('http://gdutnews.gdut.edu.cn/')
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    # 从菜单栏里面找到入口
+    enter_url = html.xpath("//div[@class='menu']/ul/li[6]/a/@href")[0]
+    gdut_spider_function.dashboard_start_spider_renwenxiaoyuan_list(enter_url)
+
+    # 爬取取完,直接重新刷新页面(每次进入那个页面的时候都会抓取数据库数据的)
+    return redirect(url_for('.dashboard_table_renwenxiaoyuan'))
+
+
+# 人文校园“清空数据” 接口
+@main_handler.route('/clear_data_renwenxiaoyuan')
+def clear_data_renwenxiaoyuan():
+    session = Session()
+    session.execute('delete from gdut_renwenxiaoyuan where 1=1')
+    session.commit()
+    return redirect(url_for('.dashboard_table_renwenxiaoyuan'))
+
+
+# 人文校园“查询” 接口
+@main_handler.route('/search_data_renwenxiaoyuan')
+def search_data_renwenxiaoyuan():
+    # print(flask.request.args)
+    filter_title = flask.request.args.get('product_name')
+    meitigongda_query = GdutRenwenxiaoyuan.query.all()
+    if filter_title:
+        meitigongda_query = GdutRenwenxiaoyuan.query.filter(
+            GdutRenwenxiaoyuan.title.like("%" + filter_title + "%")
+        ).all()
+    return render_template('table_renwenxiaoyuan.html', gdutschoolnew_all_line=meitigongda_query)
+
+
+# 人文校园“编辑” 接口
+@main_handler.route('/renwenxiaoyuan_edit')
+def edit_article_renwenxiaoyuan():
+    # 1. 定位是哪篇文章
+    article_title_restful_url = flask.request.args.get('article_link')
+    # print("article_title=", article_title_restful_url)
+
+    # 2. 查询数据库,找到文章内容
+    content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
+
+    # 3. 返回内容并渲染成一个新页面
+    return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url)
+
+
+# 人文校园编辑里面的"保存修改"按钮
+@main_handler.route('/save_renwenxiaoyuan_edit', methods=['GET', 'POST'])
+def save_edit_article_renwenxiaoyuan():
+    # 1. 定位是哪篇文章
+    if request.method == 'POST':
+        origin_title = request.form['origin_title']
+        title = request.form['title']
+        date = request.form['date']
+        jianjie = request.form['jianjie']
+        origin_title = flask.request.args.get('origin_title')
+        content = flask.request.args.get('ret_content')
+
+        content = eval(content)
+
+        # 2. 查询数据库,找到文章内容
+        content['title'] = str(title)
+        content['date'] = str(date)
+        content['jianjie'] = str(jianjie)
+
+        # # 3. 返回内容并渲染成一个新页面
+        # todo:以后更改为跳转到用户的展示页面
+        return redirect(url_for('.dashboard_table_renwenxiaoyuan'))
+
+
+
+# ==================校友动态表====================================== #
+# dashboard查看"校友动态"的数据
 @main_handler.route('/table_xiaoyoudongtai.html')
 def dashboard_table_xiaoyoudongtai():
-    return render_template('table_xiaoyoudongtai.html')
+    session = Session()
+    gdutschoolnew_all_line = session.query(GdutXiaoyoudongtai.link, GdutXiaoyoudongtai.title, GdutXiaoyoudongtai.src,
+                                           GdutXiaoyoudongtai.date).all()
+    db.session.commit()
+    return render_template('table_xiaoyoudongtai.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 
-# dashboard查看"网上校史馆表"的数据
+# dashboard 校友动态 “开始爬取” 接口
+@main_handler.route('/dashboard_start_spider_xiaoyoudongtai')
+def dashboard_start_spider_xiaoyoudongtai():
+    response = requests.get('http://gdutnews.gdut.edu.cn/')
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    # 从菜单栏里面找到入口
+    enter_url = html.xpath("//div[@class='menu']/ul/li[7]/a/@href")[0]
+    gdut_spider_function.dashboard_start_spider_xiaoyoudongtai_list(enter_url)
+
+    # 爬取取完,直接重新刷新页面(每次进入那个页面的时候都会抓取数据库数据的)
+    return redirect(url_for('.dashboard_table_xiaoyoudongtai'))
+
+
+# 校友动态“清空数据” 接口
+@main_handler.route('/clear_data_xiaoyoudongtai')
+def clear_data_xiaoyoudongtai():
+    session = Session()
+    session.execute('delete from gdut_xiaoyoudongtai where 1=1')
+    session.commit()
+    return redirect(url_for('.dashboard_table_xiaoyoudongtai'))
+
+
+# 校友动态“查询” 接口
+@main_handler.route('/search_data_xiaoyoudongtai')
+def search_data_xiaoyoudongtai():
+    # print(flask.request.args)
+    filter_title = flask.request.args.get('product_name')
+    meitigongda_query = GdutXiaoyoudongtai.query.all()
+    if filter_title:
+        meitigongda_query = GdutXiaoyoudongtai.query.filter(
+            GdutXiaoyoudongtai.title.like("%" + filter_title + "%")
+        ).all()
+    return render_template('table_xiaoyoudongtai.html', gdutschoolnew_all_line=meitigongda_query)
+
+
+# 校友动态“编辑” 接口
+@main_handler.route('/xiaoyoudongtai_edit')
+def edit_article_xiaoyoudongtai():
+    # 1. 定位是哪篇文章
+    article_title_restful_url = flask.request.args.get('article_link')
+    # print("article_title=", article_title_restful_url)
+
+    # 2. 查询数据库,找到文章内容
+    content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
+
+    # 3. 返回内容并渲染成一个新页面
+    return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url)
+
+
+# 校友动态编辑里面的"保存修改"按钮
+@main_handler.route('/save_xiaoyoudongtai_edit', methods=['GET', 'POST'])
+def save_edit_article_xiaoyoudongtai():
+    # 1. 定位是哪篇文章
+    if request.method == 'POST':
+        origin_title = request.form['origin_title']
+        title = request.form['title']
+        date = request.form['date']
+        jianjie = request.form['jianjie']
+        origin_title = flask.request.args.get('origin_title')
+        content = flask.request.args.get('ret_content')
+
+        content = eval(content)
+
+        # 2. 查询数据库,找到文章内容
+        content['title'] = str(title)
+        content['date'] = str(date)
+        content['jianjie'] = str(jianjie)
+
+        # # 3. 返回内容并渲染成一个新页面
+        # todo:以后更改为跳转到用户的展示页面
+        return redirect(url_for('.dashboard_table_xiaoyoudongtai'))
+
+
+# ==================网上校史馆====================================== #
+# dashboard查看"校友动态"的数据
 @main_handler.route('/table_wangshangxiaoshiguan.html')
 def dashboard_table_wangshangxiaoshiguan():
-    return render_template('table_wangshangxiaoshiguan.html')
+    session = Session()
+    gdutschoolnew_all_line = session.query(GdutWangshangxiaoshiguan.link, GdutWangshangxiaoshiguan.title, GdutWangshangxiaoshiguan.src,
+                                           GdutWangshangxiaoshiguan.date).all()
+    db.session.commit()
+    return render_template('table_wangshangxiaoshiguan.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 
+# dashboard 校友动态 “开始爬取” 接口
+@main_handler.route('/dashboard_start_spider_wangshangxiaoshiguan')
+def dashboard_start_spider_wangshangxiaoshiguan():
+    response = requests.get('http://gdutnews.gdut.edu.cn/')
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    # 从菜单栏里面找到入口
+    enter_url = html.xpath("//div[@class='menu']/ul/li[7]/a/@href")[0]
+    gdut_spider_function.dashboard_start_spider_wangshangxiaoshiguan_list(enter_url)
+
+    # 爬取取完,直接重新刷新页面(每次进入那个页面的时候都会抓取数据库数据的)
+    return redirect(url_for('.dashboard_table_wangshangxiaoshiguan'))
+
+
+# 校友动态“清空数据” 接口
+@main_handler.route('/clear_data_wangshangxiaoshiguan')
+def clear_data_wangshangxiaoshiguan():
+    session = Session()
+    session.execute('delete from gdut_wangshangxiaoshiguan where 1=1')
+    session.commit()
+    return redirect(url_for('.dashboard_table_wangshangxiaoshiguan'))
+
+
+# 校友动态“查询” 接口
+@main_handler.route('/search_data_wangshangxiaoshiguan')
+def search_data_wangshangxiaoshiguan():
+    # print(flask.request.args)
+    filter_title = flask.request.args.get('product_name')
+    meitigongda_query = GdutWangshangxiaoshiguan.query.all()
+    if filter_title:
+        meitigongda_query = GdutWangshangxiaoshiguan.query.filter(
+            GdutWangshangxiaoshiguan.title.like("%" + filter_title + "%")
+        ).all()
+    return render_template('table_wangshangxiaoshiguan.html', gdutschoolnew_all_line=meitigongda_query)
+
+
+# 校友动态“编辑” 接口
+@main_handler.route('/wangshangxiaoshiguan_edit')
+def edit_article_wangshangxiaoshiguan():
+    # 1. 定位是哪篇文章
+    article_title_restful_url = flask.request.args.get('article_link')
+    # print("article_title=", article_title_restful_url)
+
+    # 2. 查询数据库,找到文章内容
+    content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
+
+    # 3. 返回内容并渲染成一个新页面
+    return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url)
+
+
+# 校友动态编辑里面的"保存修改"按钮
+@main_handler.route('/save_wangshangxiaoshiguan_edit', methods=['GET', 'POST'])
+def save_edit_article_wangshangxiaoshiguan():
+    # 1. 定位是哪篇文章
+    if request.method == 'POST':
+        origin_title = request.form['origin_title']
+        title = request.form['title']
+        date = request.form['date']
+        jianjie = request.form['jianjie']
+        origin_title = flask.request.args.get('origin_title')
+        content = flask.request.args.get('ret_content')
+
+        content = eval(content)
+
+        # 2. 查询数据库,找到文章内容
+        content['title'] = str(title)
+        content['date'] = str(date)
+        content['jianjie'] = str(jianjie)
+
+        # # 3. 返回内容并渲染成一个新页面
+        # todo:以后更改为跳转到用户的展示页面
+        return redirect(url_for('.dashboard_table_wangshangxiaoshiguan'))
+
+# ==================学习园地表====================================== #
 # dashboard查看"学习园地表"的数据
+# @main_handler.route('/table_xuexiyuandi.html')
+# def dashboard_table_xuexiyuandi():
+#     return render_template('table_xuexiyuandi.html')
+
+# dashboard查看"校友动态"的数据
 @main_handler.route('/table_xuexiyuandi.html')
 def dashboard_table_xuexiyuandi():
-    return render_template('table_xuexiyuandi.html')
+    session = Session()
+    gdutschoolnew_all_line = session.query(GdutXuexiyuandi.link, GdutXuexiyuandi.title, GdutXuexiyuandi.src,
+                                           GdutXuexiyuandi.date).all()
+    db.session.commit()
+    return render_template('table_xuexiyuandi.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
+
+
+# dashboard 校友动态 “开始爬取” 接口
+@main_handler.route('/dashboard_start_spider_xuexiyuandi')
+def dashboard_start_spider_xuexiyuandi():
+    response = requests.get('http://gdutnews.gdut.edu.cn/')
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    # 从菜单栏里面找到入口
+    enter_url = html.xpath("//div[@class='menu']/ul/li[8]/a/@href")[0]
+    gdut_spider_function.dashboard_start_spider_xuexiyuandi_list(enter_url)
+
+    # 爬取取完,直接重新刷新页面(每次进入那个页面的时候都会抓取数据库数据的)
+    return redirect(url_for('.dashboard_table_xuexiyuandi'))
+
+
+# 校友动态“清空数据” 接口
+@main_handler.route('/clear_data_xuexiyuandi')
+def clear_data_xuexiyuandi():
+    session = Session()
+    session.execute('delete from gdut_xuexiyuandi where 1=1')
+    session.commit()
+    return redirect(url_for('.dashboard_table_xuexiyuandi'))
+
+
+# 校友动态“查询” 接口
+@main_handler.route('/search_data_xuexiyuandi')
+def search_data_xuexiyuandi():
+    # print(flask.request.args)
+    filter_title = flask.request.args.get('product_name')
+    meitigongda_query = GdutXuexiyuandi.query.all()
+    if filter_title:
+        meitigongda_query = GdutXuexiyuandi.query.filter(
+            GdutXuexiyuandi.title.like("%" + filter_title + "%")
+        ).all()
+    return render_template('table_xuexiyuandi.html', gdutschoolnew_all_line=meitigongda_query)
+
+
+# 校友动态“编辑” 接口
+@main_handler.route('/xuexiyuandi_edit')
+def edit_article_xuexiyuandi():
+    # 1. 定位是哪篇文章
+    article_title_restful_url = flask.request.args.get('article_link')
+    # print("article_title=", article_title_restful_url)
+
+    # 2. 查询数据库,找到文章内容
+    content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
+
+    # 3. 返回内容并渲染成一个新页面
+    return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url)
+
+
+# 校友动态编辑里面的"保存修改"按钮
+@main_handler.route('/save_xuexiyuandi_edit', methods=['GET', 'POST'])
+def save_edit_article_xuexiyuandi():
+    # 1. 定位是哪篇文章
+    if request.method == 'POST':
+        origin_title = request.form['origin_title']
+        title = request.form['title']
+        date = request.form['date']
+        jianjie = request.form['jianjie']
+        origin_title = flask.request.args.get('origin_title')
+        content = flask.request.args.get('ret_content')
+
+        content = eval(content)
+
+        # 2. 查询数据库,找到文章内容
+        content['title'] = str(title)
+        content['date'] = str(date)
+        content['jianjie'] = str(jianjie)
+
+        # # 3. 返回内容并渲染成一个新页面
+        # todo:以后更改为跳转到用户的展示页面
+        return redirect(url_for('.dashboard_table_xuexiyuandi'))
+
+# ===================专栏报道表=========================================== #
+
+# dashboard查看"校友动态"的数据
+@main_handler.route('/table_zhuanlanbaodao.html')
+def dashboard_table_zhuanlanbaodao():
+    session = Session()
+    gdutschoolnew_all_line = session.query(GdutZhuanlanbaodao.link, GdutZhuanlanbaodao.title, GdutZhuanlanbaodao.src,
+                                           GdutZhuanlanbaodao.date).all()
+    db.session.commit()
+    return render_template('table_zhuanlanbaodao.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
+
+
+# dashboard 校友动态 “开始爬取” 接口
+@main_handler.route('/dashboard_start_spider_zhuanlanbaodao')
+def dashboard_start_spider_zhuanlanbaodao():
+    response = requests.get('http://gdutnews.gdut.edu.cn/')
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    # 从菜单栏里面找到入口
+    enter_url = html.xpath("//div[@class='menu']/ul/li[9]/a/@href")[0]
+    gdut_spider_function.dashboard_start_spider_zhuanlanbaodao_list(enter_url)
+
+    # 爬取取完,直接重新刷新页面(每次进入那个页面的时候都会抓取数据库数据的)
+    return redirect(url_for('.dashboard_table_zhuanlanbaodao'))
+
+
+# 校友动态“清空数据” 接口
+@main_handler.route('/clear_data_zhuanlanbaodao')
+def clear_data_zhuanlanbaodao():
+    session = Session()
+    session.execute('delete from gdut_zhuanlanbaodao where 1=1')
+    session.commit()
+    return redirect(url_for('.dashboard_table_zhuanlanbaodao'))
+
+
+# 校友动态“查询” 接口
+@main_handler.route('/search_data_zhuanlanbaodao')
+def search_data_zhuanlanbaodao():
+    # print(flask.request.args)
+    filter_title = flask.request.args.get('product_name')
+    meitigongda_query = GdutZhuanlanbaodao.query.all()
+    if filter_title:
+        meitigongda_query = GdutZhuanlanbaodao.query.filter(
+            GdutZhuanlanbaodao.title.like("%" + filter_title + "%")
+        ).all()
+    return render_template('table_zhuanlanbaodao.html', gdutschoolnew_all_line=meitigongda_query)
+
+
+# 校友动态“编辑” 接口
+@main_handler.route('/zhuanlanbaodao_edit')
+def edit_article_zhuanlanbaodao():
+    # 1. 定位是哪篇文章
+    article_title_restful_url = flask.request.args.get('article_link')
+    # print("article_title=", article_title_restful_url)
+
+    # 2. 查询数据库,找到文章内容
+    content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
+
+    # 3. 返回内容并渲染成一个新页面
+    return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url)
+
+
+# 校友动态编辑里面的"保存修改"按钮
+@main_handler.route('/save_zhuanlanbaodao_edit', methods=['GET', 'POST'])
+def save_edit_article_zhuanlanbaodao():
+    # 1. 定位是哪篇文章
+    if request.method == 'POST':
+        origin_title = request.form['origin_title']
+        title = request.form['title']
+        date = request.form['date']
+        jianjie = request.form['jianjie']
+        origin_title = flask.request.args.get('origin_title')
+        content = flask.request.args.get('ret_content')
+
+        content = eval(content)
+
+        # 2. 查询数据库,找到文章内容
+        content['title'] = str(title)
+        content['date'] = str(date)
+        content['jianjie'] = str(jianjie)
+
+        # # 3. 返回内容并渲染成一个新页面
+        # todo:以后更改为跳转到用户的展示页面
+        return redirect(url_for('.dashboard_table_zhuanlanbaodao'))
+
+# ========================================================================
 
 # dashboard里面点击文章之后,跳转到"编辑"页面
 @main_handler.route('/ecommerce_product.html', methods=['GET'])
@@ -208,7 +664,6 @@ def dashboard_jump_edit():
     # todo:查询文章内容的详情
 
     return render_template('ecommerce_product.html')
-
 
 
 # 模拟的爬取到的新闻首页
@@ -430,7 +885,6 @@ def clear_data():
     session.execute('delete from gdut_detailpage_content where 1=1')
     session.execute('delete from gdut_detailpage_picture where 1=1')
 
-
     session.commit()
     return render_template('clear_data.html')
 
@@ -457,11 +911,8 @@ def spider_detail(path):
         for content in content_list:
             if content.text is None:
                 pass
-                # text_list.append("None")
             else:
                 text_list.append(content.text)
-        # for content in content_list2:
-        #     text_list.append(content.text)
 
         for content in content_list2:
             text_list.append(str(content))

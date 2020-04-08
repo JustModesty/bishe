@@ -7,6 +7,7 @@ from config import PublicGdutWebVar
 
 from urllib.request import urlretrieve
 
+
 # 抓取banner
 def banner(html):
     banner = html.xpath('//div[@class="banner"]/img/@src')[0]
@@ -221,19 +222,27 @@ def start_spider_detail(path):
     # print("len(if_exist)=", len(if_exist))
 
     if not if_exist:
-        detail['title'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/h1[@class='title']/span[@id='ctl00_ContentPlaceHolder1_tbxTitle']/text()")[0]
-        print("detail['title']=",detail['title'])
-        detail['release_date'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@class='info']/span[@id='ctl00_ContentPlaceHolder1_tbxUpdateTime']/text()")[0]
+        detail['title'] = html.xpath(
+            "//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/h1[@class='title']/span[@id='ctl00_ContentPlaceHolder1_tbxTitle']/text()")[
+            0]
+        print("detail['title']=", detail['title'])
+        detail['release_date'] = html.xpath(
+            "//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@class='info']/span[@id='ctl00_ContentPlaceHolder1_tbxUpdateTime']/text()")[
+            0]
         print("detail['release_date']=", detail['release_date'])
-        detail['jianjie'] = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@id='ctl00_ContentPlaceHolder1_jj']/p/span[@id='ctl00_ContentPlaceHolder1_tbxIntro']/text()")[0]
+        detail['jianjie'] = html.xpath(
+            "//div[@class='newslistcon']/div[@class='listleft']/div[@class='contentmain']/form/div[@id='ctl00_ContentPlaceHolder1_jj']/p/span[@id='ctl00_ContentPlaceHolder1_tbxIntro']/text()")[
+            0]
         print("detail['jianjie']=", detail['jianjie'])
         detail['content_list'] = html.xpath('//div[@id="vsb_content_2"]//p//span')
         detail['content_list2'] = html.xpath('//div[@id="vsb_content_4"]//p//text()')
+        detail['content_list3'] = html.xpath("//form/div[@id='contentText']//text()")
+        
         detail['img_list'] = html.xpath('//div[@id="vsb_content_2"]//p//img/@src')
 
-
         # 存储文章基本信息
-        sql_insert_GdutSchoolnewsDetailpage = GdutDetailpage(link=path, title=detail['title'], date=detail['release_date'], jianjie=detail['jianjie'])
+        sql_insert_GdutSchoolnewsDetailpage = GdutDetailpage(link=path, title=detail['title'],
+                                                             date=detail['release_date'], jianjie=detail['jianjie'])
         db.session.add(sql_insert_GdutSchoolnewsDetailpage)
         db.session.commit()
 
@@ -251,25 +260,18 @@ def start_spider_detail(path):
         for content in detail['content_list']:
             if content.text is None:
                 pass
-                # text_list.append("None")
             else:
                 text_list.append(content.text)
-        # for content in content_list2:
-        #     text_list.append(content.text)
 
         for content in detail['content_list2']:
             text_list.append(str(content))
+        for content in detail['content_list3']:
+            text_list.append(str(content))
 
-        # for paragraph in detail['content_list']:
-        #     pass
-        # for paragraph in detail['content_list2']:
-        #     pass
         for paragraph in text_list:
             sql_insert_GdutDetailpageContent = GdutDetailpageContent(detail_link=path, paragraph=paragraph)
             db.session.add(sql_insert_GdutDetailpageContent)
             db.session.commit()
-    # return detail
-
 
 
 def start_spider_menu_section(url):
@@ -288,18 +290,21 @@ def start_spider_menu_section(url):
     # 顶部新闻标题
     top_news_titles = html.xpath("//a[@class='listimgultitle']/text()")
     for i in range(len(top_news_src_links)):
-        item = {'src': PublicGdutWebVar.url_pre + top_news_src_links[i], 'link': top_news_links[i], 'title': top_news_titles[i]}
+        item = {'src': PublicGdutWebVar.url_pre + top_news_src_links[i], 'link': top_news_links[i],
+                'title': top_news_titles[i]}
         all_news.append(item)
 
     # 普通链接新闻
-    normal_news_links = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/@href")
-    normal_news_title = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/text()")
-    normal_news_date = html.xpath("//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']//span[@class='floatright']/text()")
+    normal_news_links = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/@href")
+    normal_news_title = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/text()")
+    normal_news_date = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']//span[@class='floatright']/text()")
     for i in range(len(normal_news_links)):
         news_publish_date = normal_news_date[i][1:-1]
         item = {'link': normal_news_links[i], 'title': normal_news_title[i], 'date': news_publish_date}
         all_news.append(item)
-
 
     # 将链接存进数据库
     gdutschoolnew_all_link = set(db.session.query(GdutSchoolnew.link).all())
@@ -383,42 +388,15 @@ def dashboard_start_spider_schoolnews_list(enter_url):
 def query_from_database_gdut_detailpage(article_title_restful_url):
     content = {}
     result = GdutDetailpage.query.filter_by(link=article_title_restful_url).all()
-    # result = GdutDetailpage.query.filter(link=article_title_restful_url).all()[0]
-
-    # result =  db.session.query(GdutDetailpage.link).all()
-
-    # # -----test start------
-    # print("-----test start------")
-    # print("type(result)=",type(result))
-    # print("result=",result)
-    # # print("len(result)=",len(result))
-    # print("-----test end--------")
-    # # -----test end--------
 
     # 如果已经在了,直接找到相应的内容返回即可. 不用再次爬取
     if result:
-
         print("11111111111")
         row = result[0]
-
-        # fixme bug:list out of range
-        # print("-----test start------")
-        # print("type(row)=", type(row))
-        # print("row=", row)
-        # print("dir(row)=",dir(row))
-        # print("-----test end--------")
 
         title = row.title
         date = row.date
         jianjie = row.jianjie
-        # print("title=", title)
-        # print("date=", date)
-        # print("jianjie=", jianjie)
-        # print("==============================================")
-
-        # title = row[2]
-        # date = row[3]
-        # jianjie = row[4]
 
         result_picture = GdutDetailpagePicture.query.filter_by(detail_link=article_title_restful_url).all()
         picture_local_position_list = []
@@ -443,3 +421,340 @@ def query_from_database_gdut_detailpage(article_title_restful_url):
         print("2222222222")
         start_spider_detail(article_title_restful_url)
         return query_from_database_gdut_detailpage(article_title_restful_url)
+
+
+def dashboard_start_spider_meitigongda_list(enter_url):
+    # 进入新的url开始爬取
+    url = PublicGdutWebVar.url_pre + enter_url
+    response = requests.get(url)
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    all_news = []
+
+    # 有图片的位于顶部的新闻
+    # 图片的src链接(不含前缀)
+    top_news_src_links = html.xpath("//ul[@class='listimgul']//li//img/@src")
+
+    # 新闻的链接(部分含含http前缀的外部链接,直接跳转；不含的则加广工前缀跳转)
+    top_news_links = html.xpath("//ul[@class='listimgul']//li//a[@class='listimgulimg']/@href")
+    # 顶部新闻标题
+    top_news_titles = html.xpath("//a[@class='listimgultitle']/text()")
+    for i in range(len(top_news_links)):
+        item = {'src': PublicGdutWebVar.url_pre + top_news_src_links[i], 'link': top_news_links[i],
+                'title': top_news_titles[i]}
+        all_news.append(item)
+
+    # 普通链接新闻
+    normal_news_links = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/@href")
+    normal_news_title = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/text()")
+    normal_news_date = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']//span[@class='floatright']/text()")
+    for i in range(len(normal_news_links)):
+        news_publish_date = normal_news_date[i][1:-1]
+        item = {'link': normal_news_links[i], 'title': normal_news_title[i], 'date': news_publish_date}
+        all_news.append(item)
+
+    # 将链接存进数据库
+    gdutschoolnew_all_link = set(db.session.query(GdutMeitigongda.link).all())
+    gdutschoolnew_all_tmp = set()
+    for line in gdutschoolnew_all_link:
+        gdutschoolnew_all_tmp.add(line[0])
+    gdutschoolnew_all_link = gdutschoolnew_all_tmp
+
+    for item in all_news:
+        if item['link'] not in gdutschoolnew_all_link:
+            # 有图片顶部新闻是不带日期的, 而没图片的是带日期的.
+            if item.__contains__('src'):
+                sql_insert = GdutMeitigongda(link=item['link'], title=item['title'], src=item['src'])
+                db.session.add(sql_insert)
+                db.session.commit()
+            else:
+                sql_insert = GdutMeitigongda(link=item['link'], title=item['title'], date=item['date'])
+                db.session.add(sql_insert)
+                db.session.commit()
+            gdutschoolnew_all_link.add(item['link'])
+
+
+def dashboard_start_spider_renwenxiaoyuan_list(enter_url):
+    # 进入新的url开始爬取
+    url = PublicGdutWebVar.url_pre + enter_url
+    response = requests.get(url)
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    all_news = []
+
+    # 有图片的位于顶部的新闻
+    # 图片的src链接(不含前缀)
+    top_news_src_links = html.xpath("//ul[@class='listimgul']//li//img/@src")
+
+    # 新闻的链接(部分含含http前缀的外部链接,直接跳转；不含的则加广工前缀跳转)
+    top_news_links = html.xpath("//ul[@class='listimgul']//li//a[@class='listimgulimg']/@href")
+    # 顶部新闻标题
+    top_news_titles = html.xpath("//a[@class='listimgultitle']/text()")
+    for i in range(len(top_news_links)):
+        item = {'src': PublicGdutWebVar.url_pre + top_news_src_links[i], 'link': top_news_links[i],
+                'title': top_news_titles[i]}
+        all_news.append(item)
+
+    # 普通链接新闻
+    normal_news_links = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/@href")
+    normal_news_title = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/text()")
+    normal_news_date = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']//span[@class='floatright']/text()")
+
+    for i in range(len(normal_news_links)):
+        news_publish_date = normal_news_date[i][1:-1]
+        item = {'link': normal_news_links[i], 'title': normal_news_title[i], 'date': news_publish_date}
+        all_news.append(item)
+
+    # 将链接存进数据库
+    gdutschoolnew_all_link = set(db.session.query(GdutRenwenxiaoyuan.link).all())
+    gdutschoolnew_all_tmp = set()
+    for line in gdutschoolnew_all_link:
+        gdutschoolnew_all_tmp.add(line[0])
+    gdutschoolnew_all_link = gdutschoolnew_all_tmp
+
+    for item in all_news:
+        if item['link'] not in gdutschoolnew_all_link:
+            # 有图片顶部新闻是不带日期的, 而没图片的是带日期的.
+            if item.__contains__('src'):
+                sql_insert = GdutRenwenxiaoyuan(link=item['link'], title=item['title'], src=item['src'])
+                db.session.add(sql_insert)
+                db.session.commit()
+            else:
+                sql_insert = GdutRenwenxiaoyuan(link=item['link'], title=item['title'], date=item['date'])
+                db.session.add(sql_insert)
+                db.session.commit()
+            gdutschoolnew_all_link.add(item['link'])
+
+
+def dashboard_start_spider_xiaoyoudongtai_list(enter_url):
+    # 进入新的url开始爬取
+    url = PublicGdutWebVar.url_pre + enter_url
+    response = requests.get(url)
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    all_news = []
+
+    # 有图片的位于顶部的新闻
+    # 图片的src链接(不含前缀)
+    top_news_src_links = html.xpath("//ul[@class='listimgul']//li//img/@src")
+
+    # 新闻的链接(部分含含http前缀的外部链接,直接跳转；不含的则加广工前缀跳转)
+    top_news_links = html.xpath("//ul[@class='listimgul']//li//a[@class='listimgulimg']/@href")
+    # 顶部新闻标题
+    top_news_titles = html.xpath("//a[@class='listimgultitle']/text()")
+    for i in range(len(top_news_links)):
+        item = {'src': PublicGdutWebVar.url_pre + top_news_src_links[i], 'link': top_news_links[i],
+                'title': top_news_titles[i]}
+        all_news.append(item)
+
+    # 普通链接新闻
+    normal_news_links = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/@href")
+    normal_news_title = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/text()")
+    normal_news_date = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']//span[@class='floatright']/text()")
+    for i in range(len(normal_news_links)):
+        news_publish_date = normal_news_date[i][1:-1]
+        item = {'link': normal_news_links[i], 'title': normal_news_title[i], 'date': news_publish_date}
+        all_news.append(item)
+
+    # 将链接存进数据库
+    gdutschoolnew_all_link = set(db.session.query(GdutXiaoyoudongtai.link).all())
+    gdutschoolnew_all_tmp = set()
+    for line in gdutschoolnew_all_link:
+        gdutschoolnew_all_tmp.add(line[0])
+    gdutschoolnew_all_link = gdutschoolnew_all_tmp
+
+    for item in all_news:
+        if item['link'] not in gdutschoolnew_all_link:
+            # 有图片顶部新闻是不带日期的, 而没图片的是带日期的.
+            if item.__contains__('src'):
+                sql_insert = GdutXiaoyoudongtai(link=item['link'], title=item['title'], src=item['src'])
+                db.session.add(sql_insert)
+                db.session.commit()
+            else:
+                sql_insert = GdutXiaoyoudongtai(link=item['link'], title=item['title'], date=item['date'])
+                db.session.add(sql_insert)
+                db.session.commit()
+            gdutschoolnew_all_link.add(item['link'])
+
+
+def dashboard_start_spider_wangshangxiaoshiguan_list(enter_url):
+    # 进入新的url开始爬取
+    url = PublicGdutWebVar.url_pre + enter_url
+    response = requests.get(url)
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    all_news = []
+
+    # 有图片的位于顶部的新闻
+    # 图片的src链接(不含前缀)
+    top_news_src_links = html.xpath("//ul[@class='listimgul']//li//img/@src")
+
+    # 新闻的链接(部分含含http前缀的外部链接,直接跳转；不含的则加广工前缀跳转)
+    top_news_links = html.xpath("//ul[@class='listimgul']//li//a[@class='listimgulimg']/@href")
+    # 顶部新闻标题
+    top_news_titles = html.xpath("//a[@class='listimgultitle']/text()")
+    for i in range(len(top_news_links)):
+        item = {'src': PublicGdutWebVar.url_pre + top_news_src_links[i], 'link': top_news_links[i],
+                'title': top_news_titles[i]}
+        all_news.append(item)
+
+    # 普通链接新闻
+    normal_news_links = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/@href")
+    normal_news_title = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/text()")
+    normal_news_date = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']//span[@class='floatright']/text()")
+    for i in range(len(normal_news_links)):
+        news_publish_date = normal_news_date[i][1:-1]
+        item = {'link': normal_news_links[i], 'title': normal_news_title[i], 'date': news_publish_date}
+        all_news.append(item)
+
+    # 将链接存进数据库
+    gdutschoolnew_all_link = set(db.session.query(GdutWangshangxiaoshiguan.link).all())
+    gdutschoolnew_all_tmp = set()
+    for line in gdutschoolnew_all_link:
+        gdutschoolnew_all_tmp.add(line[0])
+    gdutschoolnew_all_link = gdutschoolnew_all_tmp
+
+    for item in all_news:
+        if item['link'] not in gdutschoolnew_all_link:
+            # 有图片顶部新闻是不带日期的, 而没图片的是带日期的.
+            if item.__contains__('src'):
+                sql_insert = GdutWangshangxiaoshiguan(link=item['link'], title=item['title'], src=item['src'])
+                db.session.add(sql_insert)
+                db.session.commit()
+            else:
+                sql_insert = GdutWangshangxiaoshiguan(link=item['link'], title=item['title'], date=item['date'])
+                db.session.add(sql_insert)
+                db.session.commit()
+            gdutschoolnew_all_link.add(item['link'])
+
+
+def dashboard_start_spider_xuexiyuandi_list(enter_url):
+    # 进入新的url开始爬取
+    url = PublicGdutWebVar.url_pre + enter_url
+    response = requests.get(url)
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    all_news = []
+
+    # 有图片的位于顶部的新闻
+    # 图片的src链接(不含前缀)
+    top_news_src_links = html.xpath("//ul[@class='listimgul']//li//img/@src")
+
+    # 新闻的链接(部分含含http前缀的外部链接,直接跳转；不含的则加广工前缀跳转)
+    top_news_links = html.xpath("//ul[@class='listimgul']//li//a[@class='listimgulimg']/@href")
+    # 顶部新闻标题
+    top_news_titles = html.xpath("//a[@class='listimgultitle']/text()")
+    for i in range(len(top_news_links)):
+        item = {'src': PublicGdutWebVar.url_pre + top_news_src_links[i], 'link': top_news_links[i],
+                'title': top_news_titles[i]}
+        all_news.append(item)
+
+    # 普通链接新闻
+    normal_news_links = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/@href")
+    normal_news_title = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/text()")
+    normal_news_date = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']//span[@class='floatright']/text()")
+    for i in range(len(normal_news_links)):
+        news_publish_date = normal_news_date[i][1:-1]
+        item = {'link': normal_news_links[i], 'title': normal_news_title[i], 'date': news_publish_date}
+        all_news.append(item)
+
+    # 将链接存进数据库
+    gdutschoolnew_all_link = set(db.session.query(GdutXuexiyuandi.link).all())
+    gdutschoolnew_all_tmp = set()
+    for line in gdutschoolnew_all_link:
+        gdutschoolnew_all_tmp.add(line[0])
+    gdutschoolnew_all_link = gdutschoolnew_all_tmp
+
+    for item in all_news:
+        if item['link'] not in gdutschoolnew_all_link:
+            # 有图片顶部新闻是不带日期的, 而没图片的是带日期的.
+            if item.__contains__('src'):
+                sql_insert = GdutXuexiyuandi(link=item['link'], title=item['title'], src=item['src'])
+                db.session.add(sql_insert)
+                db.session.commit()
+            else:
+                sql_insert = GdutXuexiyuandi(link=item['link'], title=item['title'], date=item['date'])
+                db.session.add(sql_insert)
+                db.session.commit()
+            gdutschoolnew_all_link.add(item['link'])
+
+
+def dashboard_start_spider_zhuanlanbaodao_list(enter_url):
+    # 进入新的url开始爬取
+    url = PublicGdutWebVar.url_pre + enter_url
+    response = requests.get(url)
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    all_news = []
+
+    # 有图片的位于顶部的新闻
+    # 图片的src链接(不含前缀)
+    top_news_src_links = html.xpath("//ul[@class='listimgul']//li//img/@src")
+
+    # 新闻的链接(部分含含http前缀的外部链接,直接跳转；不含的则加广工前缀跳转)
+    top_news_links = html.xpath("//ul[@class='listimgul']//li//a[@class='listimgulimg']/@href")
+    # 顶部新闻标题
+    top_news_titles = html.xpath("//a[@class='listimgultitle']/text()")
+    for i in range(len(top_news_links)):
+        item = {'src': PublicGdutWebVar.url_pre + top_news_src_links[i], 'link': top_news_links[i],
+                'title': top_news_titles[i]}
+        all_news.append(item)
+
+    # 普通链接新闻
+    normal_news_links = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/@href")
+    normal_news_title = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']/li/a/text()")
+    normal_news_date = html.xpath(
+        "//div[@class='newslistcon']/div[@class='listleft']/ul[@class='listtextul']//span[@class='floatright']/text()")
+    for i in range(len(normal_news_links)):
+        news_publish_date = normal_news_date[i][1:-1]
+        item = {'link': normal_news_links[i], 'title': normal_news_title[i], 'date': news_publish_date}
+        all_news.append(item)
+
+    # 将链接存进数据库
+    gdutschoolnew_all_link = set(db.session.query(GdutZhuanlanbaodao.link).all())
+    gdutschoolnew_all_tmp = set()
+    for line in gdutschoolnew_all_link:
+        gdutschoolnew_all_tmp.add(line[0])
+    gdutschoolnew_all_link = gdutschoolnew_all_tmp
+
+    for item in all_news:
+        if item['link'] not in gdutschoolnew_all_link:
+            # 有图片顶部新闻是不带日期的, 而没图片的是带日期的.
+            if item.__contains__('src'):
+                sql_insert = GdutZhuanlanbaodao(link=item['link'], title=item['title'], src=item['src'])
+                db.session.add(sql_insert)
+                db.session.commit()
+            else:
+                sql_insert = GdutZhuanlanbaodao(link=item['link'], title=item['title'], date=item['date'])
+                db.session.add(sql_insert)
+                db.session.commit()
+            gdutschoolnew_all_link.add(item['link'])

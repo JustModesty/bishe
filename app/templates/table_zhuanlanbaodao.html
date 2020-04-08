@@ -155,7 +155,7 @@
             </div>
             <div class="row wrapper border-bottom white-bg page-heading">
                 <div class="col-lg-10">
-                    <h2>人文校园</h2>
+                    <h2>学校新闻</h2>
                     <ol class="breadcrumb">
                         <li>
                             <a href="index.html">首页</a>
@@ -164,16 +164,15 @@
                             <a>数据表</a>
                         </li>
                         <li class="active">
-                            <strong>人文校园表</strong>
+                            <strong>学校新闻表</strong>
                         </li>
                     </ol>
                 </div>
                 <div>
                     <br>
-                    <a class="btn btn-success" href="{{ url_for('.dashboard_start_spider_renwenxiaoyuan') }}"
+                    <a class="btn btn-success" href="{{ url_for('.dashboard_start_spider_zhuanlanbaodao') }}"
                        role="button">开始爬取 »</a>
-                    <a class="btn btn-danger" href="{{ url_for('.clear_data_renwenxiaoyuan') }}" role="button">开始清空数据库
-                        »</a>
+                    <a class="btn btn-danger" href="{{ url_for('.clear_data_zhuanlanbaodao') }}" role="button">开始清空数据库 »</a>
                 </div>
 
                 <div class="col-lg-2">
@@ -185,7 +184,7 @@
             <div class="wrapper wrapper-content animated fadeInRight ecommerce">
                 <div class="ibox-content m-b-sm border-bottom">
                     <div class="row">
-                        <form action="{{ url_for('.search_data_renwenxiaoyuan') }}">
+                        <form action="{{ url_for('.search_data_zhuanlanbaodao') }}">
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     <label class="control-label" for="product_name">置顶新闻标题</label>
@@ -225,13 +224,8 @@
                                         {% if not item['date'] %}
                                             <tr>
                                                 <td>
-                                                    {% if item['link'].startswith('http') %}
-                                                        <a target="_blank"
-                                                           href="{{ item['link'] }}">{{ item['title'] }}</a>
-                                                    {% else %}
-                                                        <a target="_blank"
-                                                           href="https://gdutnews.gdut.edu.cn/{{ item['link'] }}">{{ item['title'] }}</a>
-                                                    {% endif %}
+                                                    {#                                                {{ item['title'] }}#}
+                                                    <a target="_blank" href="{{ item['link'] }}">{{ item['title'] }}</a>
                                                 </td>
                                                 <td>
                                                     {#                                                {{ item['date'] | default('') }}#}
@@ -253,7 +247,7 @@
                                                         {% if item['link'].startswith('http') %}
                                                             <button class="btn-white btn btn-xs disabled">编辑</button>
                                                         {% else %}
-                                                            <a href="{{ url_for('.edit_article_schoolnews', article_link=item['link'] ) }}">
+                                                            <a href="{{ url_for('.edit_article_zhuanlanbaodao', article_link=item['link'] ) }}">
                                                                 <button class="btn-white btn btn-xs">编辑</button>
                                                             </a>
                                                         {% endif %}
@@ -303,11 +297,9 @@
                                             <tr>
                                                 <td>
                                                     {% if item['link'].startswith('http') %}
-                                                        <a target="_blank"
-                                                           href="{{ item['link'] }}">{{ item['title'] }}</a>
+                                                        <a target="_blank" href="{{ item['link'] }}">{{ item['title'] }}</a>
                                                     {% else %}
-                                                        <a target="_blank"
-                                                           href="https://gdutnews.gdut.edu.cn/{{ item['link'] }}">{{ item['title'] }}</a>
+                                                        <a target="_blank" href="https://gdutnews.gdut.edu.cn/{{ item['link'] }}">{{ item['title'] }}</a>
                                                     {% endif %}
                                                 </td>
                                                 <td>
@@ -326,7 +318,7 @@
                                                         {% if item['link'].startswith('http') %}
                                                             <button class="btn-white btn btn-xs disabled">编辑</button>
                                                         {% else %}
-                                                            <a href="{{ url_for('.edit_article_schoolnews', article_link=item['link'] ) }}">
+                                                            <a href="{{ url_for('.edit_article_zhuanlanbaodao', article_link=item['link'] ) }}">
                                                                 <button class="btn-white btn btn-xs">编辑</button>
                                                             </a>
                                                         {% endif %}
