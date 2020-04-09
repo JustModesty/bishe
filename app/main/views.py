@@ -1,5 +1,7 @@
+import base64
 import json
 import time
+import uuid
 
 import flask
 from flask import render_template, redirect, url_for, request
@@ -161,11 +163,68 @@ def save_edit_article_schoolnews():
         if update_field == 'paragraph':
             link = article.link
             new_paragraph = request.form['paragraph']
-            print("type(new_paragraph)= ", type(new_paragraph))
-            print("paragraph=", new_paragraph)
-            print("dir(paragraph)=", dir(new_paragraph))
+            # print("paragraph=", new_paragraph)
+            html = etree.HTML(new_paragraph)
+            picture_html_list = html.xpath('//img/@src')
+            # fixme:新插入的图片是base64编码,需要下载到本地,然后数据库存储本地地址
+            picture_rows = databases_map_picture[news_class].query.filter(databases_map_picture[news_class].detail_link == link).all()
+            for row in picture_rows:
+                try:
+                    db.session.delete(row)
+                    db.session.commit()
+                except :
+                    db.session.rollback()
+            for picture in picture_html_list:
+                print("picture=", picture)
+                if picture.startswith("data"):
+                    start_index = picture.find(',') + 1
+                    base64_str = picture[start_index:]
+                    # 只能放jpg格式的图片!
+                    random_str = str(uuid.uuid4()) + ".jpg"
+                    file_name = "app/static/gdut_img/detailpage/" + random_str
+                    with open(file_name, 'wb') as f:
+                        f.write(base64.b64decode(base64_str))
+
+                    save_position = 'app/static/gdut_img/detailpage/' + random_str
+                    sql_insert_GdutDetailpagePicture = GdutDetailpagePicture(detail_link=link, local_position=save_position)
+                    db.session.add(sql_insert_GdutDetailpagePicture)
+
+                    try:
+                        db.session.commit()
+                    except:
+                        db.session.rollback()
+                else:
+                    save_position = "app" + picture[2:]
+                    sql_insert_GdutDetailpagePicture = GdutDetailpagePicture(detail_link=link,
+                                                                             local_position=save_position)
+                    db.session.add(sql_insert_GdutDetailpagePicture)
+
+                    try:
+                        db.session.commit()
+                    except:
+                        db.session.rollback()
+
+
+
+
+            # text_list = html.xpath('//p/text()')
             # content_rows = databases_map_content[news_class].query.filter(databases_map_content[news_class].detail_link == link).all()
-            # picture_rows = databases_map_picture[news_class].query.filter(databases_map_picture[news_class].detail_link == link).all()
+            # for row in content_rows:
+            #     try:
+            #         db.session.delete(row)
+            #         db.session.commit()
+            #     except :
+            #         db.session.rollback()
+            # for text in text_list:
+            #     try:
+            #         row = databases_map_content[news_class](detail_link=link, paragraph=text)
+            #         db.session.add(row)
+            #         db.session.commit()
+            #     except :
+            #         db.session.rollback()
+
+
+
             #
             # article.jianjie = new_jianjie
             # try:
