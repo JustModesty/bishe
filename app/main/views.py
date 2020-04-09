@@ -184,11 +184,9 @@ def save_edit_article_schoolnews():
                     file_name = "app/static/gdut_img/detailpage/" + random_str
                     with open(file_name, 'wb') as f:
                         f.write(base64.b64decode(base64_str))
-
                     save_position = 'app/static/gdut_img/detailpage/' + random_str
                     sql_insert_GdutDetailpagePicture = GdutDetailpagePicture(detail_link=link, local_position=save_position)
                     db.session.add(sql_insert_GdutDetailpagePicture)
-
                     try:
                         db.session.commit()
                     except:
@@ -207,21 +205,21 @@ def save_edit_article_schoolnews():
 
 
 
-            # text_list = html.xpath('//p/text()')
-            # content_rows = databases_map_content[news_class].query.filter(databases_map_content[news_class].detail_link == link).all()
-            # for row in content_rows:
-            #     try:
-            #         db.session.delete(row)
-            #         db.session.commit()
-            #     except :
-            #         db.session.rollback()
-            # for text in text_list:
-            #     try:
-            #         row = databases_map_content[news_class](detail_link=link, paragraph=text)
-            #         db.session.add(row)
-            #         db.session.commit()
-            #     except :
-            #         db.session.rollback()
+            text_list = html.xpath('//p/text()')
+            content_rows = databases_map_content[news_class].query.filter(databases_map_content[news_class].detail_link == link).all()
+            for row in content_rows:
+                try:
+                    db.session.delete(row)
+                    db.session.commit()
+                except :
+                    db.session.rollback()
+            for text in text_list:
+                try:
+                    row = databases_map_content[news_class](detail_link=link, paragraph=text)
+                    db.session.add(row)
+                    db.session.commit()
+                except :
+                    db.session.rollback()
 
 
 
