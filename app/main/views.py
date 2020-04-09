@@ -121,30 +121,57 @@ def save_edit_article_schoolnews():
     # 1. 定位是哪篇文章
     if request.method == 'POST':
         databases_map = {'schoolnews': GdutSchoolnew, }
-
+        databases_map_content = {'schoolnews': GdutDetailpageContent}
+        databases_map_picture = {'schoolnews': GdutDetailpagePicture}
         update_field = flask.request.args.get('update_field')
         news_class = flask.request.args.get('news_class')
         article_id = request.form['mysql_id']
+        article = GdutDetailpage.query.get(article_id)
+
+
         if update_field == 'title':
-            new_title = request.form['title']
-            article = GdutDetailpage.query.get(article_id)
-            article.title = new_title
             link = article.link
             row = databases_map[news_class].query.filter(databases_map[news_class].link == link).first()
+
+            new_title = request.form['title']
+            article.title = new_title
             row.title =  new_title
-            # session = Session()
-            # sql = "update %s set title=%s where link=%s; "
-            # cursor = session.execute(sql, type_tbl, new_title, link)
             try:
                 db.session.commit()
             except:
                 db.session.rollback()
         if update_field == 'date':
-            pass
+            link = article.link
+            row = databases_map[news_class].query.filter(databases_map[news_class].link == link).first()
+
+            new_date = request.form['date']
+            article.date = new_date
+            row.date = new_date
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
         if update_field == 'jianjie':
-            pass
+            new_jianjie = request.form['jianjie']
+            article.jianjie = new_jianjie
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
         if update_field == 'paragraph':
-            pass
+            link = article.link
+            new_paragraph = request.form['paragraph']
+            print("type(new_paragraph)= ", type(new_paragraph))
+            print("paragraph=", new_paragraph)
+            print("dir(paragraph)=", dir(new_paragraph))
+            # content_rows = databases_map_content[news_class].query.filter(databases_map_content[news_class].detail_link == link).all()
+            # picture_rows = databases_map_picture[news_class].query.filter(databases_map_picture[news_class].detail_link == link).all()
+            #
+            # article.jianjie = new_jianjie
+            # try:
+            #     db.session.commit()
+            # except:
+            #     db.session.rollback()
 
         # content = eval(content)
 

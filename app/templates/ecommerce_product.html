@@ -190,91 +190,80 @@
                             <div class="tab-content">
                                 <div id="tab-1" class="tab-pane active">
                                     <div class="panel-body">
-{#                                        <form action="{{ url_for('.save_edit_article_schoolnews', ret_content=content) }}"#}
-{#                                              method="post"#}
-{#                                              id="contentEdit">#}
-                                            <fieldset class="form-horizontal">
-                                                <div class="form-group"><label
-                                                        class="col-sm-2 control-label">文章标题:</label>
-                                                    <div class="col-sm-10">
-                                                        <form action="{{ url_for('.save_edit_article_schoolnews' ,update_field="title", news_class=news_class)}}" method="post">
-                                                            <input type="text" class="form-control"
-                                                                   placeholder="请输入标题"
-                                                                   name="title"
-                                                                   value="{{ content['title'] }}">
+                                        {#                                        <form action="{{ url_for('.save_edit_article_schoolnews', ret_content=content) }}"#}
+                                        {#                                              method="post"#}
+                                        {#                                              id="contentEdit">#}
+                                        <fieldset class="form-horizontal">
+                                            <div class="form-group"><label
+                                                    class="col-sm-2 control-label">文章标题:</label>
+                                                <div class="col-sm-10">
+                                                    <form action="{{ url_for('.save_edit_article_schoolnews' ,update_field="title", news_class=news_class) }}"
+                                                          method="post">
+                                                        <input type="text" class="form-control"
+                                                               placeholder="请输入标题"
+                                                               name="title"
+                                                               value="{{ content['title'] }}">
 
-                                                            <input type="hidden" class="form-control"
-                                                                   placeholder="id"
-                                                                   name="mysql_id"
-                                                                   value="{{ article_id_in_mysql }}">
-{#                                                            <div class="col-sm-2">#}
-{#                                                                <div class="form-group">#}
-                                                                    <br>
-                                                                    <button class="btn btn-primary " type="submit"
-                                                                            id="save"><i
-                                                                            class="fa fa-check"></i>&nbsp;保存修改
-                                                                    </button>
-{#                                                                </div>#}
-{#                                                            </div>#}
-                                                        </form>
-
-                                                    </div>
+                                                        <input type="hidden" class="form-control"
+                                                               placeholder="id"
+                                                               name="mysql_id"
+                                                               value="{{ article_id_in_mysql }}">
+                                                        <br>
+                                                        <button class="btn btn-primary " type="submit"
+                                                                id="save"><i
+                                                                class="fa fa-check"></i>&nbsp;保存修改
+                                                        </button>
+                                                    </form>
                                                 </div>
-                                                <div class="form-group"><label
-                                                        class="col-sm-2 control-label">发布日期:</label>
-                                                    <div class="col-sm-10">
-                                                        <form action="">
-                                                            <input type="text" class="form-control"
-                                                                   placeholder="格式:yyyy年mm月dd日"
-                                                                   name="date"
-                                                                   value="{{ content["date"] }}">
-                                                            <input type="hidden" class="form-control"
-                                                                   placeholder="id"
-                                                                   name="mysql_id"
-                                                                   value="{{ article_id_in_mysql }}">
-                                                            <div class="col-sm-2">
-                                                                <div class="form-group">
-                                                                    <br>
-                                                                    <button class="btn btn-primary " type="submit"
-                                                                            id="save"><i
-                                                                            class="fa fa-check"></i>&nbsp;保存修改
-                                                                    </button>
-                                                                </div>
-
-                                                            </div>
-                                                        </form>
-                                                    </div>
+                                            </div>
+                                            <div class="form-group"><label
+                                                    class="col-sm-2 control-label">发布日期:</label>
+                                                <div class="col-sm-10">
+                                                    <form action="{{ url_for('.save_edit_article_schoolnews' ,update_field="date", news_class=news_class) }}"
+                                                          method="post">
+                                                        <input type="text" class="form-control"
+                                                               placeholder="格式:yyyy年mm月dd日"
+                                                               name="date"
+                                                               value="{{ content["date"] }}">
+                                                        <input type="hidden" class="form-control"
+                                                               placeholder="id"
+                                                               name="mysql_id"
+                                                               value="{{ article_id_in_mysql }}">
+                                                        <br>
+                                                        <button class="btn btn-primary " type="submit"
+                                                                id="save"><i
+                                                                class="fa fa-check"></i>&nbsp;保存修改
+                                                        </button>
+                                                    </form>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label class="col-sm-2 control-label">简介:</label>
-                                                    <div class="col-sm-10">
-                                                        <form method="post">
-                                                        <textarea name="jianjie" id="summernote" cols="30"
-                                                                  rows="10">{{ content["jianjie"] }}</textarea>
-                                                            <input type="hidden" class="form-control"
-                                                                   placeholder="id"
-                                                                   name="mysql_id"
-                                                                   value="{{ article_id_in_mysql }}">
-                                                            <div class="col-sm-2">
-                                                                <div class="form-group">
-                                                                    <br>
-                                                                    <button class="btn btn-primary " type="submit"
-                                                                            id="save"><i
-                                                                            class="fa fa-check"></i>&nbsp;保存修改
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">简介:</label>
+                                                <div class="col-sm-10">
+                                                    <form action="{{ url_for('.save_edit_article_schoolnews' ,update_field="jianjie", news_class=news_class) }}"
+                                                          method="post">
+                                                        <textarea name="jianjie" id="summernote" cols="30" rows="10">{{ content["jianjie"] }}</textarea>
+                                                        <input type="hidden" class="form-control"
+                                                               placeholder="id"
+                                                               name="mysql_id"
+                                                               value="{{ article_id_in_mysql }}">
+                                                        <br>
+                                                        <button class="btn btn-primary " type="submit"
+                                                                id="save"><i
+                                                                class="fa fa-check"></i>&nbsp;保存修改
+                                                        </button>
+                                                    </form>
                                                 </div>
-                                                <div class="form-group">
-                                                    <label class="col-sm-2 control-label">内容:</label>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">内容:</label>
 
-                                                    <div class="col-sm-10">
+                                                <div class="col-sm-10">
 
-                                                        {#                                                        <div class="summernote" name="paragraph_one" id="paragraph_one">#}
-                                                        <form method="post">
-                                                        <textarea name="" id="summernote2" cols="30" rows="10">
+                                                    {#                                                        <div class="summernote" name="paragraph_one" id="paragraph_one">#}
+                                                    <form action="{{ url_for('.save_edit_article_schoolnews' ,update_field="paragraph", news_class=news_class) }}"
+                                                          method="post">
+                                                        <textarea name="paragraph" id="summernote2" cols="30" rows="10">
                                                             {% for picture in  content["picture_local_position_list"] %}
                                                                 <img src="{{ picture }}" alt="">
                                                             {% endfor %}
@@ -284,38 +273,34 @@
                                                                 </p>
                                                             {% endfor %}
                                                         </textarea>
-                                                            <input type="hidden" class="form-control"
-                                                                   placeholder="id"
-                                                                   name="mysql_id"
-                                                                   value="{{ article_id_in_mysql }}">
-                                                            <div class="col-sm-2">
-                                                                <div class="form-group">
-                                                                    <br>
-                                                                    <button class="btn btn-primary " type="submit"
-                                                                            id="save"><i
-                                                                            class="fa fa-check"></i>&nbsp;保存修改
-                                                                    </button>
-                                                                </div>
-                                                            </div>
+                                                        <input type="hidden" class="form-control"
+                                                               placeholder="id"
+                                                               name="mysql_id"
+                                                               value="{{ article_id_in_mysql }}">
+                                                        <br>
+                                                        <button class="btn btn-primary " type="submit"
+                                                                id="save"><i
+                                                                class="fa fa-check"></i>&nbsp;保存修改
+                                                        </button>
 
-                                                        </form>
-                                                        {#                                                        </div>#}
-
-                                                    </div>
+                                                    </form>
+                                                    {#                                                        </div>#}
 
                                                 </div>
-                                            </fieldset>
 
-                                            {#                                            <div class="col-sm-2">#}
-                                            {#                                                <div class="form-group">#}
-                                            {#                                                    <br>#}
-                                            {#                                                    <button class="btn btn-primary " type="submit" id="save"><i#}
-                                            {#                                                            class="fa fa-check"></i>&nbsp;保存修改#}
-                                            {#                                                    </button>#}
-                                            {#                                                </div>#}
-                                            {#                                            </div>#}
-                                            {#                                            <input type="submit" id="save" name="save" value="Submit"/>#}
-{#                                        </form>#}
+                                            </div>
+                                        </fieldset>
+
+                                        {#                                            <div class="col-sm-2">#}
+                                        {#                                                <div class="form-group">#}
+                                        {#                                                    <br>#}
+                                        {#                                                    <button class="btn btn-primary " type="submit" id="save"><i#}
+                                        {#                                                            class="fa fa-check"></i>&nbsp;保存修改#}
+                                        {#                                                    </button>#}
+                                        {#                                                </div>#}
+                                        {#                                            </div>#}
+                                        {#                                            <input type="submit" id="save" name="save" value="Submit"/>#}
+                                        {#                                        </form>#}
 
                                     </div>
                                 </div>
