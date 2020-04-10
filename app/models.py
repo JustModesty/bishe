@@ -101,6 +101,17 @@ class GdutSchoolnew(db.Model):
 
 
 
+class GdutTupianxinwen(db.Model):
+    __tablename__ = 'gdut_tupianxinwen'
+
+    id = db.Column(db.Integer, primary_key=True)
+    link = db.Column(db.String(500), nullable=False)
+    title = db.Column(db.String(500), nullable=False)
+    src = db.Column(db.String(500))
+    date = db.Column(db.String(500))
+
+
+
 class GdutWangshangxiaoshiguan(db.Model):
     __tablename__ = 'gdut_wangshangxiaoshiguan'
 

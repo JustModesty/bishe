@@ -110,7 +110,6 @@ def edit_article_schoolnews():
     except:
         session.rollback()
 
-
     # 3. 返回内容并渲染成一个新页面
     return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url,
                            article_id_in_mysql=article_id_in_mysql_first_zero, news_class="schoolnews")
@@ -124,6 +123,244 @@ def save_edit_article_schoolnews():
         databases_map = {'schoolnews': GdutSchoolnew, }
         databases_map_content = {'schoolnews': GdutDetailpageContent}
         databases_map_picture = {'schoolnews': GdutDetailpagePicture}
+        update_field = flask.request.args.get('update_field')
+        news_class = flask.request.args.get('news_class')
+        article_id = request.form['mysql_id']
+        article = GdutDetailpage.query.get(article_id)
+
+        if update_field == 'title':
+            link = article.link
+            row = databases_map[news_class].query.filter(databases_map[news_class].link == link).first()
+
+            new_title = request.form['title']
+            article.title = new_title
+            row.title = new_title
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
+        if update_field == 'date':
+            link = article.link
+            row = databases_map[news_class].query.filter(databases_map[news_class].link == link).first()
+
+            new_date = request.form['date']
+            article.date = new_date
+            row.date = new_date
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
+        if update_field == 'jianjie':
+            new_jianjie = request.form['jianjie']
+            article.jianjie = new_jianjie
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
+        if update_field == 'paragraph':
+            link = article.link
+            new_paragraph = request.form['paragraph']
+            # print("paragraph=", new_paragraph)
+            html = etree.HTML(new_paragraph)
+            picture_html_list = html.xpath('//img/@src')
+            # 新插入的图片是base64编码,需要下载到本地,然后数据库存储本地地址
+            picture_rows = databases_map_picture[news_class].query.filter(
+                databases_map_picture[news_class].detail_link == link).all()
+            for row in picture_rows:
+                try:
+                    db.session.delete(row)
+                    db.session.commit()
+                except:
+                    db.session.rollback()
+            for picture in picture_html_list:
+                print("picture=", picture)
+                if picture.startswith("data"):
+                    start_index = picture.find(',') + 1
+                    base64_str = picture[start_index:]
+                    # 只能放jpg格式的图片!
+                    random_str = str(uuid.uuid4()) + ".jpg"
+                    file_name = "app/static/gdut_img/detailpage/" + random_str
+                    with open(file_name, 'wb') as f:
+                        f.write(base64.b64decode(base64_str))
+                    save_position = 'app/static/gdut_img/detailpage/' + random_str
+                    sql_insert_GdutDetailpagePicture = GdutDetailpagePicture(detail_link=link,
+                                                                             local_position=save_position)
+                    db.session.add(sql_insert_GdutDetailpagePicture)
+                    try:
+                        db.session.commit()
+                    except:
+                        db.session.rollback()
+                else:
+                    save_position = "app" + picture[2:]
+                    sql_insert_GdutDetailpagePicture = GdutDetailpagePicture(detail_link=link,
+                                                                             local_position=save_position)
+                    db.session.add(sql_insert_GdutDetailpagePicture)
+
+                    try:
+                        db.session.commit()
+                    except:
+                        db.session.rollback()
+
+            text_list = html.xpath('//text()')
+            content_rows = databases_map_content[news_class].query.filter(
+                databases_map_content[news_class].detail_link == link).all()
+            for row in content_rows:
+                try:
+                    db.session.delete(row)
+                    db.session.commit()
+                except:
+                    db.session.rollback()
+            for text in text_list:
+                try:
+                    row = databases_map_content[news_class](detail_link=link, paragraph=text)
+                    db.session.add(row)
+                    db.session.commit()
+                except:
+                    db.session.rollback()
+
+        # # 3. 返回内容并渲染成一个新页面
+        # todo:以后更改为跳转到用户的展示页面
+        return redirect(url_for('.dashboard_table_schoolnews'))
+
+# ==================图片新闻====================================== #
+# dashboard查看"图片新闻表"的数据
+@main_handler.route('/table_tupianxinwen.html')
+def dashboard_table_tupianxinwen():
+    session = Session()
+    gdutschoolnew_all_line = session.query(GdutTupianxinwen.link, GdutTupianxinwen.title, GdutTupianxinwen.src,
+                                           GdutTupianxinwen.date).all()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+    return render_template('table_tupianxinwen.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
+
+
+# dashboard 图片新闻 “开始爬取” 接口
+@main_handler.route('/dashboard_start_spider_tupianxinwen')
+def dashboard_start_spider_tupianxinwen():
+    response = requests.get('http://gdutnews.gdut.edu.cn/')
+    content = response.content
+    content = content.decode('utf-8')
+    html = etree.HTML(content)
+
+    # 抓取shcoolnews
+    # gdut_spider_function.tupianxinwen(html)
+
+    # 从菜单栏里面找到入口
+    enter_url = html.xpath("//div[@class='menu']/ul/li[3]/a/@href")[0]
+    gdut_spider_function.dashboard_start_spider_tupianxinwen_list(enter_url)
+
+    # 爬取取完,直接重新刷新页面(每次进入那个页面的时候都会抓取数据库数据的)
+    return redirect(url_for('.dashboard_table_tupianxinwen'))
+
+
+# 图片新闻“清空数据” 接口
+@main_handler.route('/clear_data_tupianxinwen')
+def clear_data_tupianxinwen():
+    session = Session()
+    # 根据link删除gdut_detailpage和gdut_detailpage_content里面的相应的行
+    link_list_in_gdut_tupianxinwen = session.query(GdutTupianxinwen.link).all()
+    try:
+        session.commit()
+    except:
+        session.rollback()
+    link_set_in_gdut_tupianxinwen = set(link_list_in_gdut_tupianxinwen)
+    link_str_list = []
+    for link in link_set_in_gdut_tupianxinwen:
+        link_str = link[0]
+        link_str_list.append(link_str)
+
+    for link in link_str_list:
+        gdutdetailpage_rows = GdutDetailpage.query.filter(
+            GdutDetailpage.link == link).all()
+        for row in gdutdetailpage_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_picture_rows = GdutDetailpagePicture.query.filter(
+            GdutDetailpagePicture.detail_link == link).all()
+        for row in gdutdetailpage_picture_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_content_rows = GdutDetailpageContent.query.filter(
+            GdutDetailpageContent.detail_link == link).all()
+        for row in gdutdetailpage_content_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+
+    session.execute('delete from gdut_tupianxinwen where 1=1')
+    try:
+        session.commit()
+    except:
+        session.rollback()
+
+    return redirect(url_for('.dashboard_table_tupianxinwen'))
+
+
+# 图片新闻“查询” 接口
+@main_handler.route('/search_data_tupianxinwen')
+def search_data_tupianxinwen():
+    # print(flask.request.args)
+    filter_title = flask.request.args.get('product_name')
+    tupianxinwen_query = GdutTupianxinwen.query.all()
+    if filter_title:
+        tupianxinwen_query = GdutTupianxinwen.query.filter(
+            GdutTupianxinwen.title.like("%" + filter_title + "%")
+        ).all()
+    return render_template('table_tupianxinwen.html', gdutschoolnew_all_line=tupianxinwen_query)
+
+
+# 图片新闻“编辑” 接口
+@main_handler.route('/tupianxinwen_edit')
+def edit_article_tupianxinwen():
+    # 1. 定位是哪篇文章
+    article_title_restful_url = flask.request.args.get('article_link')
+    # print("article_title=", article_title_restful_url)
+    print("article_title_restful_url=", article_title_restful_url)
+    content = gdut_spider_function.query_from_database_gdut_detailpage_picture(article_title_restful_url)
+    # 2. 查询数据库,找到文章内容
+    session = Session()
+    article_id_in_mysql = session.execute(
+        "select id from gdut_detailpage where link='%s';" % (article_title_restful_url))
+    print("article_id_in_mysql=", article_id_in_mysql)
+    article_id_in_mysql_first = article_id_in_mysql.first()
+    article_id_in_mysql_first_zero = article_id_in_mysql_first[0]
+    try:
+        session.commit()
+    except:
+        session.rollback()
+
+    # 3. 返回内容并渲染成一个新页面
+    return render_template('edit_page_tupianxinwen.html', content=content, article_link=article_title_restful_url,
+                           article_id_in_mysql=article_id_in_mysql_first_zero, news_class="tupianxinwen")
+
+
+# 图片新闻编辑里面的"保存修改"按钮
+@main_handler.route('/save_tupianxinwen_edit', methods=['GET', 'POST'])
+def save_edit_article_tupianxinwen():
+    # 1. 定位是哪篇文章
+    if request.method == 'POST':
+        databases_map = {'schoolnews': GdutSchoolnew, 'meitigongda': GdutMeitigongda,
+                         'xiaoyoudongtai': GdutXiaoyoudongtai, 'xuexiyuandi': GdutXuexiyuandi,
+                         'zhuanlanbaodao': GdutZhuanlanbaodao, 'tupianxinwen':GdutTupianxinwen}
+        databases_map_content = {'schoolnews': GdutDetailpageContent, 'meitigongda': GdutDetailpageContent,
+                                 'xiaoyoudongtai': GdutDetailpageContent, 'xuexiyuandi': GdutDetailpageContent,
+                                 'zhuanlanbaodao': GdutDetailpageContent, 'tupianxinwen':GdutDetailpageContent}
+        databases_map_picture = {'schoolnews': GdutDetailpagePicture, 'meitigongda': GdutDetailpagePicture,
+                                 'xiaoyoudongtai': GdutDetailpagePicture, 'xuexiyuandi': GdutDetailpagePicture,
+                                 'zhuanlanbaodao': GdutDetailpagePicture, 'tupianxinwen':GdutDetailpagePicture}
         update_field = flask.request.args.get('update_field')
         news_class = flask.request.args.get('news_class')
         article_id = request.form['mysql_id']
@@ -221,7 +458,9 @@ def save_edit_article_schoolnews():
 
         # # 3. 返回内容并渲染成一个新页面
         # todo:以后更改为跳转到用户的展示页面
-        return redirect(url_for('.dashboard_table_schoolnews'))
+        return redirect(url_for('.dashboard_table_tupianxinwen'))
+
+
 
 
 # ==================工大====================================== #
@@ -497,9 +736,12 @@ def edit_article_renwenxiaoyuan():
 def save_edit_article_renwenxiaoyuan():
     # 1. 定位是哪篇文章
     if request.method == 'POST':
-        databases_map = {'schoolnews': GdutSchoolnew, 'meitigongda': GdutMeitigongda, 'renwenxiaoyuan': GdutRenwenxiaoyuan}
-        databases_map_content = {'schoolnews': GdutDetailpageContent, 'meitigongda': GdutDetailpageContent, 'renwenxiaoyuan':GdutDetailpageContent}
-        databases_map_picture = {'schoolnews': GdutDetailpagePicture, 'meitigongda': GdutDetailpagePicture, 'renwenxiaoyuan': GdutDetailpagePicture}
+        databases_map = {'schoolnews': GdutSchoolnew, 'meitigongda': GdutMeitigongda,
+                         'renwenxiaoyuan': GdutRenwenxiaoyuan}
+        databases_map_content = {'schoolnews': GdutDetailpageContent, 'meitigongda': GdutDetailpageContent,
+                                 'renwenxiaoyuan': GdutDetailpageContent}
+        databases_map_picture = {'schoolnews': GdutDetailpagePicture, 'meitigongda': GdutDetailpagePicture,
+                                 'renwenxiaoyuan': GdutDetailpagePicture}
         update_field = flask.request.args.get('update_field')
         news_class = flask.request.args.get('news_class')
         article_id = request.form['mysql_id']
@@ -661,12 +903,23 @@ def edit_article_xiaoyoudongtai():
     # 1. 定位是哪篇文章
     article_title_restful_url = flask.request.args.get('article_link')
     # print("article_title=", article_title_restful_url)
-
-    # 2. 查询数据库,找到文章内容
+    print("article_title_restful_url=", article_title_restful_url)
     content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
+    # 2. 查询数据库,找到文章内容
+    session = Session()
+    article_id_in_mysql = session.execute(
+        "select id from gdut_detailpage where link='%s';" % (article_title_restful_url))
+    print("article_id_in_mysql=", article_id_in_mysql)
+    article_id_in_mysql_first = article_id_in_mysql.first()
+    article_id_in_mysql_first_zero = article_id_in_mysql_first[0]
+    try:
+        session.commit()
+    except:
+        session.rollback()
 
     # 3. 返回内容并渲染成一个新页面
-    return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url)
+    return render_template('edit_page_xiaoyoudongtai.html', content=content, article_link=article_title_restful_url,
+                           article_id_in_mysql=article_id_in_mysql_first_zero, news_class="xiaoyoudongtai")
 
 
 # 校友动态编辑里面的"保存修改"按钮
@@ -674,19 +927,106 @@ def edit_article_xiaoyoudongtai():
 def save_edit_article_xiaoyoudongtai():
     # 1. 定位是哪篇文章
     if request.method == 'POST':
-        origin_title = request.form['origin_title']
-        title = request.form['title']
-        date = request.form['date']
-        jianjie = request.form['jianjie']
-        origin_title = flask.request.args.get('origin_title')
-        content = flask.request.args.get('ret_content')
+        databases_map = {'schoolnews': GdutSchoolnew, 'meitigongda': GdutMeitigongda,
+                         'xiaoyoudongtai': GdutXiaoyoudongtai}
+        databases_map_content = {'schoolnews': GdutDetailpageContent, 'meitigongda': GdutDetailpageContent,
+                                 'xiaoyoudongtai': GdutDetailpageContent}
+        databases_map_picture = {'schoolnews': GdutDetailpagePicture, 'meitigongda': GdutDetailpagePicture,
+                                 'xiaoyoudongtai': GdutDetailpagePicture}
+        update_field = flask.request.args.get('update_field')
+        news_class = flask.request.args.get('news_class')
+        article_id = request.form['mysql_id']
+        article = GdutDetailpage.query.get(article_id)
 
-        content = eval(content)
+        if update_field == 'title':
+            link = article.link
+            row = databases_map[news_class].query.filter(databases_map[news_class].link == link).first()
 
-        # 2. 查询数据库,找到文章内容
-        content['title'] = str(title)
-        content['date'] = str(date)
-        content['jianjie'] = str(jianjie)
+            new_title = request.form['title']
+            article.title = new_title
+            row.title = new_title
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
+        if update_field == 'date':
+            link = article.link
+            row = databases_map[news_class].query.filter(databases_map[news_class].link == link).first()
+
+            new_date = request.form['date']
+            article.date = new_date
+            row.date = new_date
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
+        if update_field == 'jianjie':
+            new_jianjie = request.form['jianjie']
+            article.jianjie = new_jianjie
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
+        if update_field == 'paragraph':
+            link = article.link
+            new_paragraph = request.form['paragraph']
+            # print("paragraph=", new_paragraph)
+            html = etree.HTML(new_paragraph)
+            picture_html_list = html.xpath('//img/@src')
+            # 新插入的图片是base64编码,需要下载到本地,然后数据库存储本地地址
+            picture_rows = databases_map_picture[news_class].query.filter(
+                databases_map_picture[news_class].detail_link == link).all()
+            for row in picture_rows:
+                try:
+                    db.session.delete(row)
+                    db.session.commit()
+                except:
+                    db.session.rollback()
+            for picture in picture_html_list:
+                print("picture=", picture)
+                if picture.startswith("data"):
+                    start_index = picture.find(',') + 1
+                    base64_str = picture[start_index:]
+                    # 只能放jpg格式的图片!
+                    random_str = str(uuid.uuid4()) + ".jpg"
+                    file_name = "app/static/gdut_img/detailpage/" + random_str
+                    with open(file_name, 'wb') as f:
+                        f.write(base64.b64decode(base64_str))
+                    save_position = 'app/static/gdut_img/detailpage/' + random_str
+                    sql_insert_GdutDetailpagePicture = GdutDetailpagePicture(detail_link=link,
+                                                                             local_position=save_position)
+                    db.session.add(sql_insert_GdutDetailpagePicture)
+                    try:
+                        db.session.commit()
+                    except:
+                        db.session.rollback()
+                else:
+                    save_position = "app" + picture[2:]
+                    sql_insert_GdutDetailpagePicture = GdutDetailpagePicture(detail_link=link,
+                                                                             local_position=save_position)
+                    db.session.add(sql_insert_GdutDetailpagePicture)
+
+                    try:
+                        db.session.commit()
+                    except:
+                        db.session.rollback()
+
+            text_list = html.xpath('//p/text()')
+            content_rows = databases_map_content[news_class].query.filter(
+                databases_map_content[news_class].detail_link == link).all()
+            for row in content_rows:
+                try:
+                    db.session.delete(row)
+                    db.session.commit()
+                except:
+                    db.session.rollback()
+            for text in text_list:
+                try:
+                    row = databases_map_content[news_class](detail_link=link, paragraph=text)
+                    db.session.add(row)
+                    db.session.commit()
+                except:
+                    db.session.rollback()
 
         # # 3. 返回内容并渲染成一个新页面
         # todo:以后更改为跳转到用户的展示页面
@@ -694,97 +1034,97 @@ def save_edit_article_xiaoyoudongtai():
 
 
 # ==================网上校史馆====================================== #
-# dashboard查看"校友动态"的数据
-@main_handler.route('/table_wangshangxiaoshiguan.html')
-def dashboard_table_wangshangxiaoshiguan():
-    session = Session()
-    gdutschoolnew_all_line = session.query(GdutWangshangxiaoshiguan.link, GdutWangshangxiaoshiguan.title,
-                                           GdutWangshangxiaoshiguan.src,
-                                           GdutWangshangxiaoshiguan.date).all()
-    try:
-        db.session.commit()
-    except:
-        db.session.rollback()
-    return render_template('table_wangshangxiaoshiguan.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
-
-
-# dashboard 校友动态 “开始爬取” 接口
-@main_handler.route('/dashboard_start_spider_wangshangxiaoshiguan')
-def dashboard_start_spider_wangshangxiaoshiguan():
-    response = requests.get('http://gdutnews.gdut.edu.cn/')
-    content = response.content
-    content = content.decode('utf-8')
-    html = etree.HTML(content)
-
-    # 从菜单栏里面找到入口
-    enter_url = html.xpath("//div[@class='menu']/ul/li[7]/a/@href")[0]
-    gdut_spider_function.dashboard_start_spider_wangshangxiaoshiguan_list(enter_url)
-
-    # 爬取取完,直接重新刷新页面(每次进入那个页面的时候都会抓取数据库数据的)
-    return redirect(url_for('.dashboard_table_wangshangxiaoshiguan'))
-
-
-# 校友动态“清空数据” 接口
-@main_handler.route('/clear_data_wangshangxiaoshiguan')
-def clear_data_wangshangxiaoshiguan():
-    session = Session()
-    session.execute('delete from gdut_wangshangxiaoshiguan where 1=1')
-    try:
-        session.commit()
-    except:
-        session.rollback()
-    return redirect(url_for('.dashboard_table_wangshangxiaoshiguan'))
-
-
-# 校友动态“查询” 接口
-@main_handler.route('/search_data_wangshangxiaoshiguan')
-def search_data_wangshangxiaoshiguan():
-    # print(flask.request.args)
-    filter_title = flask.request.args.get('product_name')
-    meitigongda_query = GdutWangshangxiaoshiguan.query.all()
-    if filter_title:
-        meitigongda_query = GdutWangshangxiaoshiguan.query.filter(
-            GdutWangshangxiaoshiguan.title.like("%" + filter_title + "%")
-        ).all()
-    return render_template('table_wangshangxiaoshiguan.html', gdutschoolnew_all_line=meitigongda_query)
-
-
-# 校友动态“编辑” 接口
-@main_handler.route('/wangshangxiaoshiguan_edit')
-def edit_article_wangshangxiaoshiguan():
-    # 1. 定位是哪篇文章
-    article_title_restful_url = flask.request.args.get('article_link')
-    # print("article_title=", article_title_restful_url)
-
-    # 2. 查询数据库,找到文章内容
-    content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
-
-    # 3. 返回内容并渲染成一个新页面
-    return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url)
-
-
-# 校友动态编辑里面的"保存修改"按钮
-@main_handler.route('/save_wangshangxiaoshiguan_edit', methods=['GET', 'POST'])
-def save_edit_article_wangshangxiaoshiguan():
-    # 1. 定位是哪篇文章
-    if request.method == 'POST':
-        origin_title = request.form['origin_title']
-        title = request.form['title']
-        date = request.form['date']
-        jianjie = request.form['jianjie']
-        origin_title = flask.request.args.get('origin_title')
-        content = flask.request.args.get('ret_content')
-
-        content = eval(content)
-
-        # 2. 查询数据库,找到文章内容
-        content['title'] = str(title)
-        content['date'] = str(date)
-        content['jianjie'] = str(jianjie)
-
-        # # 3. 返回内容并渲染成一个新页面
-        # todo:以后更改为跳转到用户的展示页面
-        return redirect(url_for('.dashboard_table_wangshangxiaoshiguan'))
+# # dashboard查看"校友动态"的数据
+# @main_handler.route('/table_wangshangxiaoshiguan.html')
+# def dashboard_table_wangshangxiaoshiguan():
+#     session = Session()
+#     gdutschoolnew_all_line = session.query(GdutWangshangxiaoshiguan.link, GdutWangshangxiaoshiguan.title,
+#                                            GdutWangshangxiaoshiguan.src,
+#                                            GdutWangshangxiaoshiguan.date).all()
+#     try:
+#         db.session.commit()
+#     except:
+#         db.session.rollback()
+#     return render_template('table_wangshangxiaoshiguan.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
+#
+#
+# # dashboard 校友动态 “开始爬取” 接口
+# @main_handler.route('/dashboard_start_spider_wangshangxiaoshiguan')
+# def dashboard_start_spider_wangshangxiaoshiguan():
+#     response = requests.get('http://gdutnews.gdut.edu.cn/')
+#     content = response.content
+#     content = content.decode('utf-8')
+#     html = etree.HTML(content)
+#
+#     # 从菜单栏里面找到入口
+#     enter_url = html.xpath("//div[@class='menu']/ul/li[7]/a/@href")[0]
+#     gdut_spider_function.dashboard_start_spider_wangshangxiaoshiguan_list(enter_url)
+#
+#     # 爬取取完,直接重新刷新页面(每次进入那个页面的时候都会抓取数据库数据的)
+#     return redirect(url_for('.dashboard_table_wangshangxiaoshiguan'))
+#
+#
+# # 校友动态“清空数据” 接口
+# @main_handler.route('/clear_data_wangshangxiaoshiguan')
+# def clear_data_wangshangxiaoshiguan():
+#     session = Session()
+#     session.execute('delete from gdut_wangshangxiaoshiguan where 1=1')
+#     try:
+#         session.commit()
+#     except:
+#         session.rollback()
+#     return redirect(url_for('.dashboard_table_wangshangxiaoshiguan'))
+#
+#
+# # 校友动态“查询” 接口
+# @main_handler.route('/search_data_wangshangxiaoshiguan')
+# def search_data_wangshangxiaoshiguan():
+#     # print(flask.request.args)
+#     filter_title = flask.request.args.get('product_name')
+#     meitigongda_query = GdutWangshangxiaoshiguan.query.all()
+#     if filter_title:
+#         meitigongda_query = GdutWangshangxiaoshiguan.query.filter(
+#             GdutWangshangxiaoshiguan.title.like("%" + filter_title + "%")
+#         ).all()
+#     return render_template('table_wangshangxiaoshiguan.html', gdutschoolnew_all_line=meitigongda_query)
+#
+#
+# # 校友动态“编辑” 接口
+# @main_handler.route('/wangshangxiaoshiguan_edit')
+# def edit_article_wangshangxiaoshiguan():
+#     # 1. 定位是哪篇文章
+#     article_title_restful_url = flask.request.args.get('article_link')
+#     # print("article_title=", article_title_restful_url)
+#
+#     # 2. 查询数据库,找到文章内容
+#     content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
+#
+#     # 3. 返回内容并渲染成一个新页面
+#     return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url)
+#
+#
+# # 校友动态编辑里面的"保存修改"按钮
+# @main_handler.route('/save_wangshangxiaoshiguan_edit', methods=['GET', 'POST'])
+# def save_edit_article_wangshangxiaoshiguan():
+#     # 1. 定位是哪篇文章
+#     if request.method == 'POST':
+#         origin_title = request.form['origin_title']
+#         title = request.form['title']
+#         date = request.form['date']
+#         jianjie = request.form['jianjie']
+#         origin_title = flask.request.args.get('origin_title')
+#         content = flask.request.args.get('ret_content')
+#
+#         content = eval(content)
+#
+#         # 2. 查询数据库,找到文章内容
+#         content['title'] = str(title)
+#         content['date'] = str(date)
+#         content['jianjie'] = str(jianjie)
+#
+#         # # 3. 返回内容并渲染成一个新页面
+#         # todo:以后更改为跳转到用户的展示页面
+#         return redirect(url_for('.dashboard_table_wangshangxiaoshiguan'))
 
 
 # ==================学习园地表====================================== #
@@ -793,7 +1133,7 @@ def save_edit_article_wangshangxiaoshiguan():
 # def dashboard_table_xuexiyuandi():
 #     return render_template('table_xuexiyuandi.html')
 
-# dashboard查看"校友动态"的数据
+# dashboard查看"学习园地"的数据
 @main_handler.route('/table_xuexiyuandi.html')
 def dashboard_table_xuexiyuandi():
     session = Session()
@@ -806,7 +1146,7 @@ def dashboard_table_xuexiyuandi():
     return render_template('table_xuexiyuandi.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 
-# dashboard 校友动态 “开始爬取” 接口
+# dashboard 学习园地 “开始爬取” 接口
 @main_handler.route('/dashboard_start_spider_xuexiyuandi')
 def dashboard_start_spider_xuexiyuandi():
     response = requests.get('http://gdutnews.gdut.edu.cn/')
@@ -822,7 +1162,7 @@ def dashboard_start_spider_xuexiyuandi():
     return redirect(url_for('.dashboard_table_xuexiyuandi'))
 
 
-# 校友动态“清空数据” 接口
+# 学习园地“清空数据” 接口
 @main_handler.route('/clear_data_xuexiyuandi')
 def clear_data_xuexiyuandi():
     session = Session()
@@ -834,7 +1174,7 @@ def clear_data_xuexiyuandi():
     return redirect(url_for('.dashboard_table_xuexiyuandi'))
 
 
-# 校友动态“查询” 接口
+# 学习园地“查询” 接口
 @main_handler.route('/search_data_xuexiyuandi')
 def search_data_xuexiyuandi():
     # print(flask.request.args)
@@ -847,38 +1187,136 @@ def search_data_xuexiyuandi():
     return render_template('table_xuexiyuandi.html', gdutschoolnew_all_line=meitigongda_query)
 
 
-# 校友动态“编辑” 接口
+# 学习园地“编辑” 接口
 @main_handler.route('/xuexiyuandi_edit')
 def edit_article_xuexiyuandi():
     # 1. 定位是哪篇文章
     article_title_restful_url = flask.request.args.get('article_link')
     # print("article_title=", article_title_restful_url)
-
-    # 2. 查询数据库,找到文章内容
+    print("article_title_restful_url=", article_title_restful_url)
     content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
+    # 2. 查询数据库,找到文章内容
+    session = Session()
+    article_id_in_mysql = session.execute(
+        "select id from gdut_detailpage where link='%s';" % (article_title_restful_url))
+    print("article_id_in_mysql=", article_id_in_mysql)
+    article_id_in_mysql_first = article_id_in_mysql.first()
+    article_id_in_mysql_first_zero = article_id_in_mysql_first[0]
+    try:
+        session.commit()
+    except:
+        session.rollback()
 
     # 3. 返回内容并渲染成一个新页面
-    return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url)
+    return render_template('edit_page_xuexiyuandi.html', content=content, article_link=article_title_restful_url,
+                           article_id_in_mysql=article_id_in_mysql_first_zero, news_class="xuexiyuandi")
 
 
-# 校友动态编辑里面的"保存修改"按钮
+# 学习园地编辑里面的"保存修改"按钮
 @main_handler.route('/save_xuexiyuandi_edit', methods=['GET', 'POST'])
 def save_edit_article_xuexiyuandi():
     # 1. 定位是哪篇文章
     if request.method == 'POST':
-        origin_title = request.form['origin_title']
-        title = request.form['title']
-        date = request.form['date']
-        jianjie = request.form['jianjie']
-        origin_title = flask.request.args.get('origin_title')
-        content = flask.request.args.get('ret_content')
+        databases_map = {'schoolnews': GdutSchoolnew, 'meitigongda': GdutMeitigongda,
+                         'xiaoyoudongtai': GdutXiaoyoudongtai, 'xuexiyuandi':GdutXuexiyuandi}
+        databases_map_content = {'schoolnews': GdutDetailpageContent, 'meitigongda': GdutDetailpageContent,
+                                 'xiaoyoudongtai': GdutDetailpageContent, 'xuexiyuandi':GdutDetailpageContent}
+        databases_map_picture = {'schoolnews': GdutDetailpagePicture, 'meitigongda': GdutDetailpagePicture,
+                                 'xiaoyoudongtai': GdutDetailpagePicture, 'xuexiyuandi':GdutDetailpagePicture}
+        update_field = flask.request.args.get('update_field')
+        news_class = flask.request.args.get('news_class')
+        article_id = request.form['mysql_id']
+        article = GdutDetailpage.query.get(article_id)
 
-        content = eval(content)
+        if update_field == 'title':
+            link = article.link
+            row = databases_map[news_class].query.filter(databases_map[news_class].link == link).first()
 
-        # 2. 查询数据库,找到文章内容
-        content['title'] = str(title)
-        content['date'] = str(date)
-        content['jianjie'] = str(jianjie)
+            new_title = request.form['title']
+            article.title = new_title
+            row.title = new_title
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
+        if update_field == 'date':
+            link = article.link
+            row = databases_map[news_class].query.filter(databases_map[news_class].link == link).first()
+
+            new_date = request.form['date']
+            article.date = new_date
+            row.date = new_date
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
+        if update_field == 'jianjie':
+            new_jianjie = request.form['jianjie']
+            article.jianjie = new_jianjie
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
+        if update_field == 'paragraph':
+            link = article.link
+            new_paragraph = request.form['paragraph']
+            # print("paragraph=", new_paragraph)
+            html = etree.HTML(new_paragraph)
+            picture_html_list = html.xpath('//img/@src')
+            # 新插入的图片是base64编码,需要下载到本地,然后数据库存储本地地址
+            picture_rows = databases_map_picture[news_class].query.filter(
+                databases_map_picture[news_class].detail_link == link).all()
+            for row in picture_rows:
+                try:
+                    db.session.delete(row)
+                    db.session.commit()
+                except:
+                    db.session.rollback()
+            for picture in picture_html_list:
+                print("picture=", picture)
+                if picture.startswith("data"):
+                    start_index = picture.find(',') + 1
+                    base64_str = picture[start_index:]
+                    # 只能放jpg格式的图片!
+                    random_str = str(uuid.uuid4()) + ".jpg"
+                    file_name = "app/static/gdut_img/detailpage/" + random_str
+                    with open(file_name, 'wb') as f:
+                        f.write(base64.b64decode(base64_str))
+                    save_position = 'app/static/gdut_img/detailpage/' + random_str
+                    sql_insert_GdutDetailpagePicture = GdutDetailpagePicture(detail_link=link,
+                                                                             local_position=save_position)
+                    db.session.add(sql_insert_GdutDetailpagePicture)
+                    try:
+                        db.session.commit()
+                    except:
+                        db.session.rollback()
+                else:
+                    save_position = "app" + picture[2:]
+                    sql_insert_GdutDetailpagePicture = GdutDetailpagePicture(detail_link=link,
+                                                                             local_position=save_position)
+                    db.session.add(sql_insert_GdutDetailpagePicture)
+
+                    try:
+                        db.session.commit()
+                    except:
+                        db.session.rollback()
+
+            text_list = html.xpath('//p/text()')
+            content_rows = databases_map_content[news_class].query.filter(
+                databases_map_content[news_class].detail_link == link).all()
+            for row in content_rows:
+                try:
+                    db.session.delete(row)
+                    db.session.commit()
+                except:
+                    db.session.rollback()
+            for text in text_list:
+                try:
+                    row = databases_map_content[news_class](detail_link=link, paragraph=text)
+                    db.session.add(row)
+                    db.session.commit()
+                except:
+                    db.session.rollback()
 
         # # 3. 返回内容并渲染成一个新页面
         # todo:以后更改为跳转到用户的展示页面
@@ -947,12 +1385,23 @@ def edit_article_zhuanlanbaodao():
     # 1. 定位是哪篇文章
     article_title_restful_url = flask.request.args.get('article_link')
     # print("article_title=", article_title_restful_url)
-
-    # 2. 查询数据库,找到文章内容
+    print("article_title_restful_url=", article_title_restful_url)
     content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
+    # 2. 查询数据库,找到文章内容
+    session = Session()
+    article_id_in_mysql = session.execute(
+        "select id from gdut_detailpage where link='%s';" % (article_title_restful_url))
+    print("article_id_in_mysql=", article_id_in_mysql)
+    article_id_in_mysql_first = article_id_in_mysql.first()
+    article_id_in_mysql_first_zero = article_id_in_mysql_first[0]
+    try:
+        session.commit()
+    except:
+        session.rollback()
 
     # 3. 返回内容并渲染成一个新页面
-    return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url)
+    return render_template('edit_page_zhuanlanbaodao.html', content=content, article_link=article_title_restful_url,
+                           article_id_in_mysql=article_id_in_mysql_first_zero, news_class="zhuanlanbaodao")
 
 
 # 校友动态编辑里面的"保存修改"按钮
@@ -960,19 +1409,106 @@ def edit_article_zhuanlanbaodao():
 def save_edit_article_zhuanlanbaodao():
     # 1. 定位是哪篇文章
     if request.method == 'POST':
-        origin_title = request.form['origin_title']
-        title = request.form['title']
-        date = request.form['date']
-        jianjie = request.form['jianjie']
-        origin_title = flask.request.args.get('origin_title')
-        content = flask.request.args.get('ret_content')
+        databases_map = {'schoolnews': GdutSchoolnew, 'meitigongda': GdutMeitigongda,
+                         'xiaoyoudongtai': GdutXiaoyoudongtai, 'xuexiyuandi':GdutXuexiyuandi, 'zhuanlanbaodao':GdutZhuanlanbaodao}
+        databases_map_content = {'schoolnews': GdutDetailpageContent, 'meitigongda': GdutDetailpageContent,
+                                 'xiaoyoudongtai': GdutDetailpageContent, 'xuexiyuandi':GdutDetailpageContent, 'zhuanlanbaodao':GdutDetailpageContent}
+        databases_map_picture = {'schoolnews': GdutDetailpagePicture, 'meitigongda': GdutDetailpagePicture,
+                                 'xiaoyoudongtai': GdutDetailpagePicture, 'xuexiyuandi':GdutDetailpagePicture, 'zhuanlanbaodao':GdutDetailpagePicture}
+        update_field = flask.request.args.get('update_field')
+        news_class = flask.request.args.get('news_class')
+        article_id = request.form['mysql_id']
+        article = GdutDetailpage.query.get(article_id)
 
-        content = eval(content)
+        if update_field == 'title':
+            link = article.link
+            row = databases_map[news_class].query.filter(databases_map[news_class].link == link).first()
 
-        # 2. 查询数据库,找到文章内容
-        content['title'] = str(title)
-        content['date'] = str(date)
-        content['jianjie'] = str(jianjie)
+            new_title = request.form['title']
+            article.title = new_title
+            row.title = new_title
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
+        if update_field == 'date':
+            link = article.link
+            row = databases_map[news_class].query.filter(databases_map[news_class].link == link).first()
+
+            new_date = request.form['date']
+            article.date = new_date
+            row.date = new_date
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
+        if update_field == 'jianjie':
+            new_jianjie = request.form['jianjie']
+            article.jianjie = new_jianjie
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
+        if update_field == 'paragraph':
+            link = article.link
+            new_paragraph = request.form['paragraph']
+            # print("paragraph=", new_paragraph)
+            html = etree.HTML(new_paragraph)
+            picture_html_list = html.xpath('//img/@src')
+            # 新插入的图片是base64编码,需要下载到本地,然后数据库存储本地地址
+            picture_rows = databases_map_picture[news_class].query.filter(
+                databases_map_picture[news_class].detail_link == link).all()
+            for row in picture_rows:
+                try:
+                    db.session.delete(row)
+                    db.session.commit()
+                except:
+                    db.session.rollback()
+            for picture in picture_html_list:
+                print("picture=", picture)
+                if picture.startswith("data"):
+                    start_index = picture.find(',') + 1
+                    base64_str = picture[start_index:]
+                    # 只能放jpg格式的图片!
+                    random_str = str(uuid.uuid4()) + ".jpg"
+                    file_name = "app/static/gdut_img/detailpage/" + random_str
+                    with open(file_name, 'wb') as f:
+                        f.write(base64.b64decode(base64_str))
+                    save_position = 'app/static/gdut_img/detailpage/' + random_str
+                    sql_insert_GdutDetailpagePicture = GdutDetailpagePicture(detail_link=link,
+                                                                             local_position=save_position)
+                    db.session.add(sql_insert_GdutDetailpagePicture)
+                    try:
+                        db.session.commit()
+                    except:
+                        db.session.rollback()
+                else:
+                    save_position = "app" + picture[2:]
+                    sql_insert_GdutDetailpagePicture = GdutDetailpagePicture(detail_link=link,
+                                                                             local_position=save_position)
+                    db.session.add(sql_insert_GdutDetailpagePicture)
+
+                    try:
+                        db.session.commit()
+                    except:
+                        db.session.rollback()
+
+            text_list = html.xpath('//p/text()')
+            content_rows = databases_map_content[news_class].query.filter(
+                databases_map_content[news_class].detail_link == link).all()
+            for row in content_rows:
+                try:
+                    db.session.delete(row)
+                    db.session.commit()
+                except:
+                    db.session.rollback()
+            for text in text_list:
+                try:
+                    row = databases_map_content[news_class](detail_link=link, paragraph=text)
+                    db.session.add(row)
+                    db.session.commit()
+                except:
+                    db.session.rollback()
 
         # # 3. 返回内容并渲染成一个新页面
         # todo:以后更改为跳转到用户的展示页面

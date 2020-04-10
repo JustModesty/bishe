@@ -31,7 +31,7 @@
         {% endblock %}
 
         <div id="page-wrapper" class="gray-bg">
-<div class="row border-bottom">
+            <div class="row border-bottom">
                 <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
                     <div class="navbar-header">
                         <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i
@@ -41,7 +41,7 @@
             </div>
             <div class="row wrapper border-bottom white-bg page-heading">
                 <div class="col-lg-10">
-                    <h2>学习园地</h2>
+                    <h2>专栏报道</h2>
                     <ol class="breadcrumb">
                         <li>
                             <a href="index.html">首页</a>
@@ -50,16 +50,15 @@
                             <a>数据表</a>
                         </li>
                         <li class="active">
-                            <strong>学习园地表</strong>
+                            <strong>专栏报道表</strong>
                         </li>
                     </ol>
                 </div>
                 <div>
                     <br>
-                    <a class="btn btn-success" href="{{ url_for('.dashboard_start_spider_xuexiyuandi') }}"
+                    <a class="btn btn-success" href="{{ url_for('.dashboard_start_spider_tupianxinwen') }}"
                        role="button">开始爬取 »</a>
-                    <a class="btn btn-danger" href="{{ url_for('.clear_data_xuexiyuandi') }}" role="button">开始清空数据库
-                        »</a>
+                    <a class="btn btn-danger" href="{{ url_for('.clear_data_tupianxinwen') }}" role="button">开始清空数据库 »</a>
                 </div>
 
                 <div class="col-lg-2">
@@ -71,7 +70,7 @@
             <div class="wrapper wrapper-content animated fadeInRight ecommerce">
                 <div class="ibox-content m-b-sm border-bottom">
                     <div class="row">
-                        <form action="{{ url_for('.search_data_xuexiyuandi') }}">
+                        <form action="{{ url_for('.search_data_tupianxinwen') }}">
                             <div class="col-sm-4">
                                 <div class="form-group">
                                     <label class="control-label" for="product_name">置顶新闻标题</label>
@@ -111,13 +110,8 @@
                                         {% if not item['date'] %}
                                             <tr>
                                                 <td>
-                                                    {% if item['link'].startswith('http') %}
-                                                        <a target="_blank"
-                                                           href="{{ item['link'] }}">{{ item['title'] }}</a>
-                                                    {% else %}
-                                                        <a target="_blank"
-                                                           href="https://gdutnews.gdut.edu.cn/{{ item['link'] }}">{{ item['title'] }}</a>
-                                                    {% endif %}
+                                                    {#                                                {{ item['title'] }}#}
+                                                    <a target="_blank" href="{{ item['link'] }}">{{ item['title'] }}</a>
                                                 </td>
                                                 <td>
                                                     {#                                                {{ item['date'] | default('') }}#}
@@ -139,7 +133,7 @@
                                                         {% if item['link'].startswith('http') %}
                                                             <button class="btn-white btn btn-xs disabled">编辑</button>
                                                         {% else %}
-                                                            <a target="_blank" href="{{ url_for('.edit_article_xuexiyuandi', article_link=item['link'] ) }}">
+                                                            <a href="{{ url_for('.edit_article_tupianxinwen', article_link=item['link'] ) }}">
                                                                 <button class="btn-white btn btn-xs">编辑</button>
                                                             </a>
                                                         {% endif %}
@@ -189,11 +183,9 @@
                                             <tr>
                                                 <td>
                                                     {% if item['link'].startswith('http') %}
-                                                        <a target="_blank"
-                                                           href="{{ item['link'] }}">{{ item['title'] }}</a>
+                                                        <a target="_blank" href="{{ item['link'] }}">{{ item['title'] }}</a>
                                                     {% else %}
-                                                        <a target="_blank"
-                                                           href="https://gdutnews.gdut.edu.cn/{{ item['link'] }}">{{ item['title'] }}</a>
+                                                        <a target="_blank" href="https://gdutnews.gdut.edu.cn/{{ item['link'] }}">{{ item['title'] }}</a>
                                                     {% endif %}
                                                 </td>
                                                 <td>
@@ -212,7 +204,7 @@
                                                         {% if item['link'].startswith('http') %}
                                                             <button class="btn-white btn btn-xs disabled">编辑</button>
                                                         {% else %}
-                                                            <a target="_blank" href="{{ url_for('.edit_article_xuexiyuandi', article_link=item['link'] ) }}">
+                                                            <a href="{{ url_for('.edit_article_tupianxinwen', article_link=item['link'] ) }}">
                                                                 <button class="btn-white btn btn-xs">编辑</button>
                                                             </a>
                                                         {% endif %}
