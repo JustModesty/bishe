@@ -6,7 +6,8 @@ from app.models import *
 from config import PublicGdutWebVar
 
 from urllib.request import urlretrieve
-
+from urllib.parse import quote
+import string
 
 # 抓取banner
 def banner(html):
@@ -301,8 +302,15 @@ def start_spider_detail(path):
         # 下载图片
         for img_item in detail['img_list']:
             start_index = img_item.rfind('/')
-            save_position = 'app/static/gdut_img/detailpage' + img_item[start_index:-7]
-            urlretrieve(PublicGdutWebVar.url_pre_no_slash + img_item, save_position)
+            if img_item.endswith('e=.jpg'):
+                save_position = 'app/static/gdut_img/detailpage' + img_item[start_index:-7]
+            else:
+                save_position = 'app/static/gdut_img/detailpage' + img_item[start_index:]
+            img_item = quote(img_item, safe=string.printable)
+            if img_item.startswith('http'):
+                urlretrieve(img_item, save_position)
+            else:
+                urlretrieve(PublicGdutWebVar.url_pre_no_slash + img_item, save_position)
             sql_insert_GdutDetailpagePicture = GdutDetailpagePicture(detail_link=path, local_position=save_position)
             db.session.add(sql_insert_GdutDetailpagePicture)
 
@@ -1010,8 +1018,18 @@ def tupianxinwen_start_spider_detail(path):
         for img_item in detail['img_list']:
             print("info1: 进入下载图片")
             start_index = img_item.rfind('/')
-            save_position = 'app/static/gdut_img/detailpage' + img_item[start_index:]
-            urlretrieve(img_item, save_position)
+
+            if img_item.endswith('e=.jpg'):
+                save_position = 'app/static/gdut_img/detailpage' + img_item[start_index:-7]
+            else:
+                save_position = 'app/static/gdut_img/detailpage' + img_item[start_index:]
+            img_item = quote(img_item, safe=string.printable)
+            if img_item.startswith('http'):
+                urlretrieve(img_item, save_position)
+            else:
+                urlretrieve(PublicGdutWebVar.url_pre_no_slash + img_item, save_position)
+
+
             sql_insert_GdutDetailpagePicture = GdutDetailpagePicture(detail_link=path, local_position=save_position)
             db.session.add(sql_insert_GdutDetailpagePicture)
 
