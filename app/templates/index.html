@@ -50,33 +50,36 @@
                                 IN+
                             </div>
                         </li>
-                        <li>
-                            <a href="index.html"><i class="fa fa-th-large"></i> <span
-                                    class="nav-label">Dashboards</span> <span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li class="active"><a href="/">首页</a></li>
-                                <li><a href="forum_main.html">查看数据</a></li>
-                            </ul>
+                        <li class="landing_link">
+                            <a href="/"><i class="fa fa-star"></i> <span class="nav-label">模拟广工新闻首页</span>
+                                <span class="label label-warning pull-right">NEW</span></a>
                         </li>
                         <li>
-                            <a href="index.html"><i class="fa fa-th-large"></i> <span class="nav-label">数据表</span> <span
-                                    class="fa arrow"></span></a>
+                            <a href="index.html">
+                                <i class="fa fa-th-large"></i>
+                                <span class="nav-label">管理员控制台</span>
+                                <span class="fa arrow"></span>
+                            </a>
                             <ul class="nav nav-second-level">
-                                <li><a href="table_schoolnews.html">学校新闻表</a></li>
-{#                                <li><a href="table_tupianxinwen.html">图片新闻表(需要动态加载js图片,鼠标点击,先不展示)</a></li>#}
-                                <li><a href="#">图片新闻表(需要动态加载js图片,鼠标点击,先不展示)</a></li>
-                                <li><a href="table_meitigongda.html">媒体工大表</a></li>
-                                <li><a href="table_renwenxiaoyuan.html">人文校园表</a></li>
-                                <li><a href="table_xiaoyoudongtai.html">校友动态表</a></li>
-                                <li><a href="table_xuexiyuandi.html">学习园地表</a></li>
-                                <li><a href="table_zhuanlanbaodao.html">专题报道表</a></li>
+                                <li><a href="forum_main.html">查看数据</a></li>
+                                <li>
+                                    <a href="index.html"><i class="fa fa-th-large"></i> <span
+                                            class="nav-label">数据表</span> <span
+                                            class="fa arrow"></span></a>
+                                    <ul class="nav nav-second-level">
+                                        <li><a href="table_schoolnews.html">学校新闻表</a></li>
+                                        {#                                <li><a href="table_tupianxinwen.html">图片新闻表(需要动态加载js图片,鼠标点击,先不展示)</a></li>#}
+                                        <li><a href="table_meitigongda.html">媒体工大表</a></li>
+                                        <li><a href="table_renwenxiaoyuan.html">人文校园表</a></li>
+                                        <li><a href="table_xiaoyoudongtai.html">校友动态表</a></li>
+                                        <li><a href="table_xuexiyuandi.html">学习园地表</a></li>
+                                        <li><a href="table_zhuanlanbaodao.html">专题报道表</a></li>
+                                    </ul>
+                                </li>
                             </ul>
                         </li>
 
-                        <li class="landing_link">
-                            <a target="_blank" href="landing.html"><i class="fa fa-star"></i> <span class="nav-label">模拟广工新闻首页</span>
-                                <span class="label label-warning pull-right">NEW</span></a>
-                        </li>
+
                         <li>
                             <a target="_blank" href="http://gdutnews.gdut.edu.cn/"><i class="fa fa-star"></i> <span
                                     class="nav-label">原始广工新闻首页</span>
@@ -84,7 +87,6 @@
                         </li>
 
                     </ul>
-
                 </div>
             </nav>
         {% endblock %}
