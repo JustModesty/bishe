@@ -31,19 +31,55 @@ Session = sessionmaker(bind=engine)
 def dashboard_index():
     session = Session()
     # 学校新闻
-    gdutschoolnew_all_line = session.query(GdutSchoolnew.link, GdutSchoolnew.title, GdutSchoolnew.src,
-                                           GdutSchoolnew.date).limit(6)
+    gdutschoolnew_limit_line = session.query(GdutSchoolnew.link, GdutSchoolnew.title, GdutSchoolnew.src,
+                                             GdutSchoolnew.date).limit(6)
     try:
         db.session.commit()
     except:
         db.session.rollback()
 
     # 媒体工大
+    maitigongda_limit_line = session.query(GdutMeitigongda.link, GdutMeitigongda.title, GdutMeitigongda.src,
+                                           GdutMeitigongda.date).limit(6)
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
     # 人文校园
+    renwenxiaoyuan_limit_line = session.query(GdutRenwenxiaoyuan.link, GdutRenwenxiaoyuan.title, GdutRenwenxiaoyuan.src,
+                                              GdutRenwenxiaoyuan.date).limit(6)
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
     # 校友动态
+    xiaoyoudongtai_limit_line = session.query(GdutXiaoyoudongtai.link, GdutXiaoyoudongtai.title, GdutXiaoyoudongtai.src,
+                                              GdutXiaoyoudongtai.date).limit(6)
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
     # 学习园地
+    xuexiyuandi_limit_line = session.query(GdutXuexiyuandi.link, GdutXuexiyuandi.title, GdutXuexiyuandi.src,
+                                           GdutXuexiyuandi.date).limit(6)
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
     # 专栏报道
-    return render_template('dashboard_2.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
+    zhuanlanbaodao_limit_line = session.query(GdutZhuanlanbaodao.link, GdutZhuanlanbaodao.title, GdutZhuanlanbaodao.src,
+                                              GdutZhuanlanbaodao.date).limit(6)
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+
+    return render_template('dashboard_2.html', gdutschoolnew_limit_line=gdutschoolnew_limit_line,
+                           meitigongda_limit_line=maitigongda_limit_line,
+                           renwenxiaoyuan_limit_line=renwenxiaoyuan_limit_line,
+                           xiaoyoudongtai_limit_line=xiaoyoudongtai_limit_line,
+                           xuexiyuandi_limit_line=xuexiyuandi_limit_line,
+                           zhuanlanbaodao_limit_line=zhuanlanbaodao_limit_line)
 
 
 # dashboard查看数据库分类
@@ -240,6 +276,7 @@ def save_edit_article_schoolnews():
         # todo:以后更改为跳转到用户的展示页面
         return redirect(url_for('.dashboard_table_schoolnews'))
 
+
 # ==================图片新闻====================================== #
 # dashboard查看"图片新闻表"的数据
 @main_handler.route('/table_tupianxinwen.html')
@@ -317,7 +354,6 @@ def clear_data_tupianxinwen():
             except:
                 db.session.rollback()
 
-
     session.execute('delete from gdut_tupianxinwen where 1=1')
     try:
         session.commit()
@@ -372,13 +408,13 @@ def save_edit_article_tupianxinwen():
     if request.method == 'POST':
         databases_map = {'schoolnews': GdutSchoolnew, 'meitigongda': GdutMeitigongda,
                          'xiaoyoudongtai': GdutXiaoyoudongtai, 'xuexiyuandi': GdutXuexiyuandi,
-                         'zhuanlanbaodao': GdutZhuanlanbaodao, 'tupianxinwen':GdutTupianxinwen}
+                         'zhuanlanbaodao': GdutZhuanlanbaodao, 'tupianxinwen': GdutTupianxinwen}
         databases_map_content = {'schoolnews': GdutDetailpageContent, 'meitigongda': GdutDetailpageContent,
                                  'xiaoyoudongtai': GdutDetailpageContent, 'xuexiyuandi': GdutDetailpageContent,
-                                 'zhuanlanbaodao': GdutDetailpageContent, 'tupianxinwen':GdutDetailpageContent}
+                                 'zhuanlanbaodao': GdutDetailpageContent, 'tupianxinwen': GdutDetailpageContent}
         databases_map_picture = {'schoolnews': GdutDetailpagePicture, 'meitigongda': GdutDetailpagePicture,
                                  'xiaoyoudongtai': GdutDetailpagePicture, 'xuexiyuandi': GdutDetailpagePicture,
-                                 'zhuanlanbaodao': GdutDetailpagePicture, 'tupianxinwen':GdutDetailpagePicture}
+                                 'zhuanlanbaodao': GdutDetailpagePicture, 'tupianxinwen': GdutDetailpagePicture}
         update_field = flask.request.args.get('update_field')
         news_class = flask.request.args.get('news_class')
         article_id = request.form['mysql_id']
@@ -477,8 +513,6 @@ def save_edit_article_tupianxinwen():
         # # 3. 返回内容并渲染成一个新页面
         # todo:以后更改为跳转到用户的展示页面
         return redirect(url_for('.dashboard_table_tupianxinwen'))
-
-
 
 
 # ==================工大====================================== #
@@ -1236,11 +1270,11 @@ def save_edit_article_xuexiyuandi():
     # 1. 定位是哪篇文章
     if request.method == 'POST':
         databases_map = {'schoolnews': GdutSchoolnew, 'meitigongda': GdutMeitigongda,
-                         'xiaoyoudongtai': GdutXiaoyoudongtai, 'xuexiyuandi':GdutXuexiyuandi}
+                         'xiaoyoudongtai': GdutXiaoyoudongtai, 'xuexiyuandi': GdutXuexiyuandi}
         databases_map_content = {'schoolnews': GdutDetailpageContent, 'meitigongda': GdutDetailpageContent,
-                                 'xiaoyoudongtai': GdutDetailpageContent, 'xuexiyuandi':GdutDetailpageContent}
+                                 'xiaoyoudongtai': GdutDetailpageContent, 'xuexiyuandi': GdutDetailpageContent}
         databases_map_picture = {'schoolnews': GdutDetailpagePicture, 'meitigongda': GdutDetailpagePicture,
-                                 'xiaoyoudongtai': GdutDetailpagePicture, 'xuexiyuandi':GdutDetailpagePicture}
+                                 'xiaoyoudongtai': GdutDetailpagePicture, 'xuexiyuandi': GdutDetailpagePicture}
         update_field = flask.request.args.get('update_field')
         news_class = flask.request.args.get('news_class')
         article_id = request.form['mysql_id']
@@ -1428,11 +1462,14 @@ def save_edit_article_zhuanlanbaodao():
     # 1. 定位是哪篇文章
     if request.method == 'POST':
         databases_map = {'schoolnews': GdutSchoolnew, 'meitigongda': GdutMeitigongda,
-                         'xiaoyoudongtai': GdutXiaoyoudongtai, 'xuexiyuandi':GdutXuexiyuandi, 'zhuanlanbaodao':GdutZhuanlanbaodao}
+                         'xiaoyoudongtai': GdutXiaoyoudongtai, 'xuexiyuandi': GdutXuexiyuandi,
+                         'zhuanlanbaodao': GdutZhuanlanbaodao}
         databases_map_content = {'schoolnews': GdutDetailpageContent, 'meitigongda': GdutDetailpageContent,
-                                 'xiaoyoudongtai': GdutDetailpageContent, 'xuexiyuandi':GdutDetailpageContent, 'zhuanlanbaodao':GdutDetailpageContent}
+                                 'xiaoyoudongtai': GdutDetailpageContent, 'xuexiyuandi': GdutDetailpageContent,
+                                 'zhuanlanbaodao': GdutDetailpageContent}
         databases_map_picture = {'schoolnews': GdutDetailpagePicture, 'meitigongda': GdutDetailpagePicture,
-                                 'xiaoyoudongtai': GdutDetailpagePicture, 'xuexiyuandi':GdutDetailpagePicture, 'zhuanlanbaodao':GdutDetailpagePicture}
+                                 'xiaoyoudongtai': GdutDetailpagePicture, 'xuexiyuandi': GdutDetailpagePicture,
+                                 'zhuanlanbaodao': GdutDetailpagePicture}
         update_field = flask.request.args.get('update_field')
         news_class = flask.request.args.get('news_class')
         article_id = request.form['mysql_id']
@@ -1828,9 +1865,33 @@ def spider_menu_section(path):
     return render_template('menu_section_page.html', all_news=all_news)
 
 
-
 # 模拟的爬取到的新闻首页
 @main_handler.route('/show_page/table_showpage_schoolnews.html')
 def table_showpage_schoolnews():
     return render_template('table_showpage_schoolnews.html')
+
+# 模拟的爬取到的新闻首页
+@main_handler.route('/show_page/table_showpage_meitigongda.html')
+def table_showpage_meitigongda():
+    return render_template('table_showpage_meitigongda.html')
+
+# 模拟的爬取到的新闻首页
+@main_handler.route('/show_page/table_showpage_renwenxiaoyuan.html')
+def table_showpage_renwenxiaoyuan():
+    return render_template('table_showpage_renwenxiaoyuan.html')
+
+# 模拟的爬取到的新闻首页
+@main_handler.route('/show_page/table_showpage_xiaoyoudongtai.html')
+def table_showpage_xiaoyoudongtai():
+    return render_template('table_showpage_xiaoyoudongtai.html')
+
+# 模拟的爬取到的新闻首页
+@main_handler.route('/show_page/table_showpage_xuexiyuandi.html')
+def table_showpage_xuexiyuandi():
+    return render_template('table_showpage_xuexiyuandi.html')
+
+# 模拟的爬取到的新闻首页
+@main_handler.route('/show_page/table_showpage_zhuanlanbaodao.html')
+def table_showpage_zhuanlanbaodao():
+    return render_template('table_showpage_zhuanlanbaodao.html')
 
