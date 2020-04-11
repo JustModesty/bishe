@@ -23,9 +23,27 @@ Session = sessionmaker(bind=engine)
 
 
 # dashboard首页
+# @main_handler.route('/')
+# def dashboard_index():
+#     return render_template('index.html')
+
 @main_handler.route('/')
 def dashboard_index():
-    return render_template('index.html')
+    session = Session()
+    # 学校新闻
+    gdutschoolnew_all_line = session.query(GdutSchoolnew.link, GdutSchoolnew.title, GdutSchoolnew.src,
+                                           GdutSchoolnew.date).limit(6)
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+
+    # 媒体工大
+    # 人文校园
+    # 校友动态
+    # 学习园地
+    # 专栏报道
+    return render_template('dashboard_2.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 
 # dashboard查看数据库分类
@@ -1808,3 +1826,11 @@ def spider_menu_section(path):
     all_news = gdut_spider_function.start_spider_menu_section(url)
 
     return render_template('menu_section_page.html', all_news=all_news)
+
+
+
+# 模拟的爬取到的新闻首页
+@main_handler.route('/show_page/table_showpage_schoolnews.html')
+def table_showpage_schoolnews():
+    return render_template('table_showpage_schoolnews.html')
+
