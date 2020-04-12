@@ -110,7 +110,6 @@
                                         <th data-toggle="true">置顶新闻标题</th>
                                         <th data-hide="phone">热度</th>
                                         <th data-hide="phone">内容是否本站</th>
-{#                                        <th class="text-right" data-sort-ignore="true">内容是否本站</th>#}
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -118,8 +117,13 @@
                                         {% if not item['date'] %}
                                             <tr>
                                                 <td>
-                                                    {#                                                {{ item['title'] }}#}
-                                                    <a target="_blank" href="{{ url_for('.table_showpage_article_detail') }}">{{ item['title'] }}</a>
+                                                    {% if item['link'].startswith('http') %}
+                                                        <a target="_blank"
+                                                           href="{{ item['link'] }}">{{ item['title'] }}</a>
+                                                    {% else %}
+                                                        <a target="_blank"
+                                                           href="{{ url_for('.table_showpage_article_detail', article_link=item['link']) }}">{{ item['title'] }}</a>
+                                                    {% endif %}
                                                 </td>
                                                 <td>
                                                     {{ item['date'] or '热点新闻' }}
@@ -130,6 +134,8 @@
                                                         <span class="label label-danger">No</span>
                                                     {% else %}
                                                         <span class="label label-primary">Yes</span>
+                                                        <span class="label label-primary"><a target="_blank"
+                                                                                             href="https://gdutnews.gdut.edu.cn/{{ item['link'] }}">原始站点</a></span>
                                                     {% endif %}
                                                 </td>
 
@@ -176,7 +182,7 @@
                                                            href="{{ item['link'] }}">{{ item['title'] }}</a>
                                                     {% else %}
                                                         <a target="_blank"
-                                                           href="https://gdutnews.gdut.edu.cn/{{ item['link'] }}">{{ item['title'] }}</a>
+                                                           href="{{ url_for('.table_showpage_article_detail', article_link=item['link']) }}">{{ item['title'] }}</a>
                                                     {% endif %}
                                                 </td>
                                                 <td>
@@ -188,6 +194,12 @@
                                                         <span class="label label-danger">No</span>
                                                     {% else %}
                                                         <span class="label label-primary">Yes</span>
+                                                        <span class="label label-info">
+                                                            <a target="_blank"
+                                                               href="https://gdutnews.gdut.edu.cn/{{ item['link'] }}">
+                                                                原始站点
+                                                            </a>
+                                                        </span>
                                                     {% endif %}
                                                 </td>
 

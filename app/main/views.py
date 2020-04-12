@@ -2112,7 +2112,7 @@ def spider_menu_section(path):
 
 
 # 模拟的爬取到的学校新闻
-@main_handler.route('/show_page/table_showpage_schoolnews.html')
+@main_handler.route('/show_page_table_showpage_schoolnews.html')
 def table_showpage_schoolnews():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutSchoolnew.link, GdutSchoolnew.title, GdutSchoolnew.src,
@@ -2125,31 +2125,35 @@ def table_showpage_schoolnews():
     # return render_template('table_showpage_schoolnews.html')
 
 # 模拟的爬取到的媒体工大
-@main_handler.route('/show_page/table_showpage_meitigongda.html')
+@main_handler.route('/show_page_table_showpage_meitigongda.html')
 def table_showpage_meitigongda():
     return render_template('table_showpage_meitigongda.html')
 
 # 模拟的爬取到的人文校园
-@main_handler.route('/show_page/table_showpage_renwenxiaoyuan.html')
+@main_handler.route('/show_page_table_showpage_renwenxiaoyuan.html')
 def table_showpage_renwenxiaoyuan():
     return render_template('table_showpage_renwenxiaoyuan.html')
 
 # 模拟的爬取到的校友动态
-@main_handler.route('/show_page/table_showpage_xiaoyoudongtai.html')
+@main_handler.route('/show_page_table_showpage_xiaoyoudongtai.html')
 def table_showpage_xiaoyoudongtai():
     return render_template('table_showpage_xiaoyoudongtai.html')
 
 # 模拟的爬取到的学习园地
-@main_handler.route('/show_page/table_showpage_xuexiyuandi.html')
+@main_handler.route('/show_page_table_showpage_xuexiyuandi.html')
 def table_showpage_xuexiyuandi():
     return render_template('table_showpage_xuexiyuandi.html')
 
 # 模拟的爬取到的专栏报道
-@main_handler.route('/show_page/table_showpage_zhuanlanbaodao.html')
+@main_handler.route('/show_page_table_showpage_zhuanlanbaodao.html')
 def table_showpage_zhuanlanbaodao():
     return render_template('table_showpage_zhuanlanbaodao.html')
 
 # 模拟的爬取到文章详情页
-@main_handler.route('/show_page/article.html')
+@main_handler.route('/show_page_article.html')
 def table_showpage_article_detail():
-    return render_template('article.html')
+    # 1. 定位是哪篇文章
+    article_title_restful_url = flask.request.args.get('article_link')
+    content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
+    # 2. 返回内容并渲染成一个新页面
+    return render_template('article.html', content=content)
