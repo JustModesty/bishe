@@ -2122,32 +2122,67 @@ def table_showpage_schoolnews():
     except:
         db.session.rollback()
     return render_template('table_showpage_schoolnews.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
-    # return render_template('table_showpage_schoolnews.html')
 
 # 模拟的爬取到的媒体工大
 @main_handler.route('/show_page_table_showpage_meitigongda.html')
 def table_showpage_meitigongda():
-    return render_template('table_showpage_meitigongda.html')
+    session = Session()
+    gdutschoolnew_all_line = session.query(GdutMeitigongda.link, GdutMeitigongda.title, GdutMeitigongda.src,
+                                           GdutMeitigongda.date).all()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+    return render_template('table_showpage_meitigongda.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 # 模拟的爬取到的人文校园
 @main_handler.route('/show_page_table_showpage_renwenxiaoyuan.html')
 def table_showpage_renwenxiaoyuan():
-    return render_template('table_showpage_renwenxiaoyuan.html')
+    session = Session()
+    gdutschoolnew_all_line = session.query(GdutRenwenxiaoyuan.link, GdutRenwenxiaoyuan.title, GdutRenwenxiaoyuan.src,
+                                           GdutRenwenxiaoyuan.date).all()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+    return render_template('table_showpage_renwenxiaoyuan.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 # 模拟的爬取到的校友动态
 @main_handler.route('/show_page_table_showpage_xiaoyoudongtai.html')
 def table_showpage_xiaoyoudongtai():
-    return render_template('table_showpage_xiaoyoudongtai.html')
+    session = Session()
+    gdutschoolnew_all_line = session.query(GdutXiaoyoudongtai.link, GdutXiaoyoudongtai.title, GdutXiaoyoudongtai.src,
+                                           GdutXiaoyoudongtai.date).all()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+    return render_template('table_showpage_xiaoyoudongtai.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
+
 
 # 模拟的爬取到的学习园地
 @main_handler.route('/show_page_table_showpage_xuexiyuandi.html')
 def table_showpage_xuexiyuandi():
-    return render_template('table_showpage_xuexiyuandi.html')
+    session = Session()
+    gdutschoolnew_all_line = session.query(GdutXuexiyuandi.link, GdutXuexiyuandi.title, GdutXuexiyuandi.src,
+                                           GdutXuexiyuandi.date).all()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+    return render_template('table_showpage_xuexiyuandi.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 # 模拟的爬取到的专栏报道
 @main_handler.route('/show_page_table_showpage_zhuanlanbaodao.html')
 def table_showpage_zhuanlanbaodao():
-    return render_template('table_showpage_zhuanlanbaodao.html')
+    session = Session()
+    gdutschoolnew_all_line = session.query(GdutZhuanlanbaodao.link, GdutZhuanlanbaodao.title, GdutZhuanlanbaodao.src,
+                                           GdutZhuanlanbaodao.date).all()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+    return render_template('table_showpage_zhuanlanbaodao.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
 # 模拟的爬取到文章详情页
 @main_handler.route('/show_page_article.html')

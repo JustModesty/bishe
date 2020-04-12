@@ -222,11 +222,9 @@
 
 
             </div>
-            <div class="footer">
-                <div>
-                    <strong>毕业设计</strong> 基于网络爬虫的高校内容管理系统
-                </div>
-            </div>
+            {% block footer %}
+                {{ super() }}
+            {% endblock %}
         </div>
     </div>
 

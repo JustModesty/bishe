@@ -288,6 +288,10 @@ def start_spider_detail(path):
         detail['content_list3'] = html.xpath("//form/div[@id='contentText']//text()")
         
         detail['img_list'] = html.xpath('//div[@id="vsb_content_2"]//p//img/@src')
+        detail['img_list2'] = html.xpath("//div//img[@class='img_vsb_content']/@src")
+
+        img_all = detail['img_list'] + detail['img_list2']
+
 
         # 存储文章基本信息
         sql_insert_GdutSchoolnewsDetailpage = GdutDetailpage(link=path, title=detail['title'],
@@ -300,7 +304,7 @@ def start_spider_detail(path):
             db.session.rollback()
 
         # 下载图片
-        for img_item in detail['img_list']:
+        for img_item in img_all:
             start_index = img_item.rfind('/')
             if img_item.endswith('e=.jpg'):
                 save_position = 'app/static/gdut_img/detailpage' + img_item[start_index:-7]
