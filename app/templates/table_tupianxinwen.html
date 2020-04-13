@@ -137,9 +137,11 @@
                                                                 <button class="btn-white btn btn-xs">编辑</button>
                                                             </a>
                                                         {% endif %}
-                                                        <a href="">
-                                                            <button class="btn-white btn btn-xs">查看</button>
-                                                        </a>
+                                                        {% if item['link'].startswith('http') %}
+                                                            <a target="_blank" href="{{ item['link'] }}">查看</a>
+                                                        {% else %}
+                                                            <a target="_blank" href="{{ url_for('.table_showpage_article_detail', article_link=item['link']) }}">查看</a>
+                                                        {% endif %}
                                                         <a href="">
                                                             <button class="btn-white btn btn-xs">删除</button>
                                                         </a>
@@ -208,9 +210,11 @@
                                                                 <button class="btn-white btn btn-xs">编辑</button>
                                                             </a>
                                                         {% endif %}
-                                                        <a href="">
-                                                            <button class="btn-white btn btn-xs">查看</button>
-                                                        </a>
+                                                        {% if item['link'].startswith('http') %}
+                                                            <a target="_blank" href="{{ item['link'] }}">查看</a>
+                                                        {% else %}
+                                                            <a target="_blank" href="{{ url_for('.table_showpage_article_detail', article_link=item['link']) }}">查看</a>
+                                                        {% endif %}
                                                         <a href="">
                                                             <button class="btn-white btn btn-xs">删除</button>
                                                         </a>

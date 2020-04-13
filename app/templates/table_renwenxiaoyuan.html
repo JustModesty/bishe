@@ -31,7 +31,7 @@
         {% endblock %}
 
         <div id="page-wrapper" class="gray-bg">
-<div class="row border-bottom">
+            <div class="row border-bottom">
                 <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
                     <div class="navbar-header">
                         <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i
@@ -143,10 +143,17 @@
                                                                 <button class="btn-white btn btn-xs">编辑</button>
                                                             </a>
                                                         {% endif %}
-                                                        <a href="">
-                                                            <button class="btn-white btn btn-xs">查看</button>
-                                                        </a>
-                                                        <a href="">
+
+                                                        {% if item['link'].startswith('http') %}
+                                                            <a target="_blank" href="{{ item['link'] }}">查看</a>
+                                                        {% else %}
+                                                            <a target="_blank"
+                                                               href="{{ url_for('.table_showpage_article_detail', article_link=item['link']) }}">查看</a>
+                                                        {% endif %}
+
+
+
+                                                        <a href="{{ url_for('.article_delete_renwenxiaoyuan', article_link=item['link']) }}">
                                                             <button class="btn-white btn btn-xs">删除</button>
                                                         </a>
                                                     </div>
@@ -216,10 +223,16 @@
                                                                 <button class="btn-white btn btn-xs">编辑</button>
                                                             </a>
                                                         {% endif %}
-                                                        <a href="">
-                                                            <button class="btn-white btn btn-xs">查看</button>
-                                                        </a>
-                                                        <a href="">
+
+                                                        {% if item['link'].startswith('http') %}
+                                                            <a target="_blank" href="{{ item['link'] }}">查看</a>
+                                                        {% else %}
+                                                            <a target="_blank"
+                                                               href="{{ url_for('.table_showpage_article_detail', article_link=item['link']) }}">查看</a>
+                                                        {% endif %}
+
+
+                                                        <a href="{{ url_for('.article_delete_renwenxiaoyuan', article_link=item['link']) }}">
                                                             <button class="btn-white btn btn-xs">删除</button>
                                                         </a>
                                                     </div>

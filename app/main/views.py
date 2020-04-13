@@ -175,6 +175,53 @@ def clear_data_schoolnews():
     return redirect(url_for('.dashboard_table_schoolnews'))
 
 
+# 学校新闻 文章“删除” 接口
+@main_handler.route('/article_delete_schoolnews')
+def article_delete_schoolnews():
+    session = Session()
+    article_title_restful_url = flask.request.args.get('article_link')
+    link_str_list = [article_title_restful_url]
+
+    for link in link_str_list:
+        gdutschoolnews_rows = GdutSchoolnew.query.filter(
+            GdutSchoolnew.link == link).all()
+        for row in gdutschoolnews_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_rows = GdutDetailpage.query.filter(
+            GdutDetailpage.link == link).all()
+        for row in gdutdetailpage_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_picture_rows = GdutDetailpagePicture.query.filter(
+            GdutDetailpagePicture.detail_link == link).all()
+        for row in gdutdetailpage_picture_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_content_rows = GdutDetailpageContent.query.filter(
+            GdutDetailpageContent.detail_link == link).all()
+        for row in gdutdetailpage_content_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+    return redirect(url_for('.dashboard_table_schoolnews'))
+
+
 # 学校新闻“查询” 接口
 @main_handler.route('/search_data_schoolnews')
 def search_data_schoolnews():
@@ -642,6 +689,53 @@ def clear_data_meitigongda():
     return redirect(url_for('.dashboard_table_meitigongda'))
 
 
+# 媒体工大 文章“删除” 接口
+@main_handler.route('/article_delete_meitigongda')
+def article_delete_meitigongda():
+    session = Session()
+    article_title_restful_url = flask.request.args.get('article_link')
+    link_str_list = [article_title_restful_url]
+
+    for link in link_str_list:
+        gdutschoolnews_rows = GdutMeitigongda.query.filter(
+            GdutMeitigongda.link == link).all()
+        for row in gdutschoolnews_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_rows = GdutDetailpage.query.filter(
+            GdutDetailpage.link == link).all()
+        for row in gdutdetailpage_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_picture_rows = GdutDetailpagePicture.query.filter(
+            GdutDetailpagePicture.detail_link == link).all()
+        for row in gdutdetailpage_picture_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_content_rows = GdutDetailpageContent.query.filter(
+            GdutDetailpageContent.detail_link == link).all()
+        for row in gdutdetailpage_content_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+    return redirect(url_for('.dashboard_table_meitigongda'))
+
+
 # 媒体工大“查询” 接口
 @main_handler.route('/search_data_meitigongda')
 def search_data_meitigongda():
@@ -871,6 +965,53 @@ def clear_data_renwenxiaoyuan():
     return redirect(url_for('.dashboard_table_renwenxiaoyuan'))
 
 
+
+# 人文校园 文章“删除” 接口
+@main_handler.route('/article_delete_renwenxiaoyuan')
+def article_delete_renwenxiaoyuan():
+    session = Session()
+    article_title_restful_url = flask.request.args.get('article_link')
+    link_str_list = [article_title_restful_url]
+
+    for link in link_str_list:
+        gdutschoolnews_rows = GdutRenwenxiaoyuan.query.filter(
+            GdutRenwenxiaoyuan.link == link).all()
+        for row in gdutschoolnews_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_rows = GdutDetailpage.query.filter(
+            GdutDetailpage.link == link).all()
+        for row in gdutdetailpage_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_picture_rows = GdutDetailpagePicture.query.filter(
+            GdutDetailpagePicture.detail_link == link).all()
+        for row in gdutdetailpage_picture_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_content_rows = GdutDetailpageContent.query.filter(
+            GdutDetailpageContent.detail_link == link).all()
+        for row in gdutdetailpage_content_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+    return redirect(url_for('.dashboard_table_renwenxiaoyuan'))
+
 # 人文校园“查询” 接口
 @main_handler.route('/search_data_renwenxiaoyuan')
 def search_data_renwenxiaoyuan():
@@ -1097,6 +1238,52 @@ def clear_data_xiaoyoudongtai():
         session.commit()
     except:
         session.rollback()
+    return redirect(url_for('.dashboard_table_xiaoyoudongtai'))
+
+# 校友动态 文章“删除” 接口
+@main_handler.route('/article_delete_xiaoyoudongtai')
+def article_delete_xiaoyoudongtai():
+    session = Session()
+    article_title_restful_url = flask.request.args.get('article_link')
+    link_str_list = [article_title_restful_url]
+
+    for link in link_str_list:
+        gdutschoolnews_rows = GdutXiaoyoudongtai.query.filter(
+            GdutXiaoyoudongtai.link == link).all()
+        for row in gdutschoolnews_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_rows = GdutDetailpage.query.filter(
+            GdutDetailpage.link == link).all()
+        for row in gdutdetailpage_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_picture_rows = GdutDetailpagePicture.query.filter(
+            GdutDetailpagePicture.detail_link == link).all()
+        for row in gdutdetailpage_picture_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_content_rows = GdutDetailpageContent.query.filter(
+            GdutDetailpageContent.detail_link == link).all()
+        for row in gdutdetailpage_content_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
     return redirect(url_for('.dashboard_table_xiaoyoudongtai'))
 
 
@@ -1431,6 +1618,53 @@ def clear_data_xuexiyuandi():
     return redirect(url_for('.dashboard_table_xuexiyuandi'))
 
 
+# 学习园地 文章“删除” 接口
+@main_handler.route('/article_delete_xuexiyuandi')
+def article_delete_xuexiyuandi():
+    session = Session()
+    article_title_restful_url = flask.request.args.get('article_link')
+    link_str_list = [article_title_restful_url]
+
+    for link in link_str_list:
+        gdutschoolnews_rows = GdutXuexiyuandi.query.filter(
+            GdutXuexiyuandi.link == link).all()
+        for row in gdutschoolnews_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_rows = GdutDetailpage.query.filter(
+            GdutDetailpage.link == link).all()
+        for row in gdutdetailpage_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_picture_rows = GdutDetailpagePicture.query.filter(
+            GdutDetailpagePicture.detail_link == link).all()
+        for row in gdutdetailpage_picture_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_content_rows = GdutDetailpageContent.query.filter(
+            GdutDetailpageContent.detail_link == link).all()
+        for row in gdutdetailpage_content_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+    return redirect(url_for('.dashboard_table_xuexiyuandi'))
+
+
 # 学习园地“查询” 接口
 @main_handler.route('/search_data_xuexiyuandi')
 def search_data_xuexiyuandi():
@@ -1663,6 +1897,52 @@ def clear_data_zhuanlanbaodao():
         session.rollback()
     return redirect(url_for('.dashboard_table_zhuanlanbaodao'))
 
+
+# 专栏报道 文章“删除” 接口
+@main_handler.route('/article_delete_zhuanlanbaodao')
+def article_delete_zhuanlanbaodao():
+    session = Session()
+    article_title_restful_url = flask.request.args.get('article_link')
+    link_str_list = [article_title_restful_url]
+
+    for link in link_str_list:
+        gdutschoolnews_rows = GdutZhuanlanbaodao.query.filter(
+            GdutZhuanlanbaodao.link == link).all()
+        for row in gdutschoolnews_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_rows = GdutDetailpage.query.filter(
+            GdutDetailpage.link == link).all()
+        for row in gdutdetailpage_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_picture_rows = GdutDetailpagePicture.query.filter(
+            GdutDetailpagePicture.detail_link == link).all()
+        for row in gdutdetailpage_picture_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+        gdutdetailpage_content_rows = GdutDetailpageContent.query.filter(
+            GdutDetailpageContent.detail_link == link).all()
+        for row in gdutdetailpage_content_rows:
+            try:
+                db.session.delete(row)
+                db.session.commit()
+            except:
+                db.session.rollback()
+
+    return redirect(url_for('.dashboard_table_zhuanlanbaodao'))
 
 # 专栏报道“查询” 接口
 @main_handler.route('/search_data_zhuanlanbaodao')
@@ -2123,6 +2403,7 @@ def table_showpage_schoolnews():
         db.session.rollback()
     return render_template('table_showpage_schoolnews.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
+
 # 模拟的爬取到的媒体工大
 @main_handler.route('/show_page_table_showpage_meitigongda.html')
 def table_showpage_meitigongda():
@@ -2135,6 +2416,7 @@ def table_showpage_meitigongda():
         db.session.rollback()
     return render_template('table_showpage_meitigongda.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
+
 # 模拟的爬取到的人文校园
 @main_handler.route('/show_page_table_showpage_renwenxiaoyuan.html')
 def table_showpage_renwenxiaoyuan():
@@ -2146,6 +2428,7 @@ def table_showpage_renwenxiaoyuan():
     except:
         db.session.rollback()
     return render_template('table_showpage_renwenxiaoyuan.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
+
 
 # 模拟的爬取到的校友动态
 @main_handler.route('/show_page_table_showpage_xiaoyoudongtai.html')
@@ -2172,6 +2455,7 @@ def table_showpage_xuexiyuandi():
         db.session.rollback()
     return render_template('table_showpage_xuexiyuandi.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
 
+
 # 模拟的爬取到的专栏报道
 @main_handler.route('/show_page_table_showpage_zhuanlanbaodao.html')
 def table_showpage_zhuanlanbaodao():
@@ -2183,6 +2467,7 @@ def table_showpage_zhuanlanbaodao():
     except:
         db.session.rollback()
     return render_template('table_showpage_zhuanlanbaodao.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
+
 
 # 模拟的爬取到文章详情页
 @main_handler.route('/show_page_article.html')

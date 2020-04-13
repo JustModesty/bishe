@@ -58,7 +58,8 @@
                     <br>
                     <a class="btn btn-success" href="{{ url_for('.dashboard_start_spider_zhuanlanbaodao') }}"
                        role="button">开始爬取 »</a>
-                    <a class="btn btn-danger" href="{{ url_for('.clear_data_zhuanlanbaodao') }}" role="button">开始清空数据库 »</a>
+                    <a class="btn btn-danger" href="{{ url_for('.clear_data_zhuanlanbaodao') }}" role="button">开始清空数据库
+                        »</a>
                 </div>
 
                 <div class="col-lg-2">
@@ -137,10 +138,13 @@
                                                                 <button class="btn-white btn btn-xs">编辑</button>
                                                             </a>
                                                         {% endif %}
-                                                        <a href="">
-                                                            <button class="btn-white btn btn-xs">查看</button>
-                                                        </a>
-                                                        <a href="">
+                                                        {% if item['link'].startswith('http') %}
+                                                            <a target="_blank" href="{{ item['link'] }}">查看</a>
+                                                        {% else %}
+                                                            <a target="_blank"
+                                                               href="{{ url_for('.table_showpage_article_detail', article_link=item['link']) }}">查看</a>
+                                                        {% endif %}
+                                                        <a href="{{ url_for('.article_delete_zhuanlanbaodao', article_link=item['link']) }}">
                                                             <button class="btn-white btn btn-xs">删除</button>
                                                         </a>
                                                     </div>
@@ -183,9 +187,11 @@
                                             <tr>
                                                 <td>
                                                     {% if item['link'].startswith('http') %}
-                                                        <a target="_blank" href="{{ item['link'] }}">{{ item['title'] }}</a>
+                                                        <a target="_blank"
+                                                           href="{{ item['link'] }}">{{ item['title'] }}</a>
                                                     {% else %}
-                                                        <a target="_blank" href="https://gdutnews.gdut.edu.cn/{{ item['link'] }}">{{ item['title'] }}</a>
+                                                        <a target="_blank"
+                                                           href="https://gdutnews.gdut.edu.cn/{{ item['link'] }}">{{ item['title'] }}</a>
                                                     {% endif %}
                                                 </td>
                                                 <td>
@@ -208,10 +214,13 @@
                                                                 <button class="btn-white btn btn-xs">编辑</button>
                                                             </a>
                                                         {% endif %}
-                                                        <a href="">
-                                                            <button class="btn-white btn btn-xs">查看</button>
-                                                        </a>
-                                                        <a href="">
+                                                        {% if item['link'].startswith('http') %}
+                                                            <a target="_blank" href="{{ item['link'] }}">查看</a>
+                                                        {% else %}
+                                                            <a target="_blank"
+                                                               href="{{ url_for('.table_showpage_article_detail', article_link=item['link']) }}">查看</a>
+                                                        {% endif %}
+                                                        <a href="{{ url_for('.article_delete_zhuanlanbaodao', article_link=item['link']) }}">
                                                             <button class="btn-white btn btn-xs">删除</button>
                                                         </a>
                                                     </div>
