@@ -32,7 +32,7 @@ def dashboard_index():
     session = Session()
     # 学校新闻
     gdutschoolnew_limit_line = session.query(GdutSchoolnew.link, GdutSchoolnew.title, GdutSchoolnew.src,
-                                             GdutSchoolnew.date).limit(6)
+                                             GdutSchoolnew.date).order_by(GdutSchoolnew.date.desc()).limit(6)
     try:
         db.session.commit()
     except:
@@ -40,35 +40,35 @@ def dashboard_index():
 
     # 媒体工大
     maitigongda_limit_line = session.query(GdutMeitigongda.link, GdutMeitigongda.title, GdutMeitigongda.src,
-                                           GdutMeitigongda.date).limit(6)
+                                           GdutMeitigongda.date).order_by(GdutMeitigongda.date.desc()).limit(6)
     try:
         db.session.commit()
     except:
         db.session.rollback()
     # 人文校园
     renwenxiaoyuan_limit_line = session.query(GdutRenwenxiaoyuan.link, GdutRenwenxiaoyuan.title, GdutRenwenxiaoyuan.src,
-                                              GdutRenwenxiaoyuan.date).limit(6)
+                                              GdutRenwenxiaoyuan.date).order_by(GdutRenwenxiaoyuan.date.desc()).limit(6)
     try:
         db.session.commit()
     except:
         db.session.rollback()
     # 校友动态
     xiaoyoudongtai_limit_line = session.query(GdutXiaoyoudongtai.link, GdutXiaoyoudongtai.title, GdutXiaoyoudongtai.src,
-                                              GdutXiaoyoudongtai.date).limit(6)
+                                              GdutXiaoyoudongtai.date).order_by(GdutXiaoyoudongtai.date.desc()).limit(6)
     try:
         db.session.commit()
     except:
         db.session.rollback()
     # 学习园地
     xuexiyuandi_limit_line = session.query(GdutXuexiyuandi.link, GdutXuexiyuandi.title, GdutXuexiyuandi.src,
-                                           GdutXuexiyuandi.date).limit(6)
+                                           GdutXuexiyuandi.date).order_by(GdutXuexiyuandi.date.desc()).limit(6)
     try:
         db.session.commit()
     except:
         db.session.rollback()
     # 专栏报道
     zhuanlanbaodao_limit_line = session.query(GdutZhuanlanbaodao.link, GdutZhuanlanbaodao.title, GdutZhuanlanbaodao.src,
-                                              GdutZhuanlanbaodao.date).limit(6)
+                                              GdutZhuanlanbaodao.date).order_by(GdutZhuanlanbaodao.date.desc()).limit(6)
     try:
         db.session.commit()
     except:
@@ -94,7 +94,7 @@ def dashboard_forum_main():
 def dashboard_table_schoolnews():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutSchoolnew.link, GdutSchoolnew.title, GdutSchoolnew.src,
-                                           GdutSchoolnew.date).all()
+                                           GdutSchoolnew.date).order_by(GdutSchoolnew.date.desc()).all()
     try:
         db.session.commit()
     except:
@@ -231,7 +231,7 @@ def search_data_schoolnews():
     if filter_title:
         schoolnews_query = GdutSchoolnew.query.filter(
             GdutSchoolnew.title.like("%" + filter_title + "%")
-        ).all()
+        ).order_by(GdutSchoolnew.date.desc()).all()
     return render_template('table_schoolnews.html', gdutschoolnew_all_line=schoolnews_query)
 
 
@@ -609,7 +609,7 @@ def save_edit_article_tupianxinwen():
 def dashboard_table_meitigongda():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutMeitigongda.link, GdutMeitigongda.title, GdutMeitigongda.src,
-                                           GdutMeitigongda.date).all()
+                                           GdutMeitigongda.date).order_by(GdutMeitigongda.date.desc()).all()
     try:
         db.session.commit()
     except:
@@ -745,7 +745,7 @@ def search_data_meitigongda():
     if filter_title:
         meitigongda_query = GdutMeitigongda.query.filter(
             GdutMeitigongda.title.like("%" + filter_title + "%")
-        ).all()
+        ).order_by(GdutMeitigongda.date.desc()).all()
     return render_template('table_meitigongda.html', gdutschoolnew_all_line=meitigongda_query)
 
 
@@ -888,7 +888,7 @@ def save_edit_article_meitigongda():
 def dashboard_table_renwenxiaoyuan():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutRenwenxiaoyuan.link, GdutRenwenxiaoyuan.title, GdutRenwenxiaoyuan.src,
-                                           GdutRenwenxiaoyuan.date).all()
+                                           GdutRenwenxiaoyuan.date).order_by(GdutRenwenxiaoyuan.date.desc()).all()
     try:
         db.session.commit()
     except:
@@ -1021,7 +1021,7 @@ def search_data_renwenxiaoyuan():
     if filter_title:
         meitigongda_query = GdutRenwenxiaoyuan.query.filter(
             GdutRenwenxiaoyuan.title.like("%" + filter_title + "%")
-        ).all()
+        ).order_by(GdutRenwenxiaoyuan.date.desc()).all()
     return render_template('table_renwenxiaoyuan.html', gdutschoolnew_all_line=meitigongda_query)
 
 
@@ -1164,7 +1164,7 @@ def save_edit_article_renwenxiaoyuan():
 def dashboard_table_xiaoyoudongtai():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutXiaoyoudongtai.link, GdutXiaoyoudongtai.title, GdutXiaoyoudongtai.src,
-                                           GdutXiaoyoudongtai.date).all()
+                                           GdutXiaoyoudongtai.date).order_by(GdutXiaoyoudongtai.date.desc()).all()
     try:
         db.session.commit()
     except:
@@ -1296,7 +1296,7 @@ def search_data_xiaoyoudongtai():
     if filter_title:
         meitigongda_query = GdutXiaoyoudongtai.query.filter(
             GdutXiaoyoudongtai.title.like("%" + filter_title + "%")
-        ).all()
+        ).order_by(GdutXiaoyoudongtai.date.desc()).all()
     return render_template('table_xiaoyoudongtai.html', gdutschoolnew_all_line=meitigongda_query)
 
 
@@ -1541,7 +1541,7 @@ def save_edit_article_xiaoyoudongtai():
 def dashboard_table_xuexiyuandi():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutXuexiyuandi.link, GdutXuexiyuandi.title, GdutXuexiyuandi.src,
-                                           GdutXuexiyuandi.date).all()
+                                           GdutXuexiyuandi.date).order_by(GdutXuexiyuandi.date.desc()).all()
     try:
         db.session.commit()
     except:
@@ -1674,7 +1674,7 @@ def search_data_xuexiyuandi():
     if filter_title:
         meitigongda_query = GdutXuexiyuandi.query.filter(
             GdutXuexiyuandi.title.like("%" + filter_title + "%")
-        ).all()
+        ).order_by(GdutXuexiyuandi.date.desc()).all()
     return render_template('table_xuexiyuandi.html', gdutschoolnew_all_line=meitigongda_query)
 
 
@@ -1821,7 +1821,7 @@ def save_edit_article_xuexiyuandi():
 def dashboard_table_zhuanlanbaodao():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutZhuanlanbaodao.link, GdutZhuanlanbaodao.title, GdutZhuanlanbaodao.src,
-                                           GdutZhuanlanbaodao.date).all()
+                                           GdutZhuanlanbaodao.date).order_by(GdutZhuanlanbaodao.date.desc()).all()
     try:
         db.session.commit()
     except:
@@ -1953,7 +1953,7 @@ def search_data_zhuanlanbaodao():
     if filter_title:
         meitigongda_query = GdutZhuanlanbaodao.query.filter(
             GdutZhuanlanbaodao.title.like("%" + filter_title + "%")
-        ).all()
+        ).order_by(GdutZhuanlanbaodao.date.desc()).all()
     return render_template('table_zhuanlanbaodao.html', gdutschoolnew_all_line=meitigongda_query)
 
 
@@ -2396,7 +2396,7 @@ def spider_menu_section(path):
 def table_showpage_schoolnews():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutSchoolnew.link, GdutSchoolnew.title, GdutSchoolnew.src,
-                                           GdutSchoolnew.date).all()
+                                           GdutSchoolnew.date).order_by(GdutSchoolnew.date.desc()).all()
     try:
         db.session.commit()
     except:
@@ -2409,7 +2409,7 @@ def table_showpage_schoolnews():
 def table_showpage_meitigongda():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutMeitigongda.link, GdutMeitigongda.title, GdutMeitigongda.src,
-                                           GdutMeitigongda.date).all()
+                                           GdutMeitigongda.date).order_by(GdutMeitigongda.date.desc()).all()
     try:
         db.session.commit()
     except:
@@ -2422,7 +2422,7 @@ def table_showpage_meitigongda():
 def table_showpage_renwenxiaoyuan():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutRenwenxiaoyuan.link, GdutRenwenxiaoyuan.title, GdutRenwenxiaoyuan.src,
-                                           GdutRenwenxiaoyuan.date).all()
+                                           GdutRenwenxiaoyuan.date).order_by(GdutRenwenxiaoyuan.date.desc()).all()
     try:
         db.session.commit()
     except:
@@ -2435,7 +2435,7 @@ def table_showpage_renwenxiaoyuan():
 def table_showpage_xiaoyoudongtai():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutXiaoyoudongtai.link, GdutXiaoyoudongtai.title, GdutXiaoyoudongtai.src,
-                                           GdutXiaoyoudongtai.date).all()
+                                           GdutXiaoyoudongtai.date).order_by(GdutXiaoyoudongtai.date.desc()).all()
     try:
         db.session.commit()
     except:
@@ -2448,7 +2448,7 @@ def table_showpage_xiaoyoudongtai():
 def table_showpage_xuexiyuandi():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutXuexiyuandi.link, GdutXuexiyuandi.title, GdutXuexiyuandi.src,
-                                           GdutXuexiyuandi.date).all()
+                                           GdutXuexiyuandi.date).order_by(GdutXuexiyuandi.date.desc()).all()
     try:
         db.session.commit()
     except:
@@ -2461,7 +2461,7 @@ def table_showpage_xuexiyuandi():
 def table_showpage_zhuanlanbaodao():
     session = Session()
     gdutschoolnew_all_line = session.query(GdutZhuanlanbaodao.link, GdutZhuanlanbaodao.title, GdutZhuanlanbaodao.src,
-                                           GdutZhuanlanbaodao.date).all()
+                                           GdutZhuanlanbaodao.date).order_by(GdutZhuanlanbaodao.date.desc()).all()
     try:
         db.session.commit()
     except:
