@@ -27,6 +27,7 @@ Session = sessionmaker(bind=engine)
 # def dashboard_index():
 #     return render_template('index.html')
 
+
 @main_handler.route('/')
 def dashboard_index():
     session = Session()
@@ -100,6 +101,31 @@ def dashboard_table_schoolnews():
     except:
         db.session.rollback()
     return render_template('table_schoolnews.html', gdutschoolnew_all_line=gdutschoolnew_all_line)
+
+
+
+# dashboard 学校新闻 “新增” 接口
+@main_handler.route('/dashboard_new_add_schoolnews')
+def dashboard_new_add_schoolnews():
+    # 1. 定位是哪篇文章
+    # article_title_restful_url = flask.request.args.get('article_link')
+    # content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
+    # # 2. 查询数据库,找到文章内容
+    # session = Session()
+    # article_id_in_mysql = session.execute(
+    #     "select id from gdut_detailpage where link='%s';" % (article_title_restful_url))
+    # article_id_in_mysql_first = article_id_in_mysql.first()
+    # article_id_in_mysql_first_zero = article_id_in_mysql_first[0]
+    # try:
+    #     session.commit()
+    # except:
+    #     session.rollback()
+
+    # 3. 返回内容并渲染成一个新页面
+    # return render_template('ecommerce_product.html', content=content, article_link=article_title_restful_url,
+    #                        article_id_in_mysql=article_id_in_mysql_first_zero, news_class="schoolnews")
+    return render_template('ecommerce_product.html')
+
 
 
 # dashboard 学校新闻 “开始爬取” 接口
@@ -2477,3 +2503,30 @@ def table_showpage_article_detail():
     content = gdut_spider_function.query_from_database_gdut_detailpage(article_title_restful_url)
     # 2. 返回内容并渲染成一个新页面
     return render_template('article.html', content=content)
+
+
+@main_handler.route('/<path>.html')
+def redirected_path(path):
+    print("===================")
+    print("path=", path)
+    print("type(path)=", type(path))
+    print("len(path)=", len(path))
+    # path = path.encode('utf-8')
+    if path.startswith('favicon'):
+        # try:
+        #     return render_template(path)
+        # except:
+        #     return render_template(path)
+
+        pass
+        # print("===================")
+        # print("path=", path)
+        # print("type(path)=", type(path))
+        # print("len(path)=", len(path))
+        # path = path.encode('utf-8')
+    else:
+        if not path.endswith('html'):
+            path = path+".html"
+        print("path=", path)
+
+        return render_template(path)

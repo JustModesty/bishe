@@ -23,8 +23,14 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:a1234567890!@127.0.0.1:3306/gdutnews'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
+class Production(Config):
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:a1234567890!@127.0.0.1:3306/gdutnews'
+
+
+
 config = {
-    'default': DevelopmentConfig
+    'default': DevelopmentConfig,
+    'production': Production
 }
 
 # GDUT的一些通用变量
