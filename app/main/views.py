@@ -26,9 +26,29 @@ Session = sessionmaker(bind=engine)
 # @main_handler.route('/')
 # def dashboard_index():
 #     return render_template('index.html')
+# dashboard查看数据库分类
 
+# @main_handler.route('/login')
+
+count_total = 0
 
 @main_handler.route('/')
+def start():
+    global count_total
+    if count_total == 0:
+        count_total += 1
+        return redirect(url_for('.login'))
+    else:
+        return redirect(url_for('.dashboard_index'))
+    # return render_template('login.html')
+
+@main_handler.route('/login')
+def login():
+    return render_template('login.html')
+
+
+# @main_handler.route('/')
+@main_handler.route('/gdutIndex')
 def dashboard_index():
     session = Session()
     # 学校新闻
