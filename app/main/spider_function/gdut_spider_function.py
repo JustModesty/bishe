@@ -477,6 +477,31 @@ def query_from_database_gdut_detailpage(article_title_restful_url):
     content = {}
     result = GdutDetailpage.query.filter_by(link=article_title_restful_url).all()
 
+    if article_title_restful_url.startswith("newadd"):
+        row = result[0]
+
+        title = row.title
+        date = row.date
+        jianjie = row.jianjie
+
+        result_picture = GdutDetailpagePicture.query.filter_by(detail_link=article_title_restful_url).all()
+        picture_local_position_list = []
+        if result_picture:
+            for item in result_picture:
+                # picture_local_position_list.append(item["local_position"])
+                picture_local_position_list.append(".." + item.local_position[3:])
+        result_paragraph = GdutDetailpageContent.query.filter_by(detail_link=article_title_restful_url).all()
+        paragraph_list = []
+        if result_paragraph:
+            for item in result_paragraph:
+                # paragraph_list.append(item["paragraph"])
+                paragraph_list.append(item.paragraph)
+        content["title"] = title
+        content["date"] = date
+        content["jianjie"] = jianjie
+        content["picture_local_position_list"] = picture_local_position_list
+        content["paragraph_list"] = paragraph_list
+        return content
     # 如果已经在了,直接找到相应的内容返回即可. 不用再次爬取
     if result:
         print("info: 已经存在,直接返回")
