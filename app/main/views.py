@@ -44,10 +44,69 @@ def start():
     # return render_template('login.html')
 
 
-@main_handler.route('/login')
+@main_handler.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    if request.method == 'GET':
+        return render_template('login.html')
+    if request.method == 'POST':
+        account = request.form['account']
+        passwd = request.form['passwd']
 
+        # 2. 查询数据库,找到文章内容
+        session = Session()
+        sql = session.execute(
+            "select * from user_tbl where acount='%s' and password='%s';" % (account, passwd))
+        result_first_row = sql.first()
+        if result_first_row is None or len(result_first_row) == 0:
+            return render_template('login.html')
+
+        user_info = result_first_row[0]
+        try:
+            session.commit()
+        except:
+            session.rollback()
+
+        return redirect(url_for('.dashboard_index', user_info=user_info))
+
+        # < a href = "{{ url_for('.edit_article_meitigongda', article_link=item['link'] ) }}" >
+
+        # return render_template('login.html')
+
+
+@main_handler.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        account = request.form['account']
+        passwd = request.form['passwd']
+
+        # 2. 查询数据库,找到文章内容
+        session = Session()
+        sql = session.execute(
+            "select * from user_tbl where acount='%s';" % (account))
+        result_first_row = sql.first()
+        if result_first_row is None or len(result_first_row) == 0:
+            # 可以注册
+
+            session = Session()
+            # session.execute("select id from gdut_detailpage where link='%s';" % (article_title_restful_url))
+
+            # new_date变成yyyymmdd_new_date
+
+            session.execute("INSERT INTO `user_tbl` ( `name`, `acount`,`password`) VALUES ( '%s', '%s', '%s');" % (username, account, passwd))
+
+            try:
+                session.commit()
+            except:
+                session.rollback()
+
+            return render_template('login.html')
+        else:
+            return render_template('register.html')
+
+        # < a href = "{{ url_for('.edit_article_meitigongda', article_link=item['link'] ) }}" >
+
+        # return render_template('login.html')
 
 # @main_handler.route('/')
 @main_handler.route('/gdutIndex')
