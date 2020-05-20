@@ -197,7 +197,7 @@
                                             <div class="form-group"><label
                                                     class="col-sm-2 control-label">文章标题:</label>
                                                 <div class="col-sm-10">
-                                                    <form action="{{ url_for('.save_edit_article_xuexiyuandi' ,update_field="title", news_class=news_class) }}"
+                                                    <form action="{{ url_for('.save_edit_article_renwenxiaoyuan' ,update_field="title", news_class=news_class) }}"
                                                           method="post">
                                                         <input type="text" class="form-control"
                                                                placeholder="请输入标题"
@@ -219,7 +219,7 @@
                                             <div class="form-group"><label
                                                     class="col-sm-2 control-label">发布日期:</label>
                                                 <div class="col-sm-10">
-                                                    <form action="{{ url_for('.save_edit_article_xuexiyuandi' ,update_field="date", news_class=news_class) }}"
+                                                    <form action="{{ url_for('.save_edit_article_renwenxiaoyuan' ,update_field="date", news_class=news_class) }}"
                                                           method="post">
                                                         <input type="text" class="form-control"
                                                                placeholder="格式:yyyy年mm月dd日"
@@ -240,7 +240,7 @@
                                             <div class="form-group">
                                                 <label class="col-sm-2 control-label">简介:</label>
                                                 <div class="col-sm-10">
-                                                    <form action="{{ url_for('.save_edit_article_xuexiyuandi' ,update_field="jianjie", news_class=news_class) }}"
+                                                    <form action="{{ url_for('.save_edit_article_renwenxiaoyuan' ,update_field="jianjie", news_class=news_class) }}"
                                                           method="post">
                                                         <textarea name="jianjie" id="summernote" cols="30" rows="10">{{ content["jianjie"] }}</textarea>
                                                         <input type="hidden" class="form-control"
@@ -261,7 +261,7 @@
                                                 <div class="col-sm-10">
 
                                                     {#                                                        <div class="summernote" name="paragraph_one" id="paragraph_one">#}
-                                                    <form action="{{ url_for('.save_edit_article_xuexiyuandi' ,update_field="paragraph", news_class=news_class) }}"
+                                                    <form action="{{ url_for('.save_edit_article_renwenxiaoyuan' ,update_field="paragraph", news_class=news_class) }}"
                                                           method="post">
                                                         <textarea name="paragraph" id="summernote2" cols="30" rows="10">
                                                             {% for picture in  content["picture_local_position_list"] %}
